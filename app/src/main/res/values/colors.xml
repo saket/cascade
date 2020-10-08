@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="color_primary">#202020</color>
+  <color name="color_primary_dark">#1b1b1b</color>
+  <color name="color_accent">@color/teal_A400</color>
+  <color name="window_background">#292929</color>
+</resources>
