@@ -40,14 +40,16 @@ open class CascadePopupMenu @JvmOverloads constructor(
   private val themeAttrs get() = popup.themeAttrs
 
   class Styler(
-    val background: (Drawable) -> Drawable = { it },
+    val background: () -> Drawable? = { null },
     val menuList: (RecyclerView) -> Unit = {},
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
     val menuItem: (MenuItemViewHolder) -> Unit = {}
   )
 
   fun show() {
-    popup.contentView.background = styler.background(popup.contentView.background)
+    styler.background()?.let {
+      popup.contentView.background = it
+    }
 
     showMenu(menu, goingForward = true)
     popup.showAsDropDown(anchor, 0, 0, gravity)
@@ -76,7 +78,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
       // Opaque background to avoid cross-drawing
       // of menus during entry/exit animation.
       if (menu is SubMenu) {
-        background = themeAttrs.popupBackground(context)
+        background = styler.background() ?: themeAttrs.popupBackground(context)
       }
 
       // PopupWindow doesn't allow its content to have a fixed
