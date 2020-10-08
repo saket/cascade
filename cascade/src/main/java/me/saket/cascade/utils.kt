@@ -4,11 +4,13 @@ package me.saket.cascade
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.TypedArray
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.MenuItem
 import android.view.View.OVER_SCROLL_ALWAYS
 import android.view.View.OVER_SCROLL_NEVER
+import androidx.annotation.StyleableRes
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
@@ -35,4 +37,8 @@ internal class OverScrollIfContentScrolls : RecyclerView.OnScrollListener() {
       recyclerView.overScrollMode = if (canScrollVertical) OVER_SCROLL_ALWAYS else OVER_SCROLL_NEVER
     }
   }
+}
+
+internal fun TypedArray.getResourceIdOrNull(@StyleableRes index: Int): Int? {
+  return if (hasValue(index)) getResourceId(index, 0) else null
 }

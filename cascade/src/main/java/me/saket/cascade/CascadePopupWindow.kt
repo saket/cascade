@@ -6,13 +6,16 @@ import android.R.attr.popupElevation
 import android.R.attr.popupEnterTransition
 import android.R.attr.popupExitTransition
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
+import android.os.Build.VERSION.SDK_INT
 import android.transition.Transition
 import android.transition.TransitionInflater
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
+import androidx.annotation.StyleableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.getDimensionOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
@@ -39,8 +42,8 @@ open class CascadePopupWindow @JvmOverloads constructor(
     isFocusable = true
     isOutsideTouchable = true
     elevation = themeAttrs.popupElevation
-    enterTransition = themeAttrs.popupEnterTransition
-    exitTransition = themeAttrs.popupExitTransition
+    themeAttrs.popupEnterTransitionRes?.let(::setEnterTransition)
+    themeAttrs.popupExitTransitionRes?.let(::setExitTransition)
 
     // Remove PopupWindow's default frame around the content.
     setBackgroundDrawable(null)
@@ -57,32 +60,31 @@ open class CascadePopupWindow @JvmOverloads constructor(
   }
 
   private fun resolveThemeAttrs(): ThemeAttributes {
-    val attrs = intArrayOf(
-      popupBackground,
-      popupElevation,
-      popupEnterTransition,
-      popupExitTransition,
-      listChoiceBackgroundIndicator
-    )
+    val attrs = listOf(popupBackground, popupElevation, listChoiceBackgroundIndicator)
+      .plus(if (SDK_INT >= 24) listOf(popupEnterTransition, popupExitTransition) else emptyList())
+      .toIntArray()
 
     return context.obtainStyledAttributes(defStyleAttr, attrs).use {
-      val inflateTransition = { resId: Int -> TransitionInflater.from(context).inflateTransition(resId) }
+      val inflateTransition = { resId: Int? ->
+        if (resId == null) null
+        else TransitionInflater.from(context).inflateTransition(resId)
+      }
       ThemeAttributes(
         popupElevation = it.getDimensionOrThrow(attrs.indexOf(popupElevation)),
         popupBackgroundRes = it.getResourceIdOrThrow(attrs.indexOf(popupBackground)),
-        popupEnterTransition = inflateTransition(it.getResourceIdOrThrow(attrs.indexOf(popupEnterTransition))),
-        popupExitTransition = inflateTransition(it.getResourceIdOrThrow(attrs.indexOf(popupExitTransition))),
+        popupEnterTransitionRes = inflateTransition(it.getResourceIdOrNull(attrs.indexOf(popupEnterTransition))),
+        popupExitTransitionRes = inflateTransition(it.getResourceIdOrNull(attrs.indexOf(popupExitTransition))),
         touchFeedbackRes = it.getResourceIdOrThrow(attrs.indexOf(listChoiceBackgroundIndicator))
       )
     }
   }
 
-  data class ThemeAttributes(
+  class ThemeAttributes(
     @Px val popupElevation: Float,
     @DrawableRes val popupBackgroundRes: Int,
     @DrawableRes val touchFeedbackRes: Int,
-    val popupEnterTransition: Transition,
-    val popupExitTransition: Transition
+    val popupEnterTransitionRes: Transition?,
+    val popupExitTransitionRes: Transition?
   )
 }
 
