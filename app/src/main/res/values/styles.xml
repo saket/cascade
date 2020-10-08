@@ -1,8 +1,13 @@
 <resources>
 
-  <style name="AppTheme" parent="Theme.AppCompat">
-    <item name="colorPrimary">@color/color_primary</item>
-    <item name="colorPrimaryDark">@color/color_primary_dark</item>
-    <item name="colorAccent">@color/color_accent</item>
+  <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <item name="colorPrimary">#353846</item>
+    <item name="colorPrimaryDark">#353846</item>
+    <item name="colorAccent">#85F589</item>
+    <item name="colorControlNormal">@color/colorControlNormal</item>
+    <item name="android:windowBackground">#353846</item>
+    <!--<item name="android:fontFamily">@font/work_sans_bold</item>-->
   </style>
+
+  <color name="colorControlNormal">#DBC2FF</color>
 </resources>
