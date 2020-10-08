@@ -1,0 +1,45 @@
+package me.saket.cascade
+
+import android.graphics.drawable.Drawable
+import android.view.Gravity.CENTER_VERTICAL
+import android.view.Gravity.START
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.view.menu.SubMenuBuilder
+import androidx.core.view.updatePaddingRelative
+import androidx.recyclerview.widget.RecyclerView
+
+/** Layout for a sub-menu header. */
+class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+  val textView: TextView = view.findViewById(android.R.id.title)
+  lateinit var menu: SubMenuBuilder
+
+  private val Int.dip: Int
+    get() = itemView.context.dip(this)
+
+  init {
+    textView.isEnabled = false
+    textView.gravity = START or CENTER_VERTICAL
+    view.updatePaddingRelative(start = 6.dip, end = 16.dip)
+    setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_round_arrow_left_32)!!)
+  }
+
+  fun render() {
+    textView.text = menu.headerTitle
+  }
+
+  fun setBackIcon(icon: Drawable) {
+    textView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
+  }
+
+  companion object {
+    fun inflate(parent: ViewGroup): MenuHeaderViewHolder {
+      val inflater = LayoutInflater.from(parent.context).cloneInContext(parent.context)
+      val view = inflater.inflate(R.layout.abc_popup_menu_header_item_layout, parent, false)
+      return MenuHeaderViewHolder(view)
+    }
+  }
+}
