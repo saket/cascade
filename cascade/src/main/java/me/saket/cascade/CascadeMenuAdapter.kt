@@ -12,7 +12,7 @@ import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.core.view.iterator
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import me.saket.cascade.CascadeMenu.Styler
+import me.saket.cascade.CascadePopupMenu.Styler
 import me.saket.cascade.CascadeMenuAdapter.ItemType.Header
 import me.saket.cascade.CascadeMenuAdapter.ItemType.Item
 import me.saket.cascade.CascadePopupWindow.ThemeAttributes

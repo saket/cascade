@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.Stack
 import kotlin.DeprecationLevel.ERROR
 
-open class CascadeMenu @JvmOverloads constructor(
+open class CascadePopupMenu @JvmOverloads constructor(
   private val context: Context,
   private val anchor: View,
   private var gravity: Int = Gravity.NO_GRAVITY,
@@ -36,8 +36,8 @@ open class CascadeMenu @JvmOverloads constructor(
 
   val menu: Menu = MenuBuilder(context)
   private val popup = CascadePopupWindow(context, defStyleAttr)
-  private val themeAttrs get() = popup.themeAttrs
   private val backstack = Stack<Menu>()
+  private val themeAttrs get() = popup.themeAttrs
 
   class Styler(
     val background: (Drawable) -> Drawable = { it },
