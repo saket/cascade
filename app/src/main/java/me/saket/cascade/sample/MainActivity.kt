@@ -4,10 +4,12 @@ import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.iterator
 import me.saket.cascade.CascadePopupMenu
 
 class MainActivity : AppCompatActivity() {
@@ -25,12 +27,8 @@ class MainActivity : AppCompatActivity() {
   private fun showCascadeMenu(anchor: View) {
     val popupMenu = CascadePopupMenu(this, anchor)
     popupMenu.menu.apply {
-      add("About").also {
-        it.setIcon(R.drawable.ic_language_24)
-      }
-      add("Copy").also {
-        it.setIcon(R.drawable.ic_file_copy_24)
-      }
+      add("About").setIcon(R.drawable.ic_language_24)
+      add("Copy").setIcon(R.drawable.ic_file_copy_24)
       addSubMenu("Delete").also {
         it.setIcon(R.drawable.ic_delete_sweep_24)
         it.setHeaderTitle("Are you sure?")
@@ -52,6 +50,12 @@ class MainActivity : AppCompatActivity() {
         it.add("Markdown")
         it.add("Plain text")
         it.add("Microsoft word")
+        for (item in it) {
+          item.setOnMenuItemClickListener {
+            popupMenu.navigateBack()
+            true
+          }
+        }
       }
       addSubMenu("Cash App").also {
         it.setIcon(cashAppIcon())
