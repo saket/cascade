@@ -2,19 +2,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-  compileSdkVersion versions.compileSdk
   resourcePrefix "cascade_"
 
-  defaultConfig {
-    minSdkVersion 21
-    targetSdkVersion versions.compileSdk
-  }
-
-  buildTypes {
-    release {
-      minifyEnabled false
-    }
-  }
+  compileSdkVersion versions.compileSdk
+  defaultConfig { minSdkVersion 21 }
 
   kotlinOptions {
     jvmTarget = "1.8"
