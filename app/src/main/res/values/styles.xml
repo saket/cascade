@@ -1,19 +1,27 @@
 <resources>
+  <color name="color_accent">#85F589</color>
+  <color name="color_control_normal">#DBC2FF</color>
+  <color name="window_background">#353846</color>
 
   <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-    <item name="colorPrimary">@color/windowBackground</item>
-    <item name="colorPrimaryDark">@color/windowBackground</item>
-    <item name="colorAccent">#85F589</item>
-    <item name="android:windowBackground">@color/windowBackground</item>
-    <!--<item name="android:fontFamily">@font/work_sans_bold</item>-->
+    <item name="colorPrimary">@color/window_background</item>
+    <item name="colorPrimaryDark">@color/window_background</item>
+    <item name="colorAccent">@color/color_accent</item>
+    <item name="android:windowBackground">@color/window_background</item>
+    <item name="toolbarStyle">@style/ToolbarStyle</item>
 
     <!-- Color of menu icons. -->
-    <item name="colorControlNormal">@color/colorControlNormal</item>
+    <item name="colorControlNormal">@color/color_control_normal</item>
 
     <!-- Color of sub-menu titles. -->
     <item name="android:textColorSecondary">#80FFFFFF</item>
   </style>
 
-  <color name="colorControlNormal">#DBC2FF</color>
-  <color name="windowBackground">#353846</color>
+  <style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
+    <item name="titleTextAppearance">@style/ToolbarTitleAppearance</item>
+  </style>
+
+  <style name="ToolbarTitleAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <item name="fontFamily">@font/work_sans_bold</item>
+  </style>
 </resources>

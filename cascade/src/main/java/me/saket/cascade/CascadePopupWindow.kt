@@ -59,8 +59,6 @@ open class CascadePopupWindow @JvmOverloads constructor(
       background = themeAttrs.popupBackground(context)
       clipToOutline = true
     }
-
-    setMargins(left = context.dip(4), right = context.dip(4))
   }
 
   override fun getContentView(): HeightAnimatableViewFlipper {

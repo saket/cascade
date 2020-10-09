@@ -1,10 +1,15 @@
 package me.saket.cascade.sample
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Color.BLACK
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.RippleDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
@@ -16,10 +21,11 @@ import androidx.core.view.iterator
 import androidx.core.view.postDelayed
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.getkeepsafe.taptargetview.TapTargetView.Listener
 import me.saket.cascade.CascadePopupMenu
 
-@SuppressLint("ClickableViewAccessibility")
 class MainActivity : AppCompatActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
@@ -28,26 +34,14 @@ class MainActivity : AppCompatActivity() {
     toolbar.inflateMenu(R.menu.toolbar)
 
     val menuButton = toolbar.findViewById<View>(R.id.overflow_menu)
+    showcaseMenuButton(toolbar, menuButton)
     menuButton.setOnClickListener {
       showCascadeMenu(anchor = menuButton)
     }
-
-    TapTargetView.showFor(this,
-      TapTarget.forToolbarMenuItem(toolbar, R.id.overflow_menu, "Tap to see Cascade in action")
-        .transparentTarget(true)
-        .outerCircleColor(R.color.colorControlNormal)
-        .titleTextColor(R.color.windowBackground),
-      object : TapTargetView.Listener() {
-        override fun onTargetClick(view: TapTargetView) {
-          super.onTargetClick(view)
-          view.postDelayed(200) { menuButton.performClick() }
-        }
-      }
-    )
   }
 
   private fun showCascadeMenu(anchor: View) {
-    val popupMenu = CascadePopupMenu(this, anchor)
+    val popupMenu = CascadePopupMenu(this, anchor, styler = cascadeMenuStyler())
     popupMenu.menu.apply {
       add("About").setIcon(R.drawable.ic_language_24)
       add("Copy").setIcon(R.drawable.ic_file_copy_24)
@@ -92,14 +86,55 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
+  private fun cascadeMenuStyler(): CascadePopupMenu.Styler {
+    val rippleDrawable = {
+      RippleDrawable(ColorStateList.valueOf(Color.parseColor("#6F6182")), null, ColorDrawable(BLACK))
+    }
+
+    return CascadePopupMenu.Styler(
+      background = {
+        RoundedRectDrawable(Color.parseColor("#21232D"), radius = 4f.dip)
+      },
+      menuTitle = {
+        it.titleView.typeface = resources.getFont(R.font.work_sans_medium)
+        it.itemView.background = rippleDrawable()
+      },
+      menuItem = {
+        it.titleView.typeface = resources.getFont(R.font.work_sans_medium)
+        it.itemView.background = rippleDrawable()
+      }
+    )
+  }
+
   private fun cashAppIcon() =
     AppCompatResources.getDrawable(this, R.drawable.ic_cash_app_24)!!.also {
       it.mutate()
-      it.setTint(getColor(R.color.colorControlNormal))
+      it.setTint(getColor(R.color.color_control_normal))
     }
 
   private fun intent(url: String) =
     Intent(ACTION_VIEW, Uri.parse(url))
+
+  private fun showcaseMenuButton(toolbar: Toolbar?, menuButton: View) {
+    val tapTarget = TapTarget
+      .forToolbarMenuItem(toolbar, R.id.overflow_menu, "Tap to see Cascade in action")
+      .transparentTarget(true)
+      .outerCircleColor(R.color.color_control_normal)
+      .titleTextColor(R.color.window_background)
+
+    TapTargetView.showFor(this, tapTarget, object : Listener() {
+      override fun onTargetClick(view: TapTargetView) {
+        super.onTargetClick(view)
+        view.postDelayed(200) { menuButton.performClick() }
+      }
+    })
+  }
+
+  private val Float.dip: Float
+    get() {
+      val metrics = resources.displayMetrics
+      return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, metrics)
+    }
 }
 
 @OptIn(ExperimentalStdlibApi::class)

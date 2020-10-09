@@ -14,25 +14,26 @@ import androidx.recyclerview.widget.RecyclerView
 
 /** Layout for a sub-menu header. */
 class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-  val textView: TextView = view.findViewById(android.R.id.title)
+  val titleView: TextView = view.findViewById(android.R.id.title)
   lateinit var menu: SubMenuBuilder
 
   private val Int.dip: Int
     get() = itemView.context.dip(this)
 
   init {
-    textView.isEnabled = false
-    textView.gravity = START or CENTER_VERTICAL
+    titleView.isEnabled = false
+    titleView.gravity = START or CENTER_VERTICAL
     view.updatePaddingRelative(start = 6.dip, end = 16.dip)
     setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_round_arrow_left_32)!!)
   }
 
-  fun render() {
-    textView.text = menu.headerTitle
+  fun render(menu: SubMenuBuilder) {
+    this.menu = menu
+    titleView.text = this.menu.headerTitle
   }
 
   fun setBackIcon(icon: Drawable) {
-    textView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
+    titleView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
   }
 
   companion object {

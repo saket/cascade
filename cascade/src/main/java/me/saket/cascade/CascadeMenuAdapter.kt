@@ -61,14 +61,12 @@ internal class CascadeMenuAdapter(
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     when (holder) {
       is MenuHeaderViewHolder -> {
-        holder.menu = (items[position] as Header).menu
-        holder.render()
+        holder.render((items[position] as Header).menu)
         styler.menuTitle(holder)
       }
 
       is MenuItemViewHolder -> {
-        holder.item = (items[position] as Item).item
-        holder.render()
+        holder.render((items[position] as Item).item)
         styler.menuItem(holder)
       }
     }

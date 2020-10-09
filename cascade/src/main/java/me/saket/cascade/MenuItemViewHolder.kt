@@ -33,20 +33,22 @@ class MenuItemViewHolder(
   private val Int.dip: Int
     get() = view.context.dip(this)
 
-  fun render() {
+  fun render(item: MenuItemImpl) {
+    this.item = item
+
     view.setForceShowIcon(true)
-    view.initialize(item, 0)
+    view.initialize(this.item, 0)
     view.setGroupDividerEnabled(false)
 
-    if (item.hasSubMenu()) {
+    if (this.item.hasSubMenu()) {
       subMenuArrowView.setImageResource(R.drawable.ic_round_arrow_right_24)
     }
 
     subMenuArrowView.updateMargin(start = 0.dip)
     setContentSpacing(
-      start = if (item.icon != null) 12.dip else 14.dip,
+      start = if (this.item.icon != null) 12.dip else 14.dip,
       end = when {
-        item.hasSubMenu() -> 4.dip
+        this.item.hasSubMenu() -> 4.dip
         hasSubMenuSiblings -> 28.dip
         else -> 14.dip
       },
