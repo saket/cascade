@@ -13,6 +13,7 @@ import android.view.SubMenu
 import android.view.View
 import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewOutlineProvider
 import androidx.annotation.MenuRes
@@ -52,7 +53,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
     popup.width = fixedWidth
-    popup.setMargins(left = context.dip(4), right = context.dip(4))
+    popup.setMargins(start = context.dip(4), end = context.dip(4))
     styler.background()?.let {
       popup.contentView.background = it
     }
@@ -93,10 +94,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
         outlineProvider = ViewOutlineProvider.BACKGROUND
         clipToOutline = true
       }
-
-      // PopupWindow doesn't allow its content to have a fixed
-      // width so any fixed size must be set on its children instead.
-      layoutParams = LayoutParams(fixedWidth, WRAP_CONTENT)
+      layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
     }
 
     backstack.push(menu)

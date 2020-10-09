@@ -12,7 +12,6 @@ import android.os.Build.VERSION.SDK_INT
 import android.transition.Transition
 import android.transition.TransitionInflater
 import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
@@ -21,7 +20,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.getDimensionOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.PopupWindowCompat
 import me.saket.cascade.CascadePopupWindow.ThemeAttributes
 
@@ -74,29 +73,36 @@ open class CascadePopupWindow @JvmOverloads constructor(
    * edges, but PopupWindow doesn't make it easy to do so.
    */
   fun setMargins(
-    left: Int = margins.left,
+    start: Int = margins.left,
     top: Int = margins.top,
-    right: Int = margins.right,
+    end: Int = margins.right,
     bottom: Int = margins.bottom
   ) {
     check(!isShowing) { "Can't change once the popup is already visible." }
-    margins.set(left, top, right, bottom)
+    margins.set(start, top, end, bottom)
   }
 
   override fun showAsDropDown(anchor: View, xoff: Int, yoff: Int, gravity: Int) {
-    super.showAsDropDown(anchor, xoff, yoff, gravity)
-    updateContentMargins()
+    runWithMargins {
+      super.showAsDropDown(anchor, xoff, yoff, gravity)
+    }
   }
 
   override fun showAtLocation(parent: View, gravity: Int, x: Int, y: Int) {
-    super.showAtLocation(parent, gravity, x, y)
-    updateContentMargins()
+    runWithMargins {
+      super.showAtLocation(parent, gravity, x, y)
+    }
   }
 
-  private fun updateContentMargins() {
-    contentView.updateLayoutParams<MarginLayoutParams> {
-      setMargins(margins.left, margins.top, margins.right, margins.bottom)
-    }
+  private fun runWithMargins(action: () -> Unit) {
+    width += margins.left + margins.right
+    action()
+    (contentView.parent as View).updatePaddingRelative(
+      start = margins.left,
+      top = margins.top,
+      end = margins.right,
+      bottom = margins.bottom
+    )
   }
 
   private fun resolveThemeAttrs(): ThemeAttributes {
