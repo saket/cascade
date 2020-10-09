@@ -52,6 +52,11 @@ open class CascadePopupMenu @JvmOverloads constructor(
       popup.contentView.background = it
     }
 
+    // PopupWindow moves the popup to align with the anchor if a fixed width
+    // is known before hand. Note to self: If fixedWidth ever needs to be
+    // removed, copy over MenuPopup.measureIndividualMenuWidth().
+    popup.width = fixedWidth
+
     showMenu(menu, goingForward = true)
     popup.showAsDropDown(anchor, 0, 0, gravity)
   }

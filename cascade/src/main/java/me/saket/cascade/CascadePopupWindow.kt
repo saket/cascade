@@ -13,6 +13,7 @@ import android.transition.Transition
 import android.transition.TransitionInflater
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.ViewGroup.MarginLayoutParams.MATCH_PARENT
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
@@ -21,8 +22,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.getDimensionOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
-import androidx.core.view.setMargins
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.PopupWindowCompat
 import me.saket.cascade.CascadePopupWindow.ThemeAttributes
 
@@ -87,13 +86,19 @@ open class CascadePopupWindow @JvmOverloads constructor(
   }
 
   override fun showAsDropDown(anchor: View, xoff: Int, yoff: Int, gravity: Int) {
+    prepareContentMargins()
     super.showAsDropDown(anchor, xoff, yoff, gravity)
-    contentView.setMargins(margins)
   }
 
   override fun showAtLocation(parent: View, gravity: Int, x: Int, y: Int) {
+    prepareContentMargins()
     super.showAtLocation(parent, gravity, x, y)
-    contentView.setMargins(margins)
+  }
+
+  private fun prepareContentMargins() {
+    contentView.layoutParams = MarginLayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
+      setMargins(margins.left, margins.top, margins.right, margins.bottom)
+    }
   }
 
   private fun resolveThemeAttrs(): ThemeAttributes {

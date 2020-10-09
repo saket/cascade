@@ -47,8 +47,3 @@ internal fun TypedArray.getResourceIdOrNull(@StyleableRes index: Int): Int? {
   return if (hasValue(index)) getResourceId(index, 0) else null
 }
 
-internal fun View.setMargins(margins: Rect) {
-  updateLayoutParams<MarginLayoutParams> {
-    setMargins(margins.left, margins.top, margins.right, margins.bottom)
-  }
-}
