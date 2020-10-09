@@ -1,17 +1,24 @@
 package me.saket.cascade.sample
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
+import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.iterator
+import androidx.core.view.postDelayed
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import me.saket.cascade.CascadePopupMenu
 
+@SuppressLint("ClickableViewAccessibility")
 class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -19,9 +26,24 @@ class MainActivity : AppCompatActivity() {
 
     val toolbar = findViewById<Toolbar>(R.id.toolbar)
     toolbar.inflateMenu(R.menu.toolbar)
-    toolbar.findViewById<View>(R.id.overflow_menu).setOnClickListener {
-      showCascadeMenu(anchor = it)
+
+    val menuButton = toolbar.findViewById<View>(R.id.overflow_menu)
+    menuButton.setOnClickListener {
+      showCascadeMenu(anchor = menuButton)
     }
+
+    TapTargetView.showFor(this,
+      TapTarget.forToolbarMenuItem(toolbar, R.id.overflow_menu, "Tap to see Cascade in action")
+        .transparentTarget(true)
+        .outerCircleColor(R.color.colorControlNormal)
+        .titleTextColor(R.color.windowBackground),
+      object : TapTargetView.Listener() {
+        override fun onTargetClick(view: TapTargetView) {
+          super.onTargetClick(view)
+          view.postDelayed(200) { menuButton.performClick() }
+        }
+      }
+    )
   }
 
   private fun showCascadeMenu(anchor: View) {
@@ -29,31 +51,25 @@ class MainActivity : AppCompatActivity() {
     popupMenu.menu.apply {
       add("About").setIcon(R.drawable.ic_language_24)
       add("Copy").setIcon(R.drawable.ic_file_copy_24)
-      addSubMenu("Delete").also {
+      addSubMenu("Share").also {
+        val addShareTargets = { sub: SubMenu ->
+          sub.add("PDF")
+          sub.add("EPUB")
+          sub.add("Image")
+          sub.add("Web page")
+          sub.add("Markdown")
+          sub.add("Plain text")
+          sub.add("Microsoft word")
+        }
+        it.setIcon(R.drawable.ic_share_24)
+        addShareTargets(it.addSubMenu("To clipboard"))
+        addShareTargets(it.addSubMenu("As a file"))
+      }
+      addSubMenu("Remove").also {
         it.setIcon(R.drawable.ic_delete_sweep_24)
         it.setHeaderTitle("Are you sure?")
         it.add("Yep").setIcon(R.drawable.ic_check_24)
-        it.add("Go back")
-          .setIcon(R.drawable.ic_close_24)
-          .setOnMenuItemClickListener {
-            popupMenu.navigateBack()
-          }
-      }
-      addSubMenu("Export").also {
-        it.setIcon(R.drawable.ic_download_24)
-        it.setHeaderTitle("Export as")
-        it.add("PDF")
-        it.add("EPUB")
-        it.add("Image")
-        it.add("Web page")
-        it.add("Markdown")
-        it.add("Plain text")
-        it.add("Microsoft word")
-        for (item in it) {
-          item.setOnMenuItemClickListener {
-            popupMenu.navigateBack()
-          }
-        }
+        it.add("Go back").setIcon(R.drawable.ic_close_24)
       }
       addSubMenu("Cash App").also {
         it.setIcon(cashAppIcon())
@@ -64,6 +80,14 @@ class MainActivity : AppCompatActivity() {
         it.add("sqldelight").intent = intent("https://github.com/cashapp/SQLDelight")
         it.add("turbine").intent = intent("https://github.com/cashapp/turbine")
       }
+
+      allItems().filter { it.intent == null }.forEach {
+        it.setOnMenuItemClickListener {
+          popupMenu.navigateBack()
+          true
+        }
+      }
+
       popupMenu.show()
     }
   }
@@ -76,4 +100,17 @@ class MainActivity : AppCompatActivity() {
 
   private fun intent(url: String) =
     Intent(ACTION_VIEW, Uri.parse(url))
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+private fun Menu.allItems(): List<MenuItem> {
+  val menu = this
+  return buildList {
+    for (item in menu) {
+      add(item)
+      if (item.hasSubMenu()) {
+        addAll(item.subMenu.allItems())
+      }
+    }
+  }
 }

@@ -1,10 +1,10 @@
 <resources>
 
   <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-    <item name="colorPrimary">#353846</item>
-    <item name="colorPrimaryDark">#353846</item>
+    <item name="colorPrimary">@color/windowBackground</item>
+    <item name="colorPrimaryDark">@color/windowBackground</item>
     <item name="colorAccent">#85F589</item>
-    <item name="android:windowBackground">#353846</item>
+    <item name="android:windowBackground">@color/windowBackground</item>
     <!--<item name="android:fontFamily">@font/work_sans_bold</item>-->
 
     <!-- Color of menu icons. -->
@@ -15,4 +15,5 @@
   </style>
 
   <color name="colorControlNormal">#DBC2FF</color>
+  <color name="windowBackground">#353846</color>
 </resources>
