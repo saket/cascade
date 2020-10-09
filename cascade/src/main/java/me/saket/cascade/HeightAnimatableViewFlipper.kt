@@ -3,7 +3,6 @@ package me.saket.cascade
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
@@ -20,7 +19,8 @@ import androidx.core.view.doOnLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
 /**
- * A [ViewFlipper] that wraps its height to the currently displayed child and animates change in its height.
+ * A [ViewFlipper] that wraps its height to the currently
+ * displayed child and animates change in its height.
  *
  * See [show], [goForward] and [goBack].
  */
@@ -58,8 +58,8 @@ open class HeightAnimatableViewFlipper(context: Context) : BaseHeightClippableFl
 
       doOnLayout {
         animateHeight(
-          from = prevView.height,
-          to = view.height,
+          from = paddedHeight(prevView),
+          to = paddedHeight(view),
           onEnd = {
             // ViewFlipper plays animation if the view
             // count goes down, which isn't wanted here.
@@ -70,6 +70,10 @@ open class HeightAnimatableViewFlipper(context: Context) : BaseHeightClippableFl
         )
       }
     }
+  }
+
+  private fun paddedHeight(child: View): Int {
+    return child.height + paddingTop + paddingBottom
   }
 
   open fun goForward(toView: View) =
@@ -125,9 +129,10 @@ abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper(contex
 
   private fun setClippedHeight(newHeight: Int) {
     clipBounds2 = (clipBounds2 ?: Rect()).also {
-      it.set(left, top, right, newHeight)
+      it.set(0, 0, right - left, top + newHeight)
       clipBounds = it
     }
+    background()?.clippedHeight = newHeight
     invalidate()
   }
 
@@ -138,20 +143,11 @@ abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper(contex
 
   @Suppress("DEPRECATION")
   override fun setBackgroundDrawable(background: Drawable?) {
-    super.setBackgroundDrawable(background?.let(::DrawSuppressibleDrawable))
+    super.setBackgroundDrawable(background?.let(::HeightClipDrawable))
   }
 
-  override fun draw(canvas: Canvas) {
-    // Draw the background manually with clipped bounds, because
-    // super.draw() will always reset it to View's bounds.
-    background?.let {
-      it.setBounds(left, top, right, clipBounds2?.height() ?: bottom)
-      it.draw(canvas)
-    }
-
-    (background as DrawSuppressibleDrawable?).withDrawSuppressed {
-      super.draw(canvas)
-    }
+  private fun background(): HeightClipDrawable? {
+    return background as HeightClipDrawable?
   }
 
   override fun dispatchTouchEvent(ev: MotionEvent): Boolean {

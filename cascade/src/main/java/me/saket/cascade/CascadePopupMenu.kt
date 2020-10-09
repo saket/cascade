@@ -14,6 +14,7 @@ import android.view.View
 import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewOutlineProvider
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
@@ -84,6 +85,8 @@ open class CascadePopupMenu @JvmOverloads constructor(
       // of menus during entry/exit animation.
       if (menu is SubMenu) {
         background = styler.background() ?: themeAttrs.popupBackground(context)
+        outlineProvider = ViewOutlineProvider.BACKGROUND
+        clipToOutline = true
       }
 
       // PopupWindow doesn't allow its content to have a fixed

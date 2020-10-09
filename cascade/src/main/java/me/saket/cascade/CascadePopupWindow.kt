@@ -6,17 +6,23 @@ import android.R.attr.popupElevation
 import android.R.attr.popupEnterTransition
 import android.R.attr.popupExitTransition
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build.VERSION.SDK_INT
 import android.transition.Transition
 import android.transition.TransitionInflater
+import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.getDimensionOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
+import androidx.core.view.setMargins
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.PopupWindowCompat
 import me.saket.cascade.CascadePopupWindow.ThemeAttributes
 
@@ -36,6 +42,7 @@ open class CascadePopupWindow @JvmOverloads constructor(
 ) : PopupWindow(context, null, defStyleAttr) {
 
   val themeAttrs = resolveThemeAttrs()
+  private var margins = Rect()
 
   init {
     // Dismiss on outside touch.
@@ -53,10 +60,40 @@ open class CascadePopupWindow @JvmOverloads constructor(
       background = themeAttrs.popupBackground(context)
       clipToOutline = true
     }
+
+    setMargins(left = context.dip(4), right = context.dip(4))
   }
 
   override fun getContentView(): HeightAnimatableViewFlipper {
     return super.getContentView() as HeightAnimatableViewFlipper
+  }
+
+  /**
+   * Set a fixed margin between this popup and the window. By default, a margin
+   * of 4dp is used on the sides to match that of a Toolbar's overflow menu. Feel
+   * free to override this (before the popup is shown) if it doesn't work for you.
+   *
+   * It'd be nice to use the margin only if the popup extends to the window
+   * edges, but PopupWindow doesn't make it easy to do so.
+   */
+  fun setMargins(
+    left: Int = margins.left,
+    top: Int = margins.top,
+    right: Int = margins.right,
+    bottom: Int = margins.bottom
+  ) {
+    check(!isShowing) { "Can't change once the popup is already visible." }
+    margins.set(left, top, right, bottom)
+  }
+
+  override fun showAsDropDown(anchor: View, xoff: Int, yoff: Int, gravity: Int) {
+    super.showAsDropDown(anchor, xoff, yoff, gravity)
+    contentView.setMargins(margins)
+  }
+
+  override fun showAtLocation(parent: View, gravity: Int, x: Int, y: Int) {
+    super.showAtLocation(parent, gravity, x, y)
+    contentView.setMargins(margins)
   }
 
   private fun resolveThemeAttrs(): ThemeAttributes {

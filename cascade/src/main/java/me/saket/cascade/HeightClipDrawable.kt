@@ -2,28 +2,22 @@ package me.saket.cascade
 
 import android.graphics.Canvas
 import android.graphics.Outline
+import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.DrawableWrapper
 import android.graphics.drawable.ScaleDrawable
 import android.view.Gravity
 
-internal class DrawSuppressibleDrawable(delegate: Drawable) : DrawableWrapperCompat(delegate) {
-  var skipDrawing = false
-
-  override fun draw(canvas: Canvas) {
-    if (!skipDrawing) {
-      super.draw(canvas)
+/** Like [ClipDrawable], but allows clipping in terms of pixels instead of percentage. */
+internal class HeightClipDrawable(delegate: Drawable) : DrawableWrapperCompat(delegate) {
+  var clippedHeight: Int? = null
+    set(value) {
+      field = value
+      bounds = bounds
     }
-  }
-}
 
-internal fun DrawSuppressibleDrawable?.withDrawSuppressed(action: () -> Unit) {
-  if (this == null) {
-    action()
-  } else {
-    skipDrawing = false
-    action()
-    skipDrawing = true
+  override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
+    super.setBounds(left, top, right, clippedHeight ?: bottom)
   }
 }
 

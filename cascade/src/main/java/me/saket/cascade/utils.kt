@@ -5,14 +5,18 @@ package me.saket.cascade
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Rect
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.MenuItem
+import android.view.View
 import android.view.View.OVER_SCROLL_ALWAYS
 import android.view.View.OVER_SCROLL_NEVER
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.StyleableRes
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 
 internal fun Context.dip(dp: Int): Int {
@@ -41,4 +45,10 @@ internal class OverScrollIfContentScrolls : RecyclerView.OnScrollListener() {
 
 internal fun TypedArray.getResourceIdOrNull(@StyleableRes index: Int): Int? {
   return if (hasValue(index)) getResourceId(index, 0) else null
+}
+
+internal fun View.setMargins(margins: Rect) {
+  updateLayoutParams<MarginLayoutParams> {
+    setMargins(margins.left, margins.top, margins.right, margins.bottom)
+  }
 }
