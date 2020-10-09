@@ -63,15 +63,15 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
   /**
    * Navigate to the last menu.
-   * @return true if the backstack was popped, false otherwise.
+   *
+   * FYI jumping over multiple back-stack entries isn't supported
+   * very well, so avoid navigating multiple menus on a single click.
    */
-  fun navigateBack(): Boolean {
-    if (backstack.isEmpty()) return false           // There is no visible menu.
-    if (backstack.peek() !is SubMenu) return false  // Already on the root menu. Can't go back any further.
-
-    val currentMenu = backstack.pop() as SubMenuBuilder
-    showMenu(currentMenu.parentMenu, goingForward = false)
-    return true
+  fun navigateBack() {
+    if (backstack.isNotEmpty() && backstack.peek() is SubMenu) {
+      val currentMenu = backstack.pop() as SubMenuBuilder
+      showMenu(currentMenu.parentMenu, goingForward = false)
+    }
   }
 
   private fun showMenu(menu: Menu, goingForward: Boolean) {
