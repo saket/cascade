@@ -6,7 +6,6 @@ import android.R.attr.popupElevation
 import android.R.attr.popupEnterTransition
 import android.R.attr.popupExitTransition
 import android.content.Context
-import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.os.Build.VERSION.SDK_INT
 import android.transition.Transition
@@ -15,8 +14,6 @@ import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
-import androidx.annotation.StyleableRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.getDimensionOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
@@ -28,6 +25,9 @@ import me.saket.cascade.CascadePopupWindow.ThemeAttributes
  * - offering the same entry & exit transitions
  * - dismissing on outside tap
  * - setting a default elevation
+ *
+ * Use `getContentView().show(View)` for updating the content,
+ * which will handle animating content and height changes.
  */
 @Suppress("LeakingThis")
 open class CascadePopupWindow @JvmOverloads constructor(
@@ -50,8 +50,8 @@ open class CascadePopupWindow @JvmOverloads constructor(
     PopupWindowCompat.setOverlapAnchor(this, true)
 
     contentView = HeightAnimatableViewFlipper(context).apply {
-      clipToOutline = true
       background = themeAttrs.popupBackground(context)
+      clipToOutline = true
     }
   }
 

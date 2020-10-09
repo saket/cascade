@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
           .setIcon(R.drawable.ic_close_24)
           .setOnMenuItemClickListener {
             popupMenu.navigateBack()
-            true
           }
       }
       addSubMenu("Export").also {
@@ -53,7 +52,6 @@ class MainActivity : AppCompatActivity() {
         for (item in it) {
           item.setOnMenuItemClickListener {
             popupMenu.navigateBack()
-            true
           }
         }
       }

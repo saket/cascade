@@ -55,12 +55,17 @@ open class CascadePopupMenu @JvmOverloads constructor(
     popup.showAsDropDown(anchor, 0, 0, gravity)
   }
 
-  fun navigateBack() {
-    check(backstack.isNotEmpty()) { "There is no visible menu." }
-    check(backstack.peek() is SubMenu) { "Already on the root menu. Can't go back any further." }
+  /**
+   * Navigate to the last menu.
+   * @return true if the backstack was popped, false otherwise.
+   */
+  fun navigateBack(): Boolean {
+    if (backstack.isEmpty()) return false           // There is no visible menu.
+    if (backstack.peek() !is SubMenu) return false  // Already on the root menu. Can't go back any further.
 
     val currentMenu = backstack.pop() as SubMenuBuilder
     showMenu(currentMenu.parentMenu, goingForward = false)
+    return true
   }
 
   private fun showMenu(menu: Menu, goingForward: Boolean) {
@@ -68,12 +73,12 @@ open class CascadePopupMenu @JvmOverloads constructor(
       layoutManager = LinearLayoutManager(context)
       isVerticalScrollBarEnabled = true
       scrollBarStyle = SCROLLBARS_INSIDE_OVERLAY
+      addOnScrollListener(OverScrollIfContentScrolls())
       styler.menuList(this)
       adapter = CascadeMenuAdapter(menu, styler, themeAttrs,
         onTitleClick = { navigateBack() },
         onItemClick = { handleItemClick(it) }
       )
-      addOnScrollListener(OverScrollIfContentScrolls())
 
       // Opaque background to avoid cross-drawing
       // of menus during entry/exit animation.
