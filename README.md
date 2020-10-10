@@ -1,8 +1,8 @@
 # cascade
 
-![screenshot](screenshot.jpg)
+![demo](demo.gif)
 
-`cascade` lets you build nested menus with smooth height change animations. It is designed to be a drop-in replacement for [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu) so using it in your project is beautifully only a word away:
+`cascade` builds nested popup menus with smooth height animations. It is designed to be a *drop-in* replacement for [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu) so using it in your project is beautifully only a word away:
 
 ```groovy
 implementation "me.saket.cascade:cascade:1.0.0"
@@ -15,7 +15,7 @@ implementation "me.saket.cascade:cascade:1.0.0"
   menu.show()
 ```
 
-Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) on your phone to see cascade in action.
+Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) on your phone to see `cascade` in action.
 
 **Customization**
 
