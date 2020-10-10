@@ -88,12 +88,12 @@ class MainActivity : AppCompatActivity() {
 
   private fun cascadeMenuStyler(): CascadePopupMenu.Styler {
     val rippleDrawable = {
-      RippleDrawable(ColorStateList.valueOf(Color.parseColor("#6F6182")), null, ColorDrawable(BLACK))
+      RippleDrawable(ColorStateList.valueOf(Color.parseColor("#B1DDC6")), null, ColorDrawable(BLACK))
     }
 
     return CascadePopupMenu.Styler(
       background = {
-        RoundedRectDrawable(Color.parseColor("#21232D"), radius = 4f.dip)
+        RoundedRectDrawable(getColor(R.color.popup_background), radius = 8f.dip)
       },
       menuTitle = {
         it.titleView.typeface = resources.getFont(R.font.work_sans_medium)
