@@ -17,6 +17,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.iterator
 import androidx.core.view.postDelayed
 import com.getkeepsafe.taptargetview.TapTarget
@@ -93,14 +94,14 @@ class MainActivity : AppCompatActivity() {
 
     return CascadePopupMenu.Styler(
       background = {
-        RoundedRectDrawable(getColor(R.color.popup_background), radius = 8f.dip)
+        RoundedRectDrawable(ResourcesCompat.getColor(resources, R.color.popup_background, theme), radius = 8f.dip)
       },
       menuTitle = {
-        it.titleView.typeface = resources.getFont(R.font.work_sans_medium)
+        it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
         it.itemView.background = rippleDrawable()
       },
       menuItem = {
-        it.titleView.typeface = resources.getFont(R.font.work_sans_medium)
+        it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
         it.itemView.background = rippleDrawable()
       }
     )
@@ -109,7 +110,7 @@ class MainActivity : AppCompatActivity() {
   private fun cashAppIcon() =
     AppCompatResources.getDrawable(this, R.drawable.ic_cash_app_24)!!.also {
       it.mutate()
-      it.setTint(getColor(R.color.color_control_normal))
+      it.setTint(ResourcesCompat.getColor(resources, R.color.color_control_normal, theme))
     }
 
   private fun intent(url: String) =
