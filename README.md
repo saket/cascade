@@ -15,6 +15,8 @@ implementation "me.saket.cascade:cascade:1.0.0"
   menu.show()
 ```
 
+Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) on your phone to see cascade in action.
+
 **Customization**
 
 `cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin. See the [sample app](https://github.com/saket/cascade/blob/trunk/app/src/main/java/me/saket/cascade/sample/MainActivity.kt#L89) for an example. 
