@@ -53,7 +53,11 @@ open class CascadePopupMenu @JvmOverloads constructor(
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
     popup.width = fixedWidth
-    popup.setMargins(start = context.dip(4), end = context.dip(4))
+    popup.setMargins(
+      start = context.dip(4),
+      end = context.dip(4),
+      bottom = context.dip(4)
+    )
     styler.background()?.let {
       popup.contentView.background = it
     }
