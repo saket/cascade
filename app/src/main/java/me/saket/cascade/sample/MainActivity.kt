@@ -1,5 +1,6 @@
 package me.saket.cascade.sample
 
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.res.ColorStateList
@@ -14,9 +15,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.iterator
 import androidx.core.view.postDelayed
@@ -94,7 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     return CascadePopupMenu.Styler(
       background = {
-        RoundedRectDrawable(ResourcesCompat.getColor(resources, R.color.popup_background, theme), radius = 8f.dip)
+        RoundedRectDrawable(Color.parseColor("#E0EEE7"), radius = 8f.dip)
       },
       menuTitle = {
         it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
@@ -110,7 +113,7 @@ class MainActivity : AppCompatActivity() {
   private fun cashAppIcon() =
     AppCompatResources.getDrawable(this, R.drawable.ic_cash_app_24)!!.also {
       it.mutate()
-      it.setTint(ResourcesCompat.getColor(resources, R.color.color_control_normal, theme))
+      it.setTint(ContextCompat.getColor(this, R.color.color_control_normal))
     }
 
   private fun intent(url: String) =
