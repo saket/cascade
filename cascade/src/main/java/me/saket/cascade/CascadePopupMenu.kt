@@ -37,7 +37,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
 ) {
 
   val menu: Menu = MenuBuilder(context)
-  private val popup = CascadePopupWindow(context, defStyleAttr)
+  val popup = CascadePopupWindow(context, defStyleAttr)
   private val backstack = Stack<Menu>()
   private val themeAttrs get() = popup.themeAttrs
 
