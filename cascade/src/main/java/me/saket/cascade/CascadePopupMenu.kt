@@ -42,6 +42,10 @@ open class CascadePopupMenu @JvmOverloads constructor(
   private val themeAttrs get() = popup.themeAttrs
 
   class Styler(
+    /**
+     * Popup's background drawable. Also used on sub-menus as an opaque
+     * background to avoid cross-drawing of menus during animations.
+     */
     val background: () -> Drawable? = { null },
     val menuList: (RecyclerView) -> Unit = {},
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
@@ -94,7 +98,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
       // Opaque background to avoid cross-drawing
       // of menus during entry/exit animation.
       if (menu is SubMenu) {
-        background = styler.background() ?: themeAttrs.popupBackground(context)
+        background = styler.background() ?: themeAttrs.popupBackground.copy()
         outlineProvider = ViewOutlineProvider.BACKGROUND
         clipToOutline = true
       }
@@ -117,6 +121,10 @@ open class CascadePopupMenu @JvmOverloads constructor(
     if (backstack.peek() === backstackBefore) {
       popup.dismiss()
     }
+  }
+
+  private fun Drawable.copy(): Drawable {
+    return constantState!!.newDrawable(context.resources, context.theme)
   }
 
 // === APIs to maintain compatibility with PopupMenu === //

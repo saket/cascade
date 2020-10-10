@@ -3,26 +3,21 @@ package me.saket.cascade
 import android.R.attr.listChoiceBackgroundIndicator
 import android.R.attr.popupBackground
 import android.R.attr.popupElevation
-import android.R.attr.popupEnterTransition
-import android.R.attr.popupExitTransition
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Build.VERSION.SDK_INT
-import android.transition.Transition
-import android.transition.TransitionInflater
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
 import androidx.annotation.Px
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.getDimensionOrThrow
+import androidx.core.content.res.getDrawableOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.PopupWindowCompat
-import me.saket.cascade.CascadePopupWindow.ThemeAttributes
+import me.saket.cascade.R.attr
 
 /**
  * Mimics [PopupMenu] by,
@@ -36,8 +31,8 @@ import me.saket.cascade.CascadePopupWindow.ThemeAttributes
 @Suppress("LeakingThis")
 open class CascadePopupWindow @JvmOverloads constructor(
   private val context: Context,
-  private val defStyleAttr: Int = android.R.style.Widget_Material_PopupMenu
-) : PopupWindow(context, null, defStyleAttr) {
+  private val defStyleRes: Int = android.R.style.Widget_Material_PopupMenu
+) : PopupWindow(context, null, 0, defStyleRes) {
 
   val themeAttrs = resolveThemeAttrs()
   private var margins = Rect()
@@ -47,15 +42,13 @@ open class CascadePopupWindow @JvmOverloads constructor(
     isFocusable = true
     isOutsideTouchable = true
     elevation = themeAttrs.popupElevation
-    themeAttrs.popupEnterTransitionRes?.let(::setEnterTransition)
-    themeAttrs.popupExitTransitionRes?.let(::setExitTransition)
 
     // Remove PopupWindow's default frame around the content.
     setBackgroundDrawable(null)
     PopupWindowCompat.setOverlapAnchor(this, true)
 
     contentView = HeightAnimatableViewFlipper(context).apply {
-      background = themeAttrs.popupBackground(context)
+      background = themeAttrs.popupBackground
       clipToOutline = true
     }
   }
@@ -106,20 +99,11 @@ open class CascadePopupWindow @JvmOverloads constructor(
   }
 
   private fun resolveThemeAttrs(): ThemeAttributes {
-    val attrs = listOf(popupBackground, popupElevation, listChoiceBackgroundIndicator)
-      .plus(if (SDK_INT >= 24) listOf(popupEnterTransition, popupExitTransition) else emptyList())
-      .toIntArray()
-
-    return context.obtainStyledAttributes(defStyleAttr, attrs).use {
-      val inflateTransition = { resId: Int? ->
-        if (resId == null) null
-        else TransitionInflater.from(context).inflateTransition(resId)
-      }
+    val attrs = intArrayOf(popupBackground, popupElevation, listChoiceBackgroundIndicator)
+    return context.obtainStyledAttributes(null, attrs, attr.popupMenuStyle, defStyleRes).use {
       ThemeAttributes(
         popupElevation = it.getDimensionOrThrow(attrs.indexOf(popupElevation)),
-        popupBackgroundRes = it.getResourceIdOrThrow(attrs.indexOf(popupBackground)),
-        popupEnterTransitionRes = inflateTransition(it.getResourceIdOrNull(attrs.indexOf(popupEnterTransition))),
-        popupExitTransitionRes = inflateTransition(it.getResourceIdOrNull(attrs.indexOf(popupExitTransition))),
+        popupBackground = it.getDrawableOrThrow(attrs.indexOf(popupBackground)),
         touchFeedbackRes = it.getResourceIdOrThrow(attrs.indexOf(listChoiceBackgroundIndicator))
       )
     }
@@ -127,13 +111,8 @@ open class CascadePopupWindow @JvmOverloads constructor(
 
   class ThemeAttributes(
     @Px val popupElevation: Float,
-    @DrawableRes val popupBackgroundRes: Int,
-    @DrawableRes val touchFeedbackRes: Int,
-    val popupEnterTransitionRes: Transition?,
-    val popupExitTransitionRes: Transition?
+    val popupBackground: Drawable,
+    @DrawableRes val touchFeedbackRes: Int
   )
 }
 
-fun ThemeAttributes.popupBackground(context: Context): Drawable {
-  return AppCompatResources.getDrawable(context, popupBackgroundRes)!!
-}
