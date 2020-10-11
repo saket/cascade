@@ -19,7 +19,7 @@ Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.
 
 **Customization**
 
-`cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin. See the [sample app](https://github.com/saket/cascade/blob/trunk/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L93) for an example. 
+`cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin. See the [sample app](https://github.com/saket/cascade/blob/038bbf054657c243ae62f2d780e5488ed54fcafb/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L93-L111) for an example. 
 
 By default, `CascadePopupMenu` will pick up values from your theme in the same way as `PopupMenu` would.
 
