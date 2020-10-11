@@ -9,4 +9,6 @@
     android:icon="@drawable/ic_more_vert_24"
     android:title="Menu"
     app:showAsAction="always" />
+
+  <group android:id="@+id/group_support" />
 </menu>

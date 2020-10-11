@@ -1,3 +1,5 @@
 <resources>
   <string name="app_name">Cascade</string>
+  <string name="support_call">Call</string>
+  <string name="support_mail">Mail</string>
 </resources>

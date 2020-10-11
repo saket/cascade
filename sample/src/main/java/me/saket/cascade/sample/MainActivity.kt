@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity() {
 
   private fun showCascadeMenu(anchor: View) {
     val popupMenu = CascadePopupMenu(this, anchor, styler = cascadeMenuStyler())
+    popupMenu.addToGroup(groupId = R.id.group_support, title = "Call")
+    popupMenu.addToGroup(groupId = R.id.group_support, title = "Mail")
     popupMenu.menu.apply {
       add("About").setIcon(R.drawable.ic_language_24)
       add("Copy").setIcon(R.drawable.ic_file_copy_24)
@@ -86,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         }
       }
 
+      popupMenu.removeGroup(R.id.group_support)
       popupMenu.show()
     }
   }
