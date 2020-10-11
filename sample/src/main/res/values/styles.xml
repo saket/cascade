@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <color name="color_accent">#356859</color>
   <color name="color_control_normal">#356859</color>
   <color name="window_background">#B5D2C3</color>
@@ -8,7 +8,7 @@
     <item name="colorPrimaryDark">@color/window_background</item>
     <item name="colorAccent">@color/color_accent</item>
     <item name="android:windowBackground">@color/window_background</item>
-    <item name="android:windowLightStatusBar">true</item>
+    <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
     <item name="toolbarStyle">@style/ToolbarStyle</item>
 
     <item name="colorControlNormal">@color/color_control_normal</item>    <!-- Menu icons -->
