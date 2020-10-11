@@ -36,7 +36,9 @@ internal class CascadeMenuAdapter(
       add(Header(menu as SubMenuBuilder))
     }
     for (item in menu) {
-      add(Item(item as MenuItemImpl))
+      if (item.isVisible) {
+        add(Item(item as MenuItemImpl))
+      }
     }
   }
 
