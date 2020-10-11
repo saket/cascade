@@ -61,6 +61,13 @@ val popup = CascadePopupWindow(context)
 popup.contentView.goForward(CustomMenuView(context))	// Also see goBack().
 popup.showAsDropdown(anchor, ...)
 ```
+
+Issues
+------
+
+Feel free to submit issues and enhancement requests [HERE](https://github.com/saket/cascade/issues), make sure to check if similar issue already exists or not, if not then submit a new one.
+
+
 Contributing
 ------------
 
