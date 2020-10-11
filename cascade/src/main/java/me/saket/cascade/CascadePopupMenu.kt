@@ -22,6 +22,7 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Stack
@@ -81,6 +82,32 @@ open class CascadePopupMenu @JvmOverloads constructor(
       val currentMenu = backstack.pop() as SubMenuBuilder
       showMenu(currentMenu.parentMenu, goingForward = false)
     }
+  }
+
+  /**
+   * Adds a MenuItem to the given groupId with the given titleId.
+   * @param groupId: the id of the group that the MenuItem belongs to.
+   * @param titleId: the id of the title.
+   */
+  fun addToGroup(groupId: Int, titleId: Int) {
+    menu.add(groupId, ViewCompat.generateViewId(), Menu.NONE, titleId)
+  }
+
+  /**
+   * Adds a MenuItem to the given groupId with the given title.
+   * @param groupId: the id of the group that the MenuItem belongs to.
+   * @param title: the title as CharSequence.
+   */
+  fun addToGroup(groupId: Int, title: CharSequence) {
+    menu.add(groupId, ViewCompat.generateViewId(), Menu.NONE, title)
+  }
+
+  /**
+   * Removes the MenuItem(s) of the given groupId.
+   * @param groupId: the id of the group of which the elements will be removed.
+   */
+  fun removeGroup(groupId: Int) {
+    menu.removeGroup(groupId)
   }
 
   private fun showMenu(menu: Menu, goingForward: Boolean) {
