@@ -1,5 +1,8 @@
+@file:SuppressLint("RestrictedApi")
+
 package me.saket.cascade
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.Gravity.START
@@ -24,7 +27,7 @@ class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     titleView.isEnabled = false
     titleView.gravity = START or CENTER_VERTICAL
     view.updatePaddingRelative(start = 6.dip, end = 16.dip)
-    setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.ic_round_arrow_left_32)!!)
+    setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.cascade_ic_round_arrow_left_32)!!)
   }
 
   fun render(menu: SubMenuBuilder) {

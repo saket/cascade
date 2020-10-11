@@ -1,5 +1,8 @@
+@file:SuppressLint("RestrictedApi")
+
 package me.saket.cascade
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +44,7 @@ class MenuItemViewHolder(
     view.setGroupDividerEnabled(false)
 
     if (this.item.hasSubMenu()) {
-      subMenuArrowView.setImageResource(R.drawable.ic_round_arrow_right_24)
+      subMenuArrowView.setImageResource(R.drawable.cascade_ic_round_arrow_right_24)
     }
 
     subMenuArrowView.updateMargin(start = 0.dip)
