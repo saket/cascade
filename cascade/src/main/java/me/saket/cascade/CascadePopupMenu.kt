@@ -99,8 +99,6 @@ open class CascadePopupMenu @JvmOverloads constructor(
       // of menus during entry/exit animation.
       if (menu is SubMenu) {
         background = styler.background() ?: themeAttrs.popupBackground.copy()
-        outlineProvider = ViewOutlineProvider.BACKGROUND
-        clipToOutline = true
       }
       layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
     }
