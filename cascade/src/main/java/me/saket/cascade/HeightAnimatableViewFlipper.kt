@@ -17,11 +17,16 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
 /**
  * A [ViewFlipper] that wraps its height to the currently
- * displayed child and animates change in its height.
+ * displayed child and smoothly animates height change.
  *
  * See [show], [goForward] and [goBack].
  */
-open class HeightAnimatableViewFlipper(context: Context) : BaseHeightClippableFlipper(context) {
+open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context) {
+  var animationDuration = 350L
+  var animationInterpolator = FastOutSlowInInterpolator()
+
+  private var clipBounds2: Rect? = null // Because View#clipBounds creates a new Rect on every call.
+  private var animator: ValueAnimator = ObjectAnimator()
 
   fun show(
     view: View,
@@ -56,16 +61,12 @@ open class HeightAnimatableViewFlipper(context: Context) : BaseHeightClippableFl
 
       doOnLayout {
         animateHeight(
-          from = paddedHeight(prevView),
-          to = paddedHeight(view),
+          from = prevView.height + verticalPadding,
+          to = view.height + verticalPadding,
           onEnd = { removeView(prevView) }
         )
       }
     }
-  }
-
-  private fun paddedHeight(child: View): Int {
-    return child.height + paddingTop + paddingBottom
   }
 
   open fun goForward(toView: View) =
@@ -81,22 +82,8 @@ open class HeightAnimatableViewFlipper(context: Context) : BaseHeightClippableFl
     if (!animator.isRunning) action()
     else animator.doOnEnd { action() }
   }
-}
 
-@Suppress("LeakingThis")
-abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper2(context) {
-  protected var animationDuration = 350L
-  protected var animationInterpolator = FastOutSlowInInterpolator()
-
-  private var clipBounds2: Rect? = null // Because View#clipBounds creates a new Rect on every call
-  protected var animator: ValueAnimator = ObjectAnimator()
-
-  init {
-    setWillNotDraw(false)
-    outlineProvider = ViewOutlineProvider.BACKGROUND
-  }
-
-  protected fun animateHeight(from: Int, to: Int, onEnd: () -> Unit) {
+  private fun animateHeight(from: Int, to: Int, onEnd: () -> Unit) {
     animator.cancel()
     animator = ObjectAnimator.ofFloat(0f, 1f).apply {
       duration = animationDuration
@@ -112,6 +99,11 @@ abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper2(conte
     }
   }
 
+  override fun onDetachedFromWindow() {
+    animator.cancel()
+    super.onDetachedFromWindow()
+  }
+
   private fun setClippedHeight(newHeight: Int) {
     clipBounds2 = (clipBounds2 ?: Rect()).also {
       it.set(0, 0, right - left, top + newHeight)
@@ -119,11 +111,6 @@ abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper2(conte
     }
     background()?.clippedHeight = newHeight
     invalidate()
-  }
-
-  override fun onDetachedFromWindow() {
-    animator.cancel()
-    super.onDetachedFromWindow()
   }
 
   @Suppress("DEPRECATION")

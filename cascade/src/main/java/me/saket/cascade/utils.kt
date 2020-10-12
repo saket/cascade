@@ -9,6 +9,7 @@ import android.content.Context
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.MenuItem
+import android.view.View
 import android.view.View.OVER_SCROLL_ALWAYS
 import android.view.View.OVER_SCROLL_NEVER
 import android.view.ViewPropertyAnimator
@@ -52,3 +53,6 @@ internal fun ViewPropertyAnimator.setListener(
   })
   return this
 }
+
+internal val View.verticalPadding: Int
+  get() = paddingTop + paddingBottom
