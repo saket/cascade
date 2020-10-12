@@ -7,6 +7,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
@@ -75,8 +76,9 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
   open fun goBack(toView: View) =
     show(toView, forward = false)
 
-  override fun addView(child: View, index: Int, params: android.view.ViewGroup.LayoutParams) =
-    throw error("Use show() / goForward() / goBack() instead")
+  override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams) {
+    show(child, forward = true)
+  }
 
   private fun enqueueAnimation(action: () -> Unit) {
     if (!animator.isRunning) action()
