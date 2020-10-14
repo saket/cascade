@@ -8,12 +8,9 @@ import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ViewFlipper
-import androidx.annotation.AnimRes
 import androidx.core.animation.doOnEnd
 import androidx.core.view.doOnLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -26,47 +23,42 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
  */
 open class HeightAnimatableViewFlipper(context: Context) : BaseHeightClippableFlipper(context) {
 
-  init {
-    animateFirstView = false
-  }
-
   fun show(
     view: View,
-    forward: Boolean,
-    inAnimation: Animation = when {
-      forward -> inflate(R.anim.cascademenu_submenu_enter)
-      else -> inflate(R.anim.cascademenu_mainmenu_enter)
-    },
-    outAnimation: Animation = when {
-      forward -> inflate(R.anim.cascademenu_mainmenu_exit)
-      else -> inflate(R.anim.cascademenu_submenu_exit)
-    }
+    forward: Boolean
   ) {
     enqueueAnimation {
       val index = if (forward) childCount else 0
       val params = view.layoutParams ?: LayoutParams(MATCH_PARENT, WRAP_CONTENT)
       super.addView(view, index, params)
-      if (childCount == 1 && !animateFirstView) {
+      if (childCount == 1) {
         return@enqueueAnimation
       }
 
-      val prevView = displayedChildView!!
-
-      this.inAnimation = inAnimation
-      this.outAnimation = outAnimation
-      displayedChildView = view
+      val prevView = displayedChildView
+      setDisplayedChild(
+        view,
+        inAnimator = {
+          it.translationX = if (forward) width.toFloat() else -(width.toFloat() * 0.25f)
+          it.animate()
+            .translationX(0f)
+            .setDuration(animationDuration)
+            .setInterpolator(animationInterpolator)
+        },
+        outAnimator = {
+          it.translationX = 0f
+          it.animate()
+            .translationX(if (!forward) width.toFloat() else -(width.toFloat() * 0.25f))
+            .setDuration(animationDuration)
+            .setInterpolator(animationInterpolator)
+        }
+      )
 
       doOnLayout {
         animateHeight(
           from = paddedHeight(prevView),
           to = paddedHeight(view),
-          onEnd = {
-            // ViewFlipper plays animation if the view
-            // count goes down, which isn't wanted here.
-            this.inAnimation = null
-            this.outAnimation = null
-            removeView(prevView)
-          }
+          onEnd = { removeView(prevView) }
         )
       }
     }
@@ -89,17 +81,10 @@ open class HeightAnimatableViewFlipper(context: Context) : BaseHeightClippableFl
     if (!animator.isRunning) action()
     else animator.doOnEnd { action() }
   }
-
-  private fun inflate(@AnimRes animRes: Int): Animation {
-    return AnimationUtils.loadAnimation(context, animRes).also {
-      it.duration = animationDuration
-      it.interpolator = animationInterpolator
-    }
-  }
 }
 
 @Suppress("LeakingThis")
-abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper(context) {
+abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper2(context) {
   protected var animationDuration = 350L
   protected var animationInterpolator = FastOutSlowInInterpolator()
 
@@ -155,12 +140,6 @@ abstract class BaseHeightClippableFlipper(context: Context) : ViewFlipper(contex
     else super.dispatchTouchEvent(ev)
   }
 }
-
-private var ViewFlipper.displayedChildView: View?
-  get() = getChildAt(displayedChild)
-  set(value) {
-    displayedChild = indexOfChild(value)
-  }
 
 private fun Rect.contains(ev: MotionEvent): Boolean {
   return contains(ev.x.toInt(), ev.y.toInt())
