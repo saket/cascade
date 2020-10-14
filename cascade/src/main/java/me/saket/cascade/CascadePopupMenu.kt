@@ -15,7 +15,6 @@ import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.ViewOutlineProvider
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
@@ -24,6 +23,7 @@ import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import java.util.Stack
 import kotlin.DeprecationLevel.ERROR
 
@@ -40,6 +40,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
   val popup = CascadePopupWindow(context, defStyleAttr)
   private val backstack = Stack<Menu>()
   private val themeAttrs get() = popup.themeAttrs
+  private val sharedViewPool = RecycledViewPool()
 
   class Styler(
     /**
@@ -85,11 +86,15 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
   private fun showMenu(menu: Menu, goingForward: Boolean) {
     val menuList = RecyclerView(context).apply {
-      layoutManager = LinearLayoutManager(context)
+      layoutManager = LinearLayoutManager(context).also {
+        it.recycleChildrenOnDetach = true
+        setRecycledViewPool(sharedViewPool)
+      }
       isVerticalScrollBarEnabled = true
       scrollBarStyle = SCROLLBARS_INSIDE_OVERLAY
-      addOnScrollListener(OverScrollIfContentScrolls())
       styler.menuList(this)
+
+      addOnScrollListener(OverScrollIfContentScrolls())
       adapter = CascadeMenuAdapter(menu, styler, themeAttrs,
         onTitleClick = { navigateBack() },
         onItemClick = { handleItemClick(it) }
