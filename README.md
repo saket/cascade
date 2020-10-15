@@ -15,18 +15,6 @@ implementation "me.saket.cascade:cascade:1.0.0"
   popup.show()
 ```
 
-**Use as Toolbar's overflow menu**
-
-```kotlin
-toolbar.overrideOverflowMenu { context, anchor -> 
-  CascadePopupMenu(context, anchor) 
-}
-
-// The lambda can be collapsed into a reference 
-// if you're only using the two-param constructor.
-toolbar.overrideOverflowMenu(with = ::CascadePopupMenu)
-```
-
 ### Customization
 
 `cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin ([example](https://github.com/saket/cascade/blob/038bbf054657c243ae62f2d780e5488ed54fcafb/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L93-L111)).
@@ -72,8 +60,8 @@ popup.menu.addSubMenu("Remove").also {
 
 ```kotlin
 val popup = CascadePopupWindow(context)
-popup.contentView.addView(CustomMenuView(context))  // Also see goBack().
-popup.show(anchor)
+popup.contentView.goForward(CustomMenuView(context))  // Also see goBack().
+popup.showAsDropdown(anchor, ...)
 ```
 
 ## License
