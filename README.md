@@ -17,7 +17,7 @@ implementation "me.saket.cascade:cascade:1.0.0"
 
 Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) on your phone to see `cascade` in action.
 
-**Customization**
+#### Customization
 
 `cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin. See the [sample app](https://github.com/saket/cascade/blob/038bbf054657c243ae62f2d780e5488ed54fcafb/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L93-L111) for an example. 
 
@@ -37,7 +37,7 @@ By default, `CascadePopupMenu` will pick up values from your theme in the same w
 </style>
 ```
 
-**Navigation**
+#### Navigation
 
 For sub-menus, `cascade` will automatically navigate to the parent menu when the title is clicked. For manual navigation, `CascadePopupMenu#navigateBack()` can be used.
 
@@ -46,19 +46,19 @@ popup.menu.addSubMenu("Remove").also {
   it.setHeaderTitle("Are you sure?")
   it.add("Burn them all")
   it.add("Take me back").setOnMenuItemClickListener {
-    popupMenu.navigateBack()
+    popup.navigateBack()
     true
   }
 }
 ```
 
-**Custom layouts**
+#### Custom layouts
 
 `cascade` was originally inspired by Google Drive's [menu](https://twitter.com/saketme/status/1313130386743066627) that uses a variety of complex controls. For apps that want to create something similar, a batteries-included [CascadePopupWindow](https://github.com/saket/cascade/blob/trunk/cascade/src/main/java/me/saket/cascade/CascadePopupWindow.kt) is provided for use with custom layouts. 
 
 ```kotlin
 val popup = CascadePopupWindow(context)
-popup.contentView.goForward(CustomMenuView(context))	// Also see goBack().
+popup.contentView.addView(CustomMenuView(context))	// Also see goBack().
 popup.showAsDropdown(anchor, ...)
 ```
 
