@@ -2,7 +2,7 @@
 
 ![demo](demo.gif)
 
-`cascade` builds nested popup menus with smooth height animations. It is designed to be a *drop-in* replacement for [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu) so using it in your project is beautifully only a word away:
+`cascade` builds nested popup menus with smooth height animations. It is designed to be a *drop-in* replacement for [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu) so using it in your project is beautifully only a word away. Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) to see it in action.
 
 ```groovy
 implementation "me.saket.cascade:cascade:1.0.0"
@@ -15,20 +15,34 @@ implementation "me.saket.cascade:cascade:1.0.0"
   popup.show()
 ```
 
-Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) on your phone to see `cascade` in action.
+**Use as Toolbar's overflow menu**
 
-#### Customization
+```kotlin
+toolbar.overrideOverflowMenu { context, anchor -> 
+  CascadePopupMenu(context, anchor) 
+}
 
-`cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin. See the [sample app](https://github.com/saket/cascade/blob/038bbf054657c243ae62f2d780e5488ed54fcafb/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L93-L111) for an example. 
+// The lambda can be collapsed into a reference 
+// if you're only using the two-param constructor.
+toolbar.overrideOverflowMenu(with = ::CascadePopupMenu)
+```
 
-By default, `CascadePopupMenu` will pick up values from your theme in the same way as `PopupMenu` would.
+### Customization
+
+`cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin ([example](https://github.com/saket/cascade/blob/038bbf054657c243ae62f2d780e5488ed54fcafb/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L93-L111)).
+
+```kotlin
+CascadePopupMenu(context, anchor, styler = CascadePopupMenu.Styler(...))
+```
+
+By default, `cascade` will pick up values from your theme in the same way as `PopupMenu` would.
 
 ```xml
 <style name="AppTheme">
   <item name="popupMenuStyle">@style/PopupMenuStyle</item>
   <item name="colorControlNormal">@color/menu_icon_color</item>
-  <item name="android:textColorPrimary">@color/menu_item_color</item>
-  <item name="android:textColorSecondary">@color/menu_title_color</item>
+  <item name="android:textColorPrimary">@color/menu_item_text_color</item>
+  <item name="android:textColorSecondary">@color/menu_title_text_color</item>
 </style>
 
 <style name="PopupMenuStyle" parent="@style/Widget.AppCompat.PopupMenu">
@@ -37,7 +51,7 @@ By default, `CascadePopupMenu` will pick up values from your theme in the same w
 </style>
 ```
 
-#### Navigation
+### Navigation
 
 For sub-menus, `cascade` will automatically navigate to the parent menu when the title is clicked. For manual navigation, `CascadePopupMenu#navigateBack()` can be used.
 
@@ -52,17 +66,17 @@ popup.menu.addSubMenu("Remove").also {
 }
 ```
 
-#### Custom layouts
+### Custom layouts
 
 `cascade` was originally inspired by Google Drive's [menu](https://twitter.com/saketme/status/1313130386743066627) that uses a variety of complex controls. For apps that want to create something similar, a batteries-included [CascadePopupWindow](https://github.com/saket/cascade/blob/trunk/cascade/src/main/java/me/saket/cascade/CascadePopupWindow.kt) is provided for use with custom layouts. 
 
 ```kotlin
 val popup = CascadePopupWindow(context)
-popup.contentView.addView(CustomMenuView(context))	// Also see goBack().
+popup.contentView.addView(CustomMenuView(context))  // Also see goBack().
 popup.showAsDropdown(anchor, ...)
 ```
 
-### License
+## License
 
 ```
 Copyright 2020 Saket Narayan.

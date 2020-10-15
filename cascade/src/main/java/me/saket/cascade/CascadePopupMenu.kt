@@ -36,8 +36,10 @@ open class CascadePopupMenu @JvmOverloads constructor(
   private val defStyleAttr: Int = android.R.style.Widget_Material_PopupMenu
 ) {
 
-  val menu: Menu = MenuBuilder(context)
+  val menu: Menu get() = menuBuilder
   val popup = CascadePopupWindow(context, defStyleAttr)
+
+  internal var menuBuilder = MenuBuilder(context)
   private val backstack = Stack<Menu>()
   private val themeAttrs get() = popup.themeAttrs
   private val sharedViewPool = RecycledViewPool()
@@ -67,7 +69,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
       popup.contentView.background = it
     }
 
-    showMenu(menu, goingForward = true)
+    showMenu(menuBuilder, goingForward = true)
     popup.showAsDropDown(anchor, 0, 0, gravity)
   }
 
@@ -80,11 +82,11 @@ open class CascadePopupMenu @JvmOverloads constructor(
   fun navigateBack() {
     if (backstack.isNotEmpty() && backstack.peek() is SubMenu) {
       val currentMenu = backstack.pop() as SubMenuBuilder
-      showMenu(currentMenu.parentMenu, goingForward = false)
+      showMenu(currentMenu.parentMenu as MenuBuilder, goingForward = false)
     }
   }
 
-  private fun showMenu(menu: Menu, goingForward: Boolean) {
+  private fun showMenu(menu: MenuBuilder, goingForward: Boolean) {
     val menuList = RecyclerView(context).apply {
       layoutManager = LinearLayoutManager(context).also {
         it.recycleChildrenOnDetach = true
@@ -114,7 +116,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
   protected open fun handleItemClick(item: MenuItem) {
     if (item.hasSubMenu()) {
-      showMenu(item.subMenu, goingForward = true)
+      showMenu(item.subMenu as MenuBuilder, goingForward = true)
       return
     }
 
@@ -133,10 +135,10 @@ open class CascadePopupMenu @JvmOverloads constructor(
 // === APIs to maintain compatibility with PopupMenu === //
 
   fun inflate(@MenuRes menuRes: Int) =
-    SupportMenuInflater(context).inflate(menuRes, menu)
+    SupportMenuInflater(context).inflate(menuRes, menuBuilder)
 
   fun setOnMenuItemClickListener(listener: PopupMenu.OnMenuItemClickListener?) =
-    (menu as MenuBuilder).setCallback(listener)
+    (menuBuilder as MenuBuilder).setCallback(listener)
 
   fun dismiss() =
     popup.dismiss()

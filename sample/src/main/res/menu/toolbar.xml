@@ -7,6 +7,6 @@
     android:id="@+id/overflow_menu"
     tools:ignore="HardcodedText"
     android:icon="@drawable/ic_more_vert_24"
-    android:title="Menu"
+    android:title="More options"
     app:showAsAction="always" />
 </menu>

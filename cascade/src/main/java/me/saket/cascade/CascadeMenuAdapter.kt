@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import android.view.ViewGroup
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.core.view.iterator
@@ -19,7 +20,7 @@ import me.saket.cascade.CascadePopupWindow.ThemeAttributes
 
 @SuppressLint("RestrictedApi")
 internal class CascadeMenuAdapter(
-  menu: Menu,
+  menu: MenuBuilder,
   private val styler: Styler,
   private val themeAttrs: ThemeAttributes,
   private val onTitleClick: (SubMenuBuilder) -> Unit,
@@ -35,7 +36,7 @@ internal class CascadeMenuAdapter(
     if (menu is SubMenu) {
       add(Header(menu as SubMenuBuilder))
     }
-    for (item in menu) {
+    for (item in menu.nonActionItems) {
       if (item.isVisible) {
         add(Item(item as MenuItemImpl))
       }
