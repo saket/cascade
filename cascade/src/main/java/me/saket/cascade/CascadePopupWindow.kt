@@ -6,6 +6,7 @@ import android.R.attr.popupElevation
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.PopupWindow
@@ -73,6 +74,15 @@ open class CascadePopupWindow @JvmOverloads constructor(
   ) {
     check(!isShowing) { "Can't change once the popup is already visible." }
     margins.set(start, top, end, bottom)
+  }
+
+  fun show(
+    anchor: View,
+    xOffset: Int = 0,
+    yOffset: Int = 0,
+    gravity: Int = Gravity.NO_GRAVITY
+  ) {
+    showAsDropDown(anchor, xOffset, yOffset, gravity)
   }
 
   override fun showAsDropDown(anchor: View, xoff: Int, yoff: Int, gravity: Int) {
