@@ -1,4 +1,4 @@
-@file:SuppressLint("RestrictedApi")
+@file:SuppressLint("RestrictedApi", "PrivateResource")
 
 package me.saket.cascade
 
