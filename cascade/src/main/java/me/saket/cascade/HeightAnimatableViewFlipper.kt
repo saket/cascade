@@ -34,7 +34,7 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
   ) {
     enqueueAnimation {
       val index = if (forward) childCount else 0
-      val params = view.layoutParams ?: LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+      val params = view.layoutParams ?: generateDefaultLayoutParams()
       super.addView(view, index, params)
       if (childCount == 1) {
         return@enqueueAnimation
@@ -76,7 +76,12 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
     show(toView, forward = false)
 
   override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams) {
+    child.layoutParams = params
     show(child, forward = true)
+  }
+
+  override fun generateDefaultLayoutParams(): LayoutParams {
+    return LayoutParams(MATCH_PARENT, WRAP_CONTENT)
   }
 
   private fun enqueueAnimation(action: () -> Unit) {
