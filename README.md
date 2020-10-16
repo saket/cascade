@@ -5,7 +5,7 @@
 `cascade` builds nested popup menus with smooth height animations. It is designed to be a *drop-in* replacement for [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu) so using it in your project is beautifully only a word away. Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) to see it in action.
 
 ```groovy
-implementation "me.saket.cascade:cascade:1.0.0"
+implementation "me.saket.cascade:cascade:1.1.0"
 ```
 
 ```diff
@@ -13,6 +13,18 @@ implementation "me.saket.cascade:cascade:1.0.0"
 + val popup = CascadePopupMenu(context, anchor)
   popup.inflate(R.menu.nicolas_cage_movies)
   popup.show()
+```
+
+#### Use as Toolbar's overflow menu
+
+```kotlin
+toolbar.overrideOverflowMenu { context, anchor ->
+  CascadePopupMenu(context, anchor)
+}
+
+// The lambda can be collapsed into a reference
+// if you're only using the two-param constructor.
+toolbar.overrideOverflowMenu(with = ::CascadePopupMenu)
 ```
 
 ### Customization
@@ -60,8 +72,8 @@ popup.menu.addSubMenu("Remove").also {
 
 ```kotlin
 val popup = CascadePopupWindow(context)
-popup.contentView.goForward(CustomMenuView(context))  // Also see goBack().
-popup.showAsDropdown(anchor, ...)
+popup.contentView.addView(CustomMenuView(context))  // Also see goBack().
+popup.show(anchor)
 ```
 
 ## License
