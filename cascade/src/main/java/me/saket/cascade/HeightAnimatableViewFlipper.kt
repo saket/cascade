@@ -121,7 +121,15 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
 
   @Suppress("DEPRECATION")
   override fun setBackgroundDrawable(background: Drawable?) {
-    super.setBackgroundDrawable(background?.let(::HeightClipDrawable))
+    if (background == null) {
+      super.setBackgroundDrawable(null)
+    } else {
+      super.setBackgroundDrawable(
+        HeightClipDrawable(
+          ForcePaddingsDrawable(background)
+        )
+      )
+    }
   }
 
   private fun background(): HeightClipDrawable? {
