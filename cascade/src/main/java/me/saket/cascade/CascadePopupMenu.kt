@@ -4,6 +4,7 @@
 package me.saket.cascade
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.Gravity
@@ -11,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
+import android.view.ViewGroup
 import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -52,7 +54,8 @@ open class CascadePopupMenu @JvmOverloads constructor(
     val background: () -> Drawable? = { null },
     val menuList: (RecyclerView) -> Unit = {},
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
-    val menuItem: (MenuItemViewHolder) -> Unit = {}
+    val menuItem: (MenuItemViewHolder) -> Unit = {},
+    val overlayColor: () -> Int? = { null }
   )
 
   fun show() {
@@ -67,6 +70,19 @@ open class CascadePopupMenu @JvmOverloads constructor(
     )
     styler.background()?.let {
       popup.contentView.background = it
+    }
+
+    styler.overlayColor()?.let {
+      check(context is Activity) { "Activity context is required in order to add an overlay view" }
+      val container = (context.window.decorView as ViewGroup)
+      val overlay = View(context, null, 0).apply {
+        setBackgroundColor(it)
+      }
+      container.addView(overlay)
+
+      popup.setOnDismissListener {
+        container.removeView(overlay)
+      }
     }
 
     showMenu(menuBuilder, goingForward = true)
