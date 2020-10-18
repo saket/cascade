@@ -104,6 +104,9 @@ class MainActivity : AppCompatActivity() {
       menuItem = {
         it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
         it.itemView.background = rippleDrawable()
+      },
+      overlayColor = {
+        ContextCompat.getColor(this, R.color.window_overlay_background)
       }
     )
   }
