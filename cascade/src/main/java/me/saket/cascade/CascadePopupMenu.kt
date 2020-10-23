@@ -3,9 +3,11 @@
 
 package me.saket.cascade
 
+import android.animation.TimeInterpolator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +18,7 @@ import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorInt
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.SupportMenuInflater
@@ -80,13 +83,43 @@ open class CascadePopupMenu @JvmOverloads constructor(
       }
       container.addView(overlay)
 
+      val alphaInInterpolator: TimeInterpolator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+         popup.enterTransition?.interpolator ?: DecelerateInterpolator()
+      else
+        DecelerateInterpolator()
+
+      var alphaInDuration: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        popup.enterTransition?.duration ?: 300L
+      } else {
+        300L
+      }
+
+      if (alphaInDuration == -1L) alphaInDuration = 300L
+
       overlay.animate()
         .alpha(1f)
+        .setInterpolator(alphaInInterpolator)
+        .setDuration(alphaInDuration)
         .start()
 
       popup.setOnDismissListener {
+        val alphaOutInterpolator: TimeInterpolator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+          popup.exitTransition?.interpolator ?: DecelerateInterpolator()
+        else
+          DecelerateInterpolator()
+
+        var alphaOutDuration: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          popup.exitTransition?.duration ?: 300L
+        } else {
+          300L
+        }
+
+        if (alphaOutDuration == -1L) alphaOutDuration = 300L
+
         overlay.animate()
           .withEndAction { container.removeView(overlay) }
+          .setInterpolator(alphaOutInterpolator)
+          .setDuration(alphaOutDuration)
           .alpha(0f)
           .start()
       }
