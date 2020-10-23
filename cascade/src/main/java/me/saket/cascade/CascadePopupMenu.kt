@@ -3,7 +3,6 @@
 
 package me.saket.cascade
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -17,14 +16,12 @@ import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.animation.DecelerateInterpolator
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -82,19 +79,15 @@ open class CascadePopupMenu @JvmOverloads constructor(
       }
       container.addView(overlay)
 
-      val alphaInAnimator = ObjectAnimator.ofFloat(overlay, View.ALPHA, 1f).apply {
-        duration = 500
-        interpolator = DecelerateInterpolator()
-      }
-      alphaInAnimator.start()
+      overlay.animate()
+        .alpha(1f)
+        .start()
 
       popup.setOnDismissListener {
-        val alphaOutAnimator = ObjectAnimator.ofFloat(overlay, View.ALPHA, 0f)
-        alphaOutAnimator.duration = 200
-        alphaOutAnimator.doOnEnd {
-          container.removeView(overlay)
-        }
-        alphaOutAnimator.start()
+        overlay.animate()
+          .withEndAction { container.removeView(overlay) }
+          .alpha(0f)
+          .start()
       }
     }
 
