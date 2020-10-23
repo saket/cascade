@@ -76,7 +76,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
     styler.overlayColor()?.let {
       val container = (anchor.rootView as ViewGroup)
-      val overlay = View(context, null, 0).apply {
+      val overlay = View(context).apply {
         alpha = 0f
         setBackgroundColor(it)
       }
