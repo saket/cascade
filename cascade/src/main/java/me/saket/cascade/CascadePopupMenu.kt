@@ -76,53 +76,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
 
     styler.backgroundDimColor?.let {
-      val container = (anchor.rootView as ViewGroup)
-      val overlay = View(context).apply {
-        alpha = 0f
-        setBackgroundColor(it)
-      }
-      container.addView(overlay)
-
-      val alphaInInterpolator: TimeInterpolator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-         popup.enterTransition?.interpolator ?: DecelerateInterpolator()
-      else
-        DecelerateInterpolator()
-
-      var alphaInDuration: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        popup.enterTransition?.duration ?: 300L
-      } else {
-        300L
-      }
-
-      if (alphaInDuration == -1L) alphaInDuration = 300L
-
-      overlay.animate()
-        .alpha(1f)
-        .setInterpolator(alphaInInterpolator)
-        .setDuration(alphaInDuration)
-        .start()
-
-      popup.setOnDismissListener {
-        val alphaOutInterpolator: TimeInterpolator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-          popup.exitTransition?.interpolator ?: DecelerateInterpolator()
-        else
-          DecelerateInterpolator()
-
-        var alphaOutDuration: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          popup.exitTransition?.duration ?: 300L
-        } else {
-          300L
-        }
-
-        if (alphaOutDuration == -1L) alphaOutDuration = 300L
-
-        overlay.animate()
-          .withEndAction { container.removeView(overlay) }
-          .setInterpolator(alphaOutInterpolator)
-          .setDuration(alphaOutDuration)
-          .alpha(0f)
-          .start()
-      }
+      applyBackgroundDim(it)
     }
 
     showMenu(menuBuilder, goingForward = true)
@@ -181,6 +135,56 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
     if (backstack.peek() === backstackBefore) {
       popup.dismiss()
+    }
+  }
+
+  private fun applyBackgroundDim(@ColorInt backgroundDimColor: Int) {
+    val container = (anchor.rootView as ViewGroup)
+    val overlay = View(context).apply {
+      alpha = 0f
+      setBackgroundColor(backgroundDimColor)
+    }
+    container.addView(overlay)
+
+    val alphaInInterpolator: TimeInterpolator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+      popup.enterTransition?.interpolator ?: DecelerateInterpolator()
+    else
+      DecelerateInterpolator()
+
+    var alphaInDuration: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      popup.enterTransition?.duration ?: 300L
+    } else {
+      300L
+    }
+
+    if (alphaInDuration == -1L) alphaInDuration = 300L
+
+    overlay.animate()
+      .alpha(1f)
+      .setInterpolator(alphaInInterpolator)
+      .setDuration(alphaInDuration)
+      .start()
+
+    popup.setOnDismissListener {
+      val alphaOutInterpolator: TimeInterpolator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+        popup.exitTransition?.interpolator ?: DecelerateInterpolator()
+      else
+        DecelerateInterpolator()
+
+      var alphaOutDuration: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        popup.exitTransition?.duration ?: 300L
+      } else {
+        300L
+      }
+
+      if (alphaOutDuration == -1L) alphaOutDuration = 300L
+
+      overlay.animate()
+        .withEndAction { container.removeView(overlay) }
+        .setInterpolator(alphaOutInterpolator)
+        .setDuration(alphaOutDuration)
+        .alpha(0f)
+        .start()
     }
   }
 
