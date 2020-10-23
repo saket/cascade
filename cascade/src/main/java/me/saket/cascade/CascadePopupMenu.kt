@@ -5,7 +5,6 @@ package me.saket.cascade
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.Gravity
@@ -76,8 +75,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
 
     styler.overlayColor()?.let {
-      check(context is Activity) { "Activity context is required in order to add an overlay view" }
-      val container = (context.window.decorView as ViewGroup)
+      val container = (anchor.rootView as ViewGroup)
       val overlay = View(context, null, 0).apply {
         alpha = 0f
         setBackgroundColor(it)
