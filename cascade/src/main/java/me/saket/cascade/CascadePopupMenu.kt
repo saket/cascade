@@ -16,6 +16,7 @@ import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.annotation.ColorInt
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
@@ -54,7 +55,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     val menuList: (RecyclerView) -> Unit = {},
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
     val menuItem: (MenuItemViewHolder) -> Unit = {},
-    val overlayColor: () -> Int? = { null }
+    @ColorInt val overlayColor: Int? = null
   )
 
   fun show() {
@@ -71,7 +72,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
       popup.contentView.background = it
     }
 
-    styler.overlayColor()?.let {
+    styler.overlayColor?.let {
       val container = (anchor.rootView as ViewGroup)
       val overlay = View(context).apply {
         alpha = 0f
