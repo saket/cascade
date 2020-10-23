@@ -55,7 +55,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     val menuList: (RecyclerView) -> Unit = {},
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
     val menuItem: (MenuItemViewHolder) -> Unit = {},
-    @ColorInt val overlayColor: Int? = null
+    @ColorInt val backgroundDimColor: Int? = null
   )
 
   fun show() {
@@ -72,7 +72,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
       popup.contentView.background = it
     }
 
-    styler.overlayColor?.let {
+    styler.backgroundDimColor?.let {
       val container = (anchor.rootView as ViewGroup)
       val overlay = View(context).apply {
         alpha = 0f
