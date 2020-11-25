@@ -6,8 +6,10 @@ import android.R.attr.popupElevation
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Build.VERSION.SDK_INT
 import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
@@ -98,9 +100,14 @@ open class CascadePopupWindow @JvmOverloads constructor(
   }
 
   private fun runWithMargins(action: () -> Unit) {
-    width += margins.left + margins.right
+    if (SDK_INT > 21) {
+      // PopupWindow's content View does not have any parent on
+      // API 21 (poor kid) that can be used for faking margins.
+      width += margins.left + margins.right
+    }
+
     action()
-    (contentView.parent as View).updatePaddingRelative(
+    (contentView.parent as? View)?.updatePaddingRelative(
       start = margins.left,
       top = margins.top,
       end = margins.right,
