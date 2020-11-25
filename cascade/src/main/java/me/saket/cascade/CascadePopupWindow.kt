@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build.VERSION.SDK_INT
 import android.view.Gravity
 import android.view.View
-import android.view.WindowManager
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import androidx.annotation.DrawableRes
@@ -53,6 +52,11 @@ open class CascadePopupWindow @JvmOverloads constructor(
     contentView = HeightAnimatableViewFlipper(context).apply {
       background = themeAttrs.popupBackground
       clipToOutline = true
+
+      if (SDK_INT == 21) {
+        isTouchModal = true
+        eventDelegate = Api21EventDelegate(onDismiss = ::dismiss)
+      }
     }
   }
 
