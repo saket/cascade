@@ -3,6 +3,7 @@ package me.saket.cascade
 import android.R.attr.listChoiceBackgroundIndicator
 import android.R.attr.popupBackground
 import android.R.attr.popupElevation
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -54,6 +55,7 @@ open class CascadePopupWindow @JvmOverloads constructor(
       clipToOutline = true
 
       if (SDK_INT == 21) {
+        @SuppressLint("NewApi") // Was @hide on old API levels. Shouldn't be an actual issue.
         isTouchModal = true
         eventDelegate = Api21EventDelegate(onDismiss = ::dismiss)
       }
