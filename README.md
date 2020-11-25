@@ -72,7 +72,7 @@ popup.menu.addSubMenu("Remove").also {
 
 ```kotlin
 val popup = CascadePopupWindow(context)
-popup.contentView.addView(CustomMenuView(context))  // Also see goBack().
+popup.contentView.addView(CustomMenuView(context))  // Also see contentView.goBack().
 popup.show(anchor)
 ```
 
