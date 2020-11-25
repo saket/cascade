@@ -60,6 +60,8 @@ open class CascadePopupMenu @JvmOverloads constructor(
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
     popup.width = fixedWidth
+    popup.height = WRAP_CONTENT // Doesn't work on API 21 without this.
+
     popup.setMargins(
       start = context.dip(4),
       end = context.dip(4),
