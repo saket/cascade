@@ -83,9 +83,8 @@ class MainActivity : AppCompatActivity() {
           true
         }
       }
-
-      popupMenu.show()
     }
+    popupMenu.show()
   }
 
   private fun cascadeMenuStyler(): CascadePopupMenu.Styler {
