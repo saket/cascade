@@ -1,18 +1,14 @@
 @file:SuppressLint("RestrictedApi")
 
-package me.saket.cascade
+package me.saket.cascade.internal
 
-import android.animation.Animator
-import android.animation.Animator.AnimatorListener
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.MenuItem
-import android.view.View
 import android.view.View.OVER_SCROLL_ALWAYS
 import android.view.View.OVER_SCROLL_NEVER
-import android.view.ViewPropertyAnimator
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
@@ -40,19 +36,3 @@ internal class OverScrollIfContentScrolls : RecyclerView.OnScrollListener() {
     }
   }
 }
-
-internal fun ViewPropertyAnimator.setListener(
-  onEnd: () -> Unit = {},
-  onStart: () -> Unit = {}
-): ViewPropertyAnimator {
-  setListener(object : AnimatorListener {
-    override fun onAnimationRepeat(animator: Animator) = Unit
-    override fun onAnimationCancel(animator: Animator) = Unit
-    override fun onAnimationEnd(animator: Animator) = onEnd()
-    override fun onAnimationStart(animator: Animator) = onStart()
-  })
-  return this
-}
-
-internal val View.verticalPadding: Int
-  get() = paddingTop + paddingBottom

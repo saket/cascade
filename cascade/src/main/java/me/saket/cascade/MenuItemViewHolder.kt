@@ -15,6 +15,7 @@ import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.widget.RecyclerView
+import me.saket.cascade.internal.dip
 import kotlin.LazyThreadSafetyMode.NONE
 
 /**

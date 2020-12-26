@@ -1,5 +1,7 @@
 package me.saket.cascade
 
+import android.animation.Animator
+import android.animation.Animator.AnimatorListener
 import android.content.Context
 import android.view.MotionEvent
 import android.view.View
@@ -54,4 +56,17 @@ abstract class ViewFlipper2(context: Context) : ViewFlipper(context) {
       it.dispatchTouchEvent(ev)
     }
   }
+}
+
+private fun ViewPropertyAnimator.setListener(
+  onEnd: () -> Unit = {},
+  onStart: () -> Unit = {}
+): ViewPropertyAnimator {
+  setListener(object : AnimatorListener {
+    override fun onAnimationRepeat(animator: Animator) = Unit
+    override fun onAnimationCancel(animator: Animator) = Unit
+    override fun onAnimationEnd(animator: Animator) = onEnd()
+    override fun onAnimationStart(animator: Animator) = onStart()
+  })
+  return this
 }

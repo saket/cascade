@@ -14,6 +14,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.widget.RecyclerView
+import me.saket.cascade.internal.dip
 
 /** Layout for a sub-menu header. */
 class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {

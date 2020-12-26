@@ -152,3 +152,6 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
 private fun Rect.contains(ev: MotionEvent): Boolean {
   return contains(ev.x.toInt(), ev.y.toInt())
 }
+
+private val View.verticalPadding: Int
+  get() = paddingTop + paddingBottom
