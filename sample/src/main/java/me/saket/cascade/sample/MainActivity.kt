@@ -25,6 +25,7 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.getkeepsafe.taptargetview.TapTargetView.Listener
 import me.saket.cascade.CascadePopupMenu
+import me.saket.cascade.allChildren
 
 class MainActivity : AppCompatActivity() {
 
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         it.add("turbine").intent = intent("https://github.com/cashapp/turbine")
       }
 
-      allItems().filter { it.intent == null }.forEach {
+      allChildren.filter { it.intent == null }.forEach {
         it.setOnMenuItemClickListener {
           popupMenu.navigateBack()
           true
@@ -138,15 +139,3 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-private fun Menu.allItems(): List<MenuItem> {
-  val menu = this
-  return buildList {
-    for (item in menu) {
-      add(item)
-      if (item.hasSubMenu()) {
-        addAll(item.subMenu.allItems())
-      }
-    }
-  }
-}
