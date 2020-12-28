@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.OnHierarchyChangeListener
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.ActionMenuView
-import androidx.appcompat.widget.ActionMenuView.LayoutParams
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.forEach
@@ -20,8 +19,8 @@ import java.util.ArrayDeque
  * of the native [PopupMenu]. It's safe to call this before any menu is inflated.
  */
 fun Toolbar.overrideOverflowMenu(with: (Context, anchor: View) -> CascadePopupMenu) {
-  onOverflowMenuClick { icon ->
-    val cascade = with(context, icon)
+  onOverflowMenuClick { button ->
+    val cascade = with(context, button)
     check(!cascade.popup.isShowing)
     cascade.menuBuilder = this.menu as MenuBuilder
     cascade.show()
@@ -30,7 +29,7 @@ fun Toolbar.overrideOverflowMenu(with: (Context, anchor: View) -> CascadePopupMe
 
 private fun Toolbar.onOverflowMenuClick(onClick: View.OnClickListener) {
   val isOverflowButton = { v: View ->
-    (v.layoutParams as? LayoutParams)?.isOverflowButton == true
+    (v.layoutParams as? ActionMenuView.LayoutParams)?.isOverflowButton == true
   }
 
   // Toolbar lazily instantiates its children so may have to wait
@@ -43,6 +42,9 @@ private fun Toolbar.onOverflowMenuClick(onClick: View.OnClickListener) {
   findOrWaitForChild<ActionMenuView> {
     it.findOrWaitForChild(isOverflowButton) {
       it.setOnClickListener(onClick)
+
+      // Disable drag-to-show-popup touch listener which uses native PopupMenu.
+      it.setOnTouchListener(null)
     }
   }
 }
