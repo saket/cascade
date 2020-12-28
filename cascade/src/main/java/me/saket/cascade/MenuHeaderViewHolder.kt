@@ -28,15 +28,21 @@ class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     titleView.isEnabled = false
     titleView.gravity = START or CENTER_VERTICAL
     view.updatePaddingRelative(start = 6.dip, end = 16.dip)
-    setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.cascade_ic_round_arrow_left_32)!!)
   }
 
-  fun render(menu: SubMenuBuilder) {
+  fun render(menu: SubMenuBuilder, showBackIcon: Boolean) {
     this.menu = menu
     titleView.text = this.menu.headerTitle
+
+    if (showBackIcon) {
+      setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.cascade_ic_round_arrow_left_32)!!)
+    } else {
+      setBackIcon(null)
+    }
+    itemView.isClickable = showBackIcon
   }
 
-  fun setBackIcon(icon: Drawable) {
+  fun setBackIcon(icon: Drawable?) {
     titleView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
   }
 

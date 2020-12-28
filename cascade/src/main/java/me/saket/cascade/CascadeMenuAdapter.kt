@@ -23,18 +23,19 @@ internal class CascadeMenuAdapter(
   menu: MenuBuilder,
   private val styler: Styler,
   private val themeAttrs: ThemeAttributes,
+  private val canNavigateBack: Boolean,
   private val onTitleClick: (SubMenuBuilder) -> Unit,
   private val onItemClick: (MenuItem) -> Unit
 ) : Adapter<ViewHolder>() {
 
   sealed class ItemType {
-    class Header(val menu: SubMenuBuilder) : ItemType()
+    class Header(val menu: SubMenuBuilder, val canNavigateBack: Boolean) : ItemType()
     class Item(val item: MenuItemImpl) : ItemType()
   }
 
   private val items: List<ItemType> = buildList {
     if (menu is SubMenu) {
-      add(Header(menu as SubMenuBuilder))
+      add(Header(menu as SubMenuBuilder, canNavigateBack))
     }
     for (item in menu.nonActionItems) {
       if (item.isVisible) {
@@ -64,7 +65,8 @@ internal class CascadeMenuAdapter(
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     when (holder) {
       is MenuHeaderViewHolder -> {
-        holder.render((items[position] as Header).menu)
+        val header = items[position] as Header
+        holder.render(header.menu, showBackIcon = header.canNavigateBack)
         styler.menuTitle(holder)
       }
 
