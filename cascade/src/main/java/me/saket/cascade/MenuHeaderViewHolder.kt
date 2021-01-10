@@ -1,3 +1,4 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
 @file:SuppressLint("RestrictedApi", "PrivateResource")
 
 package me.saket.cascade
@@ -17,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import me.saket.cascade.internal.dip
 
 /** Layout for a sub-menu header. */
-class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class MenuHeaderViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
   val titleView: TextView = view.findViewById(android.R.id.title)
   lateinit var menu: SubMenuBuilder
 
@@ -27,7 +28,6 @@ class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
   init {
     titleView.isEnabled = false
     titleView.gravity = START or CENTER_VERTICAL
-    view.updatePaddingRelative(start = 6.dip, end = 16.dip)
   }
 
   fun render(menu: SubMenuBuilder, showBackIcon: Boolean) {
@@ -36,8 +36,10 @@ class MenuHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     if (showBackIcon) {
       setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.cascade_ic_round_arrow_left_32)!!)
+      view.updatePaddingRelative(start = 6.dip, end = 16.dip)
     } else {
       setBackIcon(null)
+      view.updatePaddingRelative(start = 16.dip, end = 16.dip)
     }
     itemView.isClickable = showBackIcon
   }

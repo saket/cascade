@@ -1,3 +1,4 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
 @file:SuppressLint("RestrictedApi", "PrivateResource")
 
 package me.saket.cascade
@@ -62,7 +63,7 @@ class MenuItemViewHolder(
 
   fun setContentSpacing(@Px start: Int, @Px end: Int, @Px iconSpacing: Int) {
     val hasIcon = item.icon != null
-    iconView.updateMargin(start = if (hasIcon) start else 0)
+    iconView.updateMargin(start = if (hasIcon) start else 0, end = 0)
     titleContainerView.updateMargin(start = if (hasIcon) iconSpacing else start)
     contentView.updatePaddingRelative(end = end)
   }
@@ -76,8 +77,11 @@ class MenuItemViewHolder(
   }
 }
 
-private fun View.updateMargin(start: Int) {
+private fun View.updateMargin(start: Int, end: Int? = null) {
   updateLayoutParams<MarginLayoutParams> {
     marginStart = start
+    if (end != null) {
+      marginEnd = end
+    }
   }
 }
