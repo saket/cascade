@@ -41,15 +41,13 @@ open class CascadePopupWindow @JvmOverloads constructor(
   private var margins = Rect()
 
   init {
-    // Dismiss on outside touch.
-    isFocusable = true
-    isOutsideTouchable = true
-    elevation = themeAttrs.popupElevation
-
-    // Remove PopupWindow's default frame around the content.
-    setBackgroundDrawable(null)
+    isFocusable = true                          // For receiving hardware back clicks.
+    isOutsideTouchable = true                   // For receiving outside clicks.
+    inputMethodMode = INPUT_METHOD_NOT_NEEDED   // Keyboard is recreated otherwise.
+    setBackgroundDrawable(null)                 // Remove PopupWindow's default frame around the content.
     PopupWindowCompat.setOverlapAnchor(this, true)
 
+    elevation = themeAttrs.popupElevation
     contentView = HeightAnimatableViewFlipper(context).apply {
       background = themeAttrs.popupBackground
       clipToOutline = true
