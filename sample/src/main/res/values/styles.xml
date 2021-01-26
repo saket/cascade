@@ -2,6 +2,7 @@
   <color name="color_accent">#356859</color>
   <color name="color_control_normal">#356859</color>
   <color name="window_background">#B5D2C3</color>
+  <color name="window_overlay_background">#80000000</color>
 
   <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="colorPrimary">@color/window_background</item>
