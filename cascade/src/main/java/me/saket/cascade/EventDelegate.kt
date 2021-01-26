@@ -21,7 +21,7 @@ class NoOpEventDelegate : EventDelegate
  * Cascade draws its (animatable) background manually so the events must be handled manually.
  */
 @SuppressLint("ViewConstructor")
-class LollipopEventDelegate(private val onDismiss: () -> Unit) : EventDelegate {
+class Api21And22EventDelegate(private val onDismiss: () -> Unit) : EventDelegate {
   override fun dispatchKeyEvent(event: KeyEvent): Boolean {
     return if (event.keyCode == KEYCODE_BACK && event.action == ACTION_UP && !event.isCanceled) {
       onDismiss()

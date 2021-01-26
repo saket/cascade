@@ -8,8 +8,6 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.LOLLIPOP
-import android.os.Build.VERSION_CODES.LOLLIPOP_MR1
 import android.view.Gravity
 import android.view.View
 import android.widget.PopupMenu
@@ -56,10 +54,10 @@ open class CascadePopupWindow @JvmOverloads constructor(
       background = themeAttrs.popupBackground
       clipToOutline = true
 
-      if (SDK_INT == LOLLIPOP || SDK_INT == LOLLIPOP_MR1) {
+      if (SDK_INT == 21 || SDK_INT == 22) {
         @SuppressLint("NewApi") // Was @hide on old API levels. Shouldn't be an actual issue.
         isTouchModal = true
-        eventDelegate = LollipopEventDelegate(onDismiss = ::dismiss)
+        eventDelegate = Api21And22EventDelegate(onDismiss = ::dismiss)
       }
     }
   }
