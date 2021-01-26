@@ -17,11 +17,11 @@ interface EventDelegate {
 class NoOpEventDelegate : EventDelegate
 
 /**
- * On API 21, PopupWindow only handles touch and key events if a background is present.
+ * On API 21 & 22, PopupWindow only handles touch and key events if a background is present.
  * Cascade draws its (animatable) background manually so the events must be handled manually.
  */
 @SuppressLint("ViewConstructor")
-class Api21EventDelegate(private val onDismiss: () -> Unit) : EventDelegate {
+class LollipopEventDelegate(private val onDismiss: () -> Unit) : EventDelegate {
   override fun dispatchKeyEvent(event: KeyEvent): Boolean {
     return if (event.keyCode == KEYCODE_BACK && event.action == ACTION_UP && !event.isCanceled) {
       onDismiss()
