@@ -3,7 +3,7 @@
   <color name="color_control_normal">#356859</color>
   <color name="window_background">#B5D2C3</color>
 
-  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
     <item name="colorPrimary">@color/window_background</item>
     <item name="colorPrimaryDark">@color/window_background</item>
     <item name="colorAccent">@color/color_accent</item>
@@ -16,7 +16,7 @@
     <item name="android:textColorSecondary">#729288</item>                <!-- Sub-menu titles -->
   </style>
 
-  <style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
+  <style name="ToolbarStyle" parent="Widget.MaterialComponents.Toolbar">
     <item name="titleTextAppearance">@style/ToolbarTitleAppearance</item>
   </style>
 
