@@ -49,14 +49,17 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
   class Styler(
     /**
-     * Popup's background drawable. Also used on sub-menus as an opaque
-     * background to avoid cross-drawing of menus during animations.
+     * Popup's background drawable. Also used on sub-menus as an opaque background
+     * to avoid cross-drawing of menus during their entry/exit transition. Return
+     * `null` to use the background set in XML theme.
      */
-    val background: () -> Drawable? = { null },
+    background: () -> Drawable? = { null },
     val menuList: (RecyclerView) -> Unit = {},
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
     val menuItem: (MenuItemViewHolder) -> Unit = {}
-  )
+  ) {
+    val background = { background()?.trimPaddings() }
+  }
 
   init {
     backNavigator.onBackNavigate = {

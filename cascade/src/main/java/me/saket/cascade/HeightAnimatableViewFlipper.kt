@@ -18,7 +18,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
 /**
  * A [ViewFlipper] that wraps its height to the currently
- * displayed child and smoothly animates height change.
+ * displayed child and smoothly animates height changes.
  *
  * See [show], [goForward] and [goBack].
  */

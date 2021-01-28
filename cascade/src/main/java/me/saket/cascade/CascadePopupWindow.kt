@@ -20,7 +20,6 @@ import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.PopupWindowCompat
-import me.saket.cascade.R.attr
 
 /**
  * Mimics [PopupMenu] by,
@@ -121,10 +120,10 @@ open class CascadePopupWindow @JvmOverloads constructor(
 
   private fun resolveThemeAttrs(): ThemeAttributes {
     val attrs = intArrayOf(popupBackground, popupElevation, listChoiceBackgroundIndicator)
-    return context.obtainStyledAttributes(null, attrs, attr.popupMenuStyle, defStyleRes).use {
+    return context.obtainStyledAttributes(null, attrs, android.R.attr.popupMenuStyle, defStyleRes).use {
       ThemeAttributes(
         popupElevation = it.getDimensionOrThrow(attrs.indexOf(popupElevation)),
-        popupBackground = it.getDrawableOrThrow(attrs.indexOf(popupBackground)),
+        popupBackground = it.getDrawableOrThrow(attrs.indexOf(popupBackground)).trimPaddings(),
         touchFeedbackRes = it.getResourceIdOrThrow(attrs.indexOf(listChoiceBackgroundIndicator))
       )
     }
@@ -137,3 +136,17 @@ open class CascadePopupWindow @JvmOverloads constructor(
   )
 }
 
+/**
+ * Cascade doesn't fully support popup backgrounds with internal paddings. They cause visual
+ * glitches when navigating to a sub-menu (e.g., https://github.com/saket/cascade/issues/24).
+ * If you really want paddings, feel free to set them on the menu list instead by providing
+ * a custom [CascadePopupMenu.Styler.menuList].
+ */
+internal fun Drawable.trimPaddings(): Drawable {
+  return object : DrawableWrapperCompat(this) {
+    override fun getPadding(padding: Rect): Boolean {
+      padding.set(0, 0, 0, 0)
+      return true
+    }
+  }
+}
