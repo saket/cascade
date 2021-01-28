@@ -47,7 +47,8 @@ fun Toolbar.overrideAllPopupMenus(with: (Context, anchor: View) -> CascadePopupM
     val cascade = with(context, anchor)
     check(!cascade.popup.isShowing)
     cascade.menuBuilder = menu
-    return cascade.also { cascade.show() }
+    cascade.show()
+    return cascade
   }
 
   onOverflowMenuClick { button ->

@@ -36,9 +36,9 @@ open class CascadePopupMenu @JvmOverloads constructor(
   private var gravity: Int = Gravity.NO_GRAVITY,
   private val styler: Styler = Styler(),
   private val fixedWidth: Int = context.dip(196),
-  private val defStyleAttr: Int = android.R.style.Widget_Material_PopupMenu
+  private val defStyleAttr: Int = android.R.style.Widget_Material_PopupMenu,
+  private val backNavigator: CascadeBackNavigator = CascadeBackNavigator()
 ) {
-
   val menu: Menu get() = menuBuilder
   val popup = CascadePopupWindow(context, defStyleAttr)
 
@@ -57,6 +57,15 @@ open class CascadePopupMenu @JvmOverloads constructor(
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
     val menuItem: (MenuItemViewHolder) -> Unit = {}
   )
+
+  init {
+    backNavigator.onBackNavigate = {
+      if (backstack.isNotEmpty() && backstack.peek() is SubMenu) {
+        val currentMenu = backstack.pop() as SubMenuBuilder
+        showMenu(currentMenu.parentMenu as MenuBuilder, goingForward = false)
+      }
+    }
+  }
 
   fun show() {
     // PopupWindow moves the popup to align with the anchor if a fixed width
@@ -79,16 +88,13 @@ open class CascadePopupMenu @JvmOverloads constructor(
   }
 
   /**
-   * Navigate to the last menu.
+   * Navigate to the last menu. Also see [CascadeBackNavigator].
    *
    * FYI jumping over multiple back-stack entries isn't supported
    * very well, so avoid navigating multiple menus on a single click.
    */
   fun navigateBack() {
-    if (backstack.isNotEmpty() && backstack.peek() is SubMenu) {
-      val currentMenu = backstack.pop() as SubMenuBuilder
-      showMenu(currentMenu.parentMenu as MenuBuilder, goingForward = false)
-    }
+    backNavigator.navigateBack()
   }
 
   private fun showMenu(menu: MenuBuilder, goingForward: Boolean) {
@@ -144,7 +150,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     SupportMenuInflater(context).inflate(menuRes, menuBuilder)
 
   fun setOnMenuItemClickListener(listener: PopupMenu.OnMenuItemClickListener?) =
-    (menuBuilder as MenuBuilder).setCallback(listener)
+    menuBuilder.setCallback(listener)
 
   fun dismiss() =
     popup.dismiss()
