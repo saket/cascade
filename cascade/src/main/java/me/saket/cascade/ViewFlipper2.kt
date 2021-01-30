@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.Animation
 import android.widget.ViewFlipper
-import androidx.core.view.children
 import androidx.core.view.isVisible
 
 /**
@@ -18,11 +17,6 @@ import androidx.core.view.isVisible
 abstract class ViewFlipper2(context: Context) : ViewFlipper(context) {
   val displayedChildView: View
     get() = getChildAt(displayedChild)
-
-  override fun setDisplayedChild(whichChild: Int) {
-    super.setDisplayedChild(whichChild)
-    children.forEach { it.clearAnimation() }
-  }
 
   fun setDisplayedChild(
     inView: View,
