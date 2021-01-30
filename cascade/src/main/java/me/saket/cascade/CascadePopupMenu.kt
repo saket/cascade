@@ -53,13 +53,11 @@ open class CascadePopupMenu @JvmOverloads constructor(
      * to avoid cross-drawing of menus during their entry/exit transition. Return
      * `null` to use the background set in XML theme.
      */
-    background: () -> Drawable? = { null },
+    val background: () -> Drawable? = { null },
     val menuList: (RecyclerView) -> Unit = {},
     val menuTitle: (MenuHeaderViewHolder) -> Unit = {},
     val menuItem: (MenuItemViewHolder) -> Unit = {}
-  ) {
-    val background = { background()?.trimPaddings() }
-  }
+  )
 
   init {
     backNavigator.onBackNavigate = {

@@ -130,17 +130,16 @@ open class CascadePopupWindow @JvmOverloads constructor(
   }
 
   class ThemeAttributes(
-    @Px val popupElevation: Float,
     val popupBackground: Drawable,
+    @Px val popupElevation: Float,
     @DrawableRes val touchFeedbackRes: Int
   )
 }
 
 /**
- * Cascade doesn't fully support popup backgrounds with internal paddings. They cause visual
- * glitches when navigating to a sub-menu (e.g., https://github.com/saket/cascade/issues/24).
- * If you really want paddings, feel free to set them on the menu list instead by providing
- * a custom [CascadePopupMenu.Styler.menuList].
+ * Android's default popup background (picked from the theme) contains internal paddings that don't look great.
+ * If you really prefer having them, feel free to provide a custom [CascadePopupMenu.Styler.background] instead
+ * which allows paddings.
  */
 internal fun Drawable.trimPaddings(): Drawable {
   return object : DrawableWrapperCompat(this) {
