@@ -116,12 +116,6 @@ open class CascadePopupMenu @JvmOverloads constructor(
         onTitleClick = { navigateBack() },
         onItemClick = { handleItemClick(it) }
       )
-
-      // Opaque background to avoid cross-drawing
-      // of menus during entry/exit animation.
-      if (menu is SubMenu) {
-        background = styler.background() ?: themeAttrs.popupBackground.copy()
-      }
       layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
     }
 
@@ -141,10 +135,6 @@ open class CascadePopupMenu @JvmOverloads constructor(
     if (backstack.peek() === backstackBefore) {
       popup.dismiss()
     }
-  }
-
-  private fun Drawable.copy(): Drawable {
-    return constantState!!.newDrawable(context.resources, context.theme)
   }
 
 // === APIs to maintain compatibility with PopupMenu === //

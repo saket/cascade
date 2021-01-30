@@ -3,6 +3,7 @@ package me.saket.cascade
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.KeyEvent
@@ -13,6 +14,7 @@ import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ViewFlipper
 import androidx.core.animation.doOnEnd
+import androidx.core.graphics.withTranslation
 import androidx.core.view.doOnLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
@@ -115,7 +117,6 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
   private fun setClippedHeight(newHeight: Int) {
     clipBounds2 = (clipBounds2 ?: Rect()).also {
       it.set(0, 0, right - left, top + newHeight)
-      clipBounds = it
     }
     background()?.clippedHeight = newHeight
     invalidate()
@@ -136,6 +137,17 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
 
   private fun background(): HeightClipDrawable? {
     return background as HeightClipDrawable?
+  }
+
+  override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
+    if (childCount > 1) {
+      // When Views are animating, they'll overlap with each other. Re-draw this
+      // layout's background behind each child so that they don't cross-draw.
+      canvas.withTranslation(x = child.translationX) {
+        background()?.draw(canvas)
+      }
+    }
+    return super.drawChild(canvas, child, drawingTime)
   }
 
   override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
