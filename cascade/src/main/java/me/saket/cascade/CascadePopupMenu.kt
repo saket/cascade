@@ -94,8 +94,8 @@ open class CascadePopupMenu @JvmOverloads constructor(
    * FYI jumping over multiple back-stack entries isn't supported
    * very well, so avoid navigating multiple menus on a single click.
    */
-  fun navigateBack() {
-    backNavigator.navigateBack()
+  fun navigateBack(): Boolean {
+    return backNavigator.navigateBack()
   }
 
   private fun showMenu(menu: MenuBuilder, goingForward: Boolean) {
@@ -131,6 +131,8 @@ open class CascadePopupMenu @JvmOverloads constructor(
     (item as MenuItemImpl).invoke()
 
     if (backstack.peek() === backstackBefore) {
+      // Back wasn't called. Item click wasn't handled either.
+      // Dismiss the popup because there's nothing else to do.
       popup.dismiss()
     }
   }

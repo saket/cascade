@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity() {
       allChildren.filter { it.intent == null }.forEach {
         it.setOnMenuItemClickListener {
           popupMenu.navigateBack()
-          true
         }
       }
     }
