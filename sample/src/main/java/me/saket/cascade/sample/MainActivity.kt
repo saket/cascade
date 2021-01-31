@@ -10,8 +10,6 @@ import android.graphics.drawable.RippleDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.Menu
-import android.view.MenuItem
 import android.view.SubMenu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -19,12 +17,13 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.iterator
+import androidx.core.view.MenuCompat
 import androidx.core.view.postDelayed
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.getkeepsafe.taptargetview.TapTargetView.Listener
 import me.saket.cascade.CascadePopupMenu
+import me.saket.cascade.add
 import me.saket.cascade.allChildren
 
 class MainActivity : AppCompatActivity() {
@@ -46,8 +45,10 @@ class MainActivity : AppCompatActivity() {
   private fun showCascadeMenu(anchor: View) {
     val popupMenu = CascadePopupMenu(this, anchor, styler = cascadeMenuStyler())
     popupMenu.menu.apply {
-      add("About").setIcon(R.drawable.ic_language_24)
-      add("Copy").setIcon(R.drawable.ic_file_copy_24)
+      add("About", groupId = 42).setIcon(R.drawable.ic_language_24)
+      add("Copy", groupId = 42).setIcon(R.drawable.ic_file_copy_24)
+      MenuCompat.setGroupDividerEnabled(this, true)
+
       addSubMenu("Share").also {
         val addShareTargets = { sub: SubMenu ->
           sub.add("PDF")
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity() {
       },
       menuItem = {
         it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
-        it.itemView.background = rippleDrawable()
+        it.contentView.background = rippleDrawable()
       }
     )
   }

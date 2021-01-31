@@ -1,8 +1,11 @@
+@file:Suppress("unused")
+
 package me.saket.cascade
 
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.view.children
+import android.view.SubMenu
+import androidx.annotation.StringRes
 import androidx.core.view.iterator
 
 // ==================================================================
@@ -26,3 +29,39 @@ val Menu.allChildren: List<MenuItem>
       }
     }
   }
+
+fun Menu.add(
+  title: CharSequence,
+  itemId: Int = Menu.NONE,
+  groupId: Int = Menu.NONE,
+  order: Int = Menu.NONE
+): MenuItem {
+  return add(groupId, itemId, order, title)
+}
+
+fun Menu.add(
+  @StringRes titleRes: Int,
+  itemId: Int = Menu.NONE,
+  groupId: Int = Menu.NONE,
+  order: Int = Menu.NONE
+): MenuItem {
+  return add(groupId, itemId, order, titleRes)
+}
+
+fun Menu.addSubMenu(
+  title: CharSequence,
+  groupId: Int = Menu.NONE,
+  itemId: Int = Menu.NONE,
+  order: Int = Menu.NONE
+): SubMenu {
+  return addSubMenu(groupId, itemId, order, title)
+}
+
+fun Menu.addSubMenu(
+  @StringRes titleRes: Int,
+  groupId: Int = Menu.NONE,
+  itemId: Int = Menu.NONE,
+  order: Int = Menu.NONE
+): SubMenu {
+  return addSubMenu(groupId, itemId, order, titleRes)
+}
