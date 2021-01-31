@@ -4,6 +4,7 @@
 package me.saket.cascade
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.PaintDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +33,7 @@ class MenuItemViewHolder(
   val contentView: View = view.findViewById(R.id.content)
   val iconView: ImageView by lazy(NONE) { view.findViewById(R.id.icon) }
   val subMenuArrowView: ImageView = view.findViewById(R.id.submenuarrow)
-  val topDivider: ImageView = view.findViewById(R.id.group_divider)
+  val groupDividerView: View = view.findViewById(R.id.group_divider)      // Shown at the top of this item's layout.
 
   lateinit var item: MenuItemImpl
 
@@ -67,6 +68,13 @@ class MenuItemViewHolder(
     iconView.updateMargin(start = if (hasIcon) start else 0, end = 0)
     titleContainerView.updateMargin(start = if (hasIcon) iconSpacing else start)
     contentView.updatePaddingRelative(end = end)
+  }
+
+  fun setGroupDividerColor(color: Int) {
+    // Tinting the divider View is not an option because the default drawable has a transparent color.
+    groupDividerView.background = (groupDividerView.background as? PaintDrawable ?: PaintDrawable()).apply {
+      paint.color = color
+    }
   }
 
   companion object {

@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
       menuItem = {
         it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
         it.contentView.background = rippleDrawable()
+        it.setGroupDividerColor(Color.parseColor("#BED9CF"))
       }
     )
   }
