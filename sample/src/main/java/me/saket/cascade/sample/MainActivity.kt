@@ -45,10 +45,10 @@ class MainActivity : AppCompatActivity() {
   private fun showCascadeMenu(anchor: View) {
     val popupMenu = CascadePopupMenu(this, anchor, styler = cascadeMenuStyler())
     popupMenu.menu.apply {
-      add("About", groupId = 42).setIcon(R.drawable.ic_language_24)
-      add("Copy", groupId = 42).setIcon(R.drawable.ic_file_copy_24)
       MenuCompat.setGroupDividerEnabled(this, true)
 
+      add("About").setIcon(R.drawable.ic_language_24)
+      add("Copy").setIcon(R.drawable.ic_file_copy_24)
       addSubMenu("Share").also {
         val addShareTargets = { sub: SubMenu ->
           sub.add("PDF")
@@ -56,8 +56,8 @@ class MainActivity : AppCompatActivity() {
           sub.add("Image")
           sub.add("Web page")
           sub.add("Markdown")
-          sub.add("Plain text")
-          sub.add("Microsoft word")
+          sub.add("Plain text", groupId = 42)
+          sub.add("Microsoft word", groupId = 42)
         }
         it.setIcon(R.drawable.ic_share_24)
         addShareTargets(it.addSubMenu("To clipboard"))
