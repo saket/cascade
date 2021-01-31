@@ -46,10 +46,8 @@ abstract class ViewFlipper2(context: Context) : ViewFlipper(context) {
     // OG ViewFlipper animates view bitmaps instead of actual views,
     // where the displayed View is always at 0,0. This effectively means
     // that touch events are *always* received by the displayed child.
-    return displayedChildView!!.let {
-      ev.offsetLocation(it.translationX, 0f)
-      it.dispatchTouchEvent(ev)
-    }
+    ev.offsetLocation(displayedChildView!!.translationX, 0f)
+    return super.dispatchTouchEvent(ev)
   }
 }
 
