@@ -137,9 +137,9 @@ open class CascadePopupWindow @JvmOverloads constructor(
 }
 
 /**
- * Android's default popup background (picked from the theme) contains internal paddings that don't look great.
- * If you really prefer having them, feel free to provide a custom [CascadePopupMenu.Styler.background] instead
- * which allows paddings.
+ * Android's default popup background (picked from the theme) contains internal paddings that
+ * cascade is not a fan of. If you really prefer having them, feel free to provide a custom
+ * [CascadePopupMenu.Styler.background] instead which allows paddings.
  */
 internal fun Drawable.trimPaddings(): Drawable {
   return object : DrawableWrapperCompat(this) {
