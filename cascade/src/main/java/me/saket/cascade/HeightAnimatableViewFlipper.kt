@@ -41,10 +41,11 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
       val params = view.layoutParams ?: generateDefaultLayoutParams()
       super.addView(view, index, params)
       if (childCount == 1) {
+        setDisplayedChild(view)
         return@enqueueAnimation
       }
 
-      val prevView = displayedChildView
+      val prevView = displayedChildView!!
       setDisplayedChild(
         view,
         inAnimator = {
