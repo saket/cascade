@@ -1,4 +1,4 @@
-package me.saket.cascade
+package me.saket.cascade.internal
 
 import android.graphics.Rect
 import android.graphics.drawable.Drawable

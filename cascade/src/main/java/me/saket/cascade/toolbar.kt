@@ -37,6 +37,7 @@ fun Toolbar.overrideOverflowMenu(with: (Context, anchor: View) -> CascadePopupMe
 
 /**
  * WARNING: This uses reflection and isn't guaranteed to be stable.
+ * Also see [overrideOverflowMenu].
  *
  * Steals clicks for both overflow menu button and action menu buttons from a Toolbar for
  * showing a [CascadePopupMenu] instead of the native [PopupMenu]. It's safe to call this

@@ -17,6 +17,8 @@ import androidx.core.animation.doOnEnd
 import androidx.core.graphics.withTranslation
 import androidx.core.view.doOnLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import me.saket.cascade.internal.ForcePaddingsDrawable
+import me.saket.cascade.internal.ViewFlipper2
 
 /**
  * A [ViewFlipper] that wraps its height to the currently
@@ -27,7 +29,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context) {
   var animationDuration = 350L
   var animationInterpolator = FastOutSlowInInterpolator()
-  var eventDelegate: EventDelegate = NoOpEventDelegate()
+  var eventDelegate: EventDelegate = NoOpEventDelegate
 
   private var clipBounds2: Rect? = null // Because View#clipBounds creates a new Rect on every call.
   private var animator: ValueAnimator = ObjectAnimator()
@@ -44,7 +46,7 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
         return@enqueueAnimation
       }
 
-      val prevView = displayedChildView
+      val prevView = displayedChildView!!
       setDisplayedChild(
         view,
         inAnimator = {
