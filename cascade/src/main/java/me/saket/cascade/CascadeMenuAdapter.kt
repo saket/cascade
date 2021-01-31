@@ -3,24 +3,22 @@
 package me.saket.cascade
 
 import android.annotation.SuppressLint
-import android.view.Menu
 import android.view.MenuItem
 import android.view.SubMenu
 import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.appcompat.view.menu.SubMenuBuilder
-import androidx.core.view.iterator
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import me.saket.cascade.CascadePopupMenu.Styler
 import me.saket.cascade.CascadeMenuAdapter.ItemType.Header
 import me.saket.cascade.CascadeMenuAdapter.ItemType.Item
+import me.saket.cascade.CascadePopupMenu.Styler
 import me.saket.cascade.CascadePopupWindow.ThemeAttributes
 
 @SuppressLint("RestrictedApi")
 internal class CascadeMenuAdapter(
-  menu: MenuBuilder,
+  private val menu: MenuBuilder,
   private val styler: Styler,
   private val themeAttrs: ThemeAttributes,
   private val canNavigateBack: Boolean,
@@ -55,7 +53,7 @@ internal class CascadeMenuAdapter(
         itemView.setOnClickListener { onTitleClick(menu) }
       }
       VIEW_TYPE_ITEM -> MenuItemViewHolder.inflate(parent, hasSubMenuItems).apply {
-        itemView.setBackgroundResource(themeAttrs.touchFeedbackRes)
+        contentView.setBackgroundResource(themeAttrs.touchFeedbackRes)
         itemView.setOnClickListener { onItemClick(item) }
       }
       else -> TODO()
@@ -71,10 +69,20 @@ internal class CascadeMenuAdapter(
       }
 
       is MenuItemViewHolder -> {
-        holder.render((items[position] as Item).item)
+        holder.render((items[position] as Item).item, showTopDivider = shouldShowDividerBefore(position))
         styler.menuItem(holder)
       }
     }
+  }
+
+  private fun shouldShowDividerBefore(position: Int): Boolean {
+    if (!menu.isGroupDividerEnabled) {
+      return false
+    }
+
+    val currentItem = (items[position] as Item).item
+    val previousItem = (items.getOrNull(position - 1) as? Item)?.item
+    return previousItem != null && previousItem.groupId != currentItem.groupId
   }
 
   override fun getItemViewType(position: Int): Int {

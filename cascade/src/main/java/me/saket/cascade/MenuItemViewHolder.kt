@@ -32,18 +32,19 @@ class MenuItemViewHolder(
   val contentView: View = view.findViewById(R.id.content)
   val iconView: ImageView by lazy(NONE) { view.findViewById(R.id.icon) }
   val subMenuArrowView: ImageView = view.findViewById(R.id.submenuarrow)
+  val topDivider: ImageView = view.findViewById(R.id.group_divider)
 
   lateinit var item: MenuItemImpl
 
   private val Int.dip: Int
     get() = view.context.dip(this)
 
-  fun render(item: MenuItemImpl) {
+  fun render(item: MenuItemImpl, showTopDivider: Boolean = false) {
     this.item = item
 
     view.setForceShowIcon(true)
     view.initialize(this.item, 0)
-    view.setGroupDividerEnabled(false)
+    view.setGroupDividerEnabled(showTopDivider)
 
     if (this.item.hasSubMenu()) {
       subMenuArrowView.setImageResource(R.drawable.cascade_ic_round_arrow_right_24)
