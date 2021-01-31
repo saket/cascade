@@ -99,11 +99,11 @@ class MainActivity : AppCompatActivity() {
       },
       menuTitle = {
         it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
-        it.itemView.background = rippleDrawable()
+        it.setBackground(rippleDrawable())
       },
       menuItem = {
         it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
-        it.contentView.background = rippleDrawable()
+        it.setBackground(rippleDrawable())
         it.setGroupDividerColor(Color.parseColor("#BED9CF"))
       }
     )

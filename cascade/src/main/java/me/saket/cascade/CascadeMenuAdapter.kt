@@ -51,7 +51,7 @@ internal class CascadeMenuAdapter(
         itemView.setOnClickListener { onTitleClick(menu) }
       }
       VIEW_TYPE_ITEM -> MenuItemViewHolder.inflate(parent, hasSubMenuItems).apply {
-        contentView.setBackgroundResource(themeAttrs.touchFeedbackRes)
+        itemView.setBackgroundResource(themeAttrs.touchFeedbackRes)
         itemView.setOnClickListener { onItemClick(item) }
       }
       else -> TODO()
@@ -67,20 +67,24 @@ internal class CascadeMenuAdapter(
       }
 
       is MenuItemViewHolder -> {
-        holder.render((items[position] as Item).item, showTopDivider = shouldShowDividerBefore(position))
+        holder.render(
+          item = (items[position] as Item).item,
+          hasTopDivider = shouldShowDividerBetween(position, position - 1),
+          hasPaddingForNextItemsDivider = shouldShowDividerBetween(position, position + 1)
+        )
         styler.menuItem(holder)
       }
     }
   }
 
-  private fun shouldShowDividerBefore(position: Int): Boolean {
+  private fun shouldShowDividerBetween(positionA: Int, positionB: Int): Boolean {
     if (!menu.isGroupDividerEnabled) {
       return false
     }
 
-    val currentItem = (items[position] as Item).item
-    val previousItem = (items.getOrNull(position - 1) as? Item)?.item
-    return previousItem != null && previousItem.groupId != currentItem.groupId
+    val itemA = (items.getOrNull(positionA) as? Item)?.item ?: return false
+    val itemB = (items.getOrNull(positionB) as? Item)?.item ?: return false
+    return itemA.groupId != itemB.groupId
   }
 
   override fun getItemViewType(position: Int): Int {

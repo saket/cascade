@@ -49,6 +49,10 @@ class MenuHeaderViewHolder(private val view: View) : RecyclerView.ViewHolder(vie
     titleView.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
   }
 
+  fun setBackground(drawable: Drawable) {
+    itemView.background = drawable
+  }
+
   companion object {
     fun inflate(parent: ViewGroup): MenuHeaderViewHolder {
       val inflater = LayoutInflater.from(parent.context).cloneInContext(parent.context)
