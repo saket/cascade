@@ -7,8 +7,6 @@ import android.view.MenuItem
 import android.view.SubMenu
 import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.view.menu.MenuItemImpl
-import androidx.appcompat.view.menu.SubMenuBuilder
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import me.saket.cascade.CascadeMenuAdapter.ItemType.Header
@@ -22,22 +20,22 @@ internal class CascadeMenuAdapter(
   private val styler: Styler,
   private val themeAttrs: ThemeAttributes,
   private val canNavigateBack: Boolean,
-  private val onTitleClick: (SubMenuBuilder) -> Unit,
+  private val onTitleClick: (SubMenu) -> Unit,
   private val onItemClick: (MenuItem) -> Unit
 ) : Adapter<ViewHolder>() {
 
   sealed class ItemType {
-    class Header(val menu: SubMenuBuilder, val canNavigateBack: Boolean) : ItemType()
-    class Item(val item: MenuItemImpl) : ItemType()
+    class Header(val menu: SubMenu, val canNavigateBack: Boolean) : ItemType()
+    class Item(val item: MenuItem) : ItemType()
   }
 
   private val items: List<ItemType> = buildList {
     if (menu is SubMenu) {
-      add(Header(menu as SubMenuBuilder, canNavigateBack))
+      add(Header(menu as SubMenu, canNavigateBack))
     }
     for (item in menu.nonActionItems) {
       if (item.isVisible) {
-        add(Item(item as MenuItemImpl))
+        add(Item(item as MenuItem))
       }
     }
   }

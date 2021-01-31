@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.Gravity.CENTER_VERTICAL
 import android.view.Gravity.START
 import android.view.LayoutInflater
+import android.view.SubMenu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -20,7 +21,7 @@ import me.saket.cascade.internal.dip
 /** Layout for a sub-menu header. */
 class MenuHeaderViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
   val titleView: TextView = view.findViewById(android.R.id.title)
-  lateinit var menu: SubMenuBuilder
+  lateinit var menu: SubMenu
 
   private val Int.dip: Int
     get() = itemView.context.dip(this)
@@ -30,9 +31,9 @@ class MenuHeaderViewHolder(private val view: View) : RecyclerView.ViewHolder(vie
     titleView.gravity = START or CENTER_VERTICAL
   }
 
-  fun render(menu: SubMenuBuilder, showBackIcon: Boolean) {
+  fun render(menu: SubMenu, showBackIcon: Boolean) {
     this.menu = menu
-    titleView.text = this.menu.headerTitle
+    titleView.text = (menu as SubMenuBuilder).headerTitle
 
     if (showBackIcon) {
       setBackIcon(AppCompatResources.getDrawable(itemView.context, R.drawable.cascade_ic_round_arrow_left_32)!!)

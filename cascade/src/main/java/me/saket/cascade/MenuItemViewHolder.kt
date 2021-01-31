@@ -6,6 +6,7 @@ package me.saket.cascade
 import android.annotation.SuppressLint
 import android.graphics.drawable.PaintDrawable
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
@@ -35,16 +36,16 @@ class MenuItemViewHolder(
   val subMenuArrowView: ImageView = view.findViewById(R.id.submenuarrow)
   val groupDividerView: View = view.findViewById(R.id.group_divider)      // Shown at the top of this item's layout.
 
-  lateinit var item: MenuItemImpl
+  lateinit var item: MenuItem
 
   private val Int.dip: Int
     get() = view.context.dip(this)
 
-  fun render(item: MenuItemImpl, showTopDivider: Boolean = false) {
+  fun render(item: MenuItem, showTopDivider: Boolean = false) {
     this.item = item
 
     view.setForceShowIcon(true)
-    view.initialize(this.item, 0)
+    view.initialize(item as MenuItemImpl, 0)
     view.setGroupDividerEnabled(showTopDivider)
 
     if (this.item.hasSubMenu()) {
@@ -55,7 +56,7 @@ class MenuItemViewHolder(
     setContentSpacing(
       start = if (this.item.icon != null) 12.dip else 14.dip,
       end = when {
-        this.item.hasSubMenu() -> 4.dip
+        item.hasSubMenu() -> 4.dip
         hasSubMenuSiblings -> 28.dip
         else -> 14.dip
       },
