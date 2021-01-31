@@ -7,7 +7,7 @@ import android.view.MenuItem
 import android.view.SubMenu
 import android.view.ViewGroup
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import me.saket.cascade.CascadeMenuAdapter.ItemType.Header
 import me.saket.cascade.CascadeMenuAdapter.ItemType.Item
@@ -22,16 +22,16 @@ internal class CascadeMenuAdapter(
   private val canNavigateBack: Boolean,
   private val onTitleClick: (SubMenu) -> Unit,
   private val onItemClick: (MenuItem) -> Unit
-) : Adapter<ViewHolder>() {
+) : RecyclerView.Adapter<ViewHolder>() {
 
   sealed class ItemType {
-    class Header(val menu: SubMenu, val canNavigateBack: Boolean) : ItemType()
+    class Header(val menu: SubMenu) : ItemType()
     class Item(val item: MenuItem) : ItemType()
   }
 
   private val items: List<ItemType> = buildList {
     if (menu is SubMenu) {
-      add(Header(menu as SubMenu, canNavigateBack))
+      add(Header(menu as SubMenu))
     }
     for (item in menu.nonActionItems) {
       if (item.isVisible) {
@@ -61,8 +61,7 @@ internal class CascadeMenuAdapter(
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     when (holder) {
       is MenuHeaderViewHolder -> {
-        val header = items[position] as Header
-        holder.render(header.menu, showBackIcon = header.canNavigateBack)
+        holder.render((items[position] as Header).menu, showBackIcon = canNavigateBack)
         styler.menuTitle(holder)
       }
 
