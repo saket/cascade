@@ -5,7 +5,7 @@
 `cascade` builds nested popup menus with smooth height animations. It is designed to be a *drop-in* replacement for [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu) so using it in your project is beautifully only a word away. Try out the [sample app](https://github.com/saket/cascade/releases/download/1.0.0/cascade_v1.0.0_sample.apk) to see it in action.
 
 ```groovy
-implementation "me.saket.cascade:cascade:1.2.0"
+implementation "me.saket.cascade:cascade:1.3.0"
 ```
 
 ```diff
@@ -18,18 +18,18 @@ implementation "me.saket.cascade:cascade:1.2.0"
 #### Use as Toolbar's overflow menu
 
 ```kotlin
-toolbar.overrideOverflowMenu { context, anchor ->
+toolbar.overrideAllPopupMenus { context, anchor ->
   CascadePopupMenu(context, anchor)
 }
 
 // The lambda can be collapsed into a reference
 // if you're only using the two-param constructor.
-toolbar.overrideOverflowMenu(with = ::CascadePopupMenu)
+toolbar.overrideAllPopupMenus(with = ::CascadePopupMenu)
 ```
 
 ### Customization
 
-`cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin ([example](https://github.com/saket/cascade/blob/038bbf054657c243ae62f2d780e5488ed54fcafb/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L93-L111)).
+`cascade` is great for apps that prefer applying dynamic themes at runtime, which `PopupMenu` makes it extremely hard to do so. By providing a `CascadePopupMenu.Styler` object, you can adjust colors, spacings and text styles from Kotlin ([example](https://github.com/saket/cascade/blob/ea668552999be0d3fd235e9feefa782ac92b13d4/sample/src/main/java/me/saket/cascade/sample/MainActivity.kt#L91:L110)).
 
 ```kotlin
 CascadePopupMenu(context, anchor, styler = CascadePopupMenu.Styler(...))
@@ -53,7 +53,7 @@ By default, `cascade` will pick up values from your theme in the same way as `Po
 
 ### Navigation
 
-For sub-menus, `cascade` will automatically navigate to the parent menu when the title is clicked. For manual navigation, `CascadePopupMenu#navigateBack()` can be used.
+For sub-menus, `cascade` will automatically navigate to the parent menu when the title is clicked. For manual navigation, `CascadePopupMenu#navigateBack()` or [CascadeBackNavigator](https://github.com/saket/cascade/blob/trunk/cascade/src/main/java/me/saket/cascade/CascadeBackNavigator.kt) can be used.
 
 ```kotlin
 popup.menu.addSubMenu("Remove").also {
@@ -61,7 +61,6 @@ popup.menu.addSubMenu("Remove").also {
   it.add("Burn them all")
   it.add("Take me back").setOnMenuItemClickListener {
     popup.navigateBack()
-    true
   }
 }
 ```
