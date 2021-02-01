@@ -109,8 +109,10 @@ open class CascadePopupMenu @JvmOverloads constructor(
       styler.menuList(this)
 
       addOnScrollListener(OverScrollIfContentScrolls())
-      adapter = CascadeMenuAdapter(menu, styler, themeAttrs,
-        canNavigateBack = backstack.isNotEmpty(),
+      adapter = CascadeMenuAdapter(
+        items = buildModels(menu, canNavigateBack = backstack.isNotEmpty()),
+        styler = styler,
+        themeAttrs = themeAttrs,
         onTitleClick = { navigateBack() },
         onItemClick = { handleItemClick(it) }
       )
