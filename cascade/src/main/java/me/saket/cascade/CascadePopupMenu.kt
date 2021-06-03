@@ -35,7 +35,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
   private val anchor: View,
   private var gravity: Int = Gravity.NO_GRAVITY,
   private val styler: Styler = Styler(),
-  private val fixedWidth: Int = context.dip(196),
+  private val fixedWidth: (Menu) -> Int = { context.dip(196) },
   private val defStyleAttr: Int = android.R.style.Widget_Material_PopupMenu,
   private val backNavigator: CascadeBackNavigator = CascadeBackNavigator()
 ) {
@@ -72,7 +72,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     // PopupWindow moves the popup to align with the anchor if a fixed width
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
-    popup.width = fixedWidth
+    popup.width = fixedWidth(menu)
     popup.height = WRAP_CONTENT // Doesn't work on API 21 without this.
 
     popup.setMargins(
