@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.saket.cascade.CascadeDropdownMenu
+import me.saket.cascade.DropdownMenuHeader
 
 class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,7 +128,11 @@ class MainActivity : AppCompatActivity() {
       DropdownMenuItem(
         text = { Text("Remove") },
         leadingIcon = { Icon(Icons.TwoTone.Delete, contentDescription = null) },
-        childrenHeader = { Text("Are you sure?") },
+        childrenHeader = {
+          DropdownMenuHeader {
+            Text("Are you sure?")
+          }
+        },
         children = {},
       )
       DropdownMenuItem(

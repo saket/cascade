@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
@@ -28,9 +30,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 
@@ -41,7 +44,7 @@ fun CascadeDropdownMenu(
   modifier: Modifier = Modifier,
   state: CascadeState = rememberCascadeState(),
   offset: DpOffset = DpOffset(0.dp, 0.dp),
-  requiredWidth: Dp = 192.dp,
+  requiredWidth: Dp = 196.dp,
   properties: PopupProperties = PopupProperties(focusable = true),
   content: @Composable CascadeColumnScope.() -> Unit
 ) {
@@ -127,7 +130,10 @@ interface CascadeColumnScope : ColumnScope {
         Row(verticalAlignment = CenterVertically) {
           trailingIcon?.invoke()
 
+          val requiredGapWithEdge = 4.dp
+          val iconOffset = contentPadding.calculateEndPadding(LocalLayoutDirection.current) - requiredGapWithEdge
           Icon(
+            modifier = Modifier.offset(x = iconOffset),
             imageVector = Icons.Rounded.ArrowRight,
             contentDescription = null
           )
@@ -146,13 +152,14 @@ interface CascadeColumnScope : ColumnScope {
 @Composable
 inline fun CascadeColumnScope.DropdownMenuHeader(
   modifier: Modifier = Modifier,
+  contentPadding: PaddingValues = PaddingValues(vertical = 4.dp),
   crossinline text: @Composable () -> Unit,
 ) {
   Row(
     modifier = modifier
       .clickable { navigator.navigateBack() }
       .fillMaxWidth()
-      .padding(vertical = 4.dp),
+      .padding(contentPadding),
     verticalAlignment = CenterVertically
   ) {
     val headerColor = LocalContentColor.current.copy(alpha = 0.6f)

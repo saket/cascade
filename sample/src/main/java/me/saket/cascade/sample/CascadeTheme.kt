@@ -2,7 +2,6 @@ package me.saket.cascade.sample
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.lightColorScheme
@@ -19,7 +18,7 @@ fun CascadeMaterialTheme(content: @Composable () -> Unit) {
   val colors = lightColorScheme(
     primary = Color(0xFFB5D2C3),
     background = Color(0xFFB5D2C3),
-    surface = Color(0xFFE9F4EF),
+    surface = Color(0xFFE5F0EB),
     onSurface = Color(0xFF356859),
     onSurfaceVariant = Color(0xFF356859),
   )
