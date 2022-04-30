@@ -33,7 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.LayoutDirection.Ltr
+import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 
@@ -134,7 +135,10 @@ interface CascadeColumnScope : ColumnScope {
           val iconOffset = contentPadding.calculateEndPadding(LocalLayoutDirection.current) - requiredGapWithEdge
           Icon(
             modifier = Modifier.offset(x = iconOffset),
-            imageVector = Icons.Rounded.ArrowRight,
+            imageVector = when (LocalLayoutDirection.current) {
+              Ltr -> Icons.Rounded.ArrowRight
+              Rtl -> Icons.Rounded.ArrowLeft
+            },
             contentDescription = null
           )
         }
@@ -175,7 +179,10 @@ inline fun CascadeColumnScope.DropdownMenuHeader(
     ) {
       Icon(
         modifier = Modifier.requiredSize(32.dp),
-        imageVector = Icons.Rounded.ArrowLeft,
+        imageVector = when (LocalLayoutDirection.current) {
+          Ltr -> Icons.Rounded.ArrowLeft
+          Rtl -> Icons.Rounded.ArrowRight
+        },
         contentDescription = null
       )
       text()
