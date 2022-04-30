@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowLeft
+import androidx.compose.material.icons.rounded.ArrowRight
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -124,7 +128,7 @@ interface CascadeColumnScope : ColumnScope {
           trailingIcon?.invoke()
 
           Icon(
-            painter = painterResource(R.drawable.cascade_ic_round_arrow_right_24),
+            imageVector = Icons.Rounded.ArrowRight,
             contentDescription = null
           )
         }
@@ -163,7 +167,8 @@ inline fun CascadeColumnScope.DropdownMenuHeader(
       LocalTextStyle provides headerStyle
     ) {
       Icon(
-        painter = painterResource(R.drawable.cascade_ic_round_arrow_left_32),
+        modifier = Modifier.requiredSize(32.dp),
+        imageVector = Icons.Rounded.ArrowLeft,
         contentDescription = null
       )
       text()
