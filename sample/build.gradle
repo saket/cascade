@@ -18,6 +18,13 @@ android {
     }
   }
 
+  buildFeatures {
+    compose = true
+  }
+  composeOptions {
+    kotlinCompilerExtensionVersion = versions.composeUi
+  }
+
   kotlinOptions {
     jvmTarget = "1.8"
   }
@@ -34,9 +41,10 @@ android {
 
 dependencies {
   implementation project(':cascade')
-  implementation "androidx.appcompat:appcompat:1.2.0"
-  implementation "androidx.core:core-ktx:1.3.2"
-  implementation 'com.getkeepsafe.taptargetview:taptargetview:1.13.0'
-  implementation "androidx.recyclerview:recyclerview:1.1.0"
-  implementation "com.google.android.material:material:1.3.0-rc01"
+  implementation project(':cascade-compose')
+  implementation "androidx.appcompat:appcompat:1.4.1"
+  implementation "androidx.activity:activity-compose:1.4.0"
+  implementation "com.google.android.material:material:1.7.0-alpha01"
+  implementation "androidx.compose.material3:material3:$versions.composeUiMaterial3"
+  implementation "androidx.compose.material:material-icons-extended:$versions.composeUi"
 }

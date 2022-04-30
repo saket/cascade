@@ -24,7 +24,7 @@ import android.view.MenuItem
  * ```
  */
 class CascadeBackNavigator {
-  internal var onBackNavigate: (() -> Unit)? = null
+  var onBackNavigate: (() -> Unit)? = null
 
   /** @return A useless boolean for use with [MenuItem.setOnMenuItemClickListener] .*/
   fun navigateBack(): Boolean {

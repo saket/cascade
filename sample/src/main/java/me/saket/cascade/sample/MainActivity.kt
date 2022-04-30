@@ -1,142 +1,140 @@
 package me.saket.cascade.sample
 
-import android.content.Intent
-import android.content.Intent.ACTION_VIEW
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.Color.BLACK
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.RippleDrawable
-import android.net.Uri
 import android.os.Bundle
-import android.util.TypedValue
-import android.view.SubMenu
-import android.view.View
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.MenuCompat
-import androidx.core.view.postDelayed
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetView
-import com.getkeepsafe.taptargetview.TapTargetView.Listener
-import me.saket.cascade.CascadePopupMenu
-import me.saket.cascade.add
-import me.saket.cascade.allChildren
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.twotone.ContentCopy
+import androidx.compose.material.icons.twotone.DeleteSweep
+import androidx.compose.material.icons.twotone.Language
+import androidx.compose.material.icons.twotone.Share
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import me.saket.cascade.CascadeDropdownMenu
 
 class MainActivity : AppCompatActivity() {
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
 
-    val toolbar = findViewById<Toolbar>(R.id.toolbar)
-    toolbar.inflateMenu(R.menu.toolbar)
+    setContent {
+      CascadeMaterialTheme {
+        Box(
+          Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+        ) {
+          val isMenuShown = rememberSaveable { mutableStateOf(true) }
+          Box(
+            Modifier
+              .padding(4.dp)
+              .size(1.dp)
+              .align(Alignment.TopEnd)
+          ) {
+            Menu(
+              isShown = isMenuShown
+            )
+          }
 
-    val menuButton = toolbar.findViewById<View>(R.id.overflow_menu)
-    showcaseMenuButton(toolbar, menuButton)
-    menuButton.setOnClickListener {
-      showCascadeMenu(anchor = menuButton)
-    }
-  }
-
-  private fun showCascadeMenu(anchor: View) {
-    val popupMenu = CascadePopupMenu(this, anchor, styler = cascadeMenuStyler())
-    popupMenu.menu.apply {
-      MenuCompat.setGroupDividerEnabled(this, true)
-
-      add("About").setIcon(R.drawable.ic_language_24)
-      add("Copy").setIcon(R.drawable.ic_file_copy_24)
-      addSubMenu("Share").also {
-        val addShareTargets = { sub: SubMenu ->
-          sub.add("PDF")
-          sub.add("EPUB")
-          sub.add("Image")
-          sub.add("Web page")
-          sub.add("Markdown")
-          sub.add("Plain text", groupId = 42)
-          sub.add("Microsoft word", groupId = 42)
-        }
-        it.setIcon(R.drawable.ic_share_24)
-        addShareTargets(it.addSubMenu("To clipboard"))
-        addShareTargets(it.addSubMenu("As a file"))
-      }
-      addSubMenu("Remove").also {
-        it.setIcon(R.drawable.ic_delete_sweep_24)
-        it.setHeaderTitle("Are you sure?")
-        it.add("Yep").setIcon(R.drawable.ic_check_24)
-        it.add("Go back").setIcon(R.drawable.ic_close_24)
-      }
-      addSubMenu("Cash App").also {
-        it.setIcon(cashAppIcon())
-        it.add("contour").intent = intent("https://github.com/cashapp/contour")
-        it.add("duktape").intent = intent("https://github.com/cashapp/duktape-android")
-        it.add("misk").intent = intent("https://github.com/cashapp/misk")
-        it.add("paparazzi").intent = intent("https://github.com/cashapp/paparazzi")
-        it.add("sqldelight").intent = intent("https://github.com/cashapp/SQLDelight")
-        it.add("turbine").intent = intent("https://github.com/cashapp/turbine")
-      }
-
-      allChildren.filter { it.intent == null }.forEach {
-        it.setOnMenuItemClickListener {
-          popupMenu.navigateBack()
+          SmallTopAppBar(
+            title = { Text(stringResource(R.string.app_name)) },
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+              containerColor = Color.Transparent
+            ),
+            actions = {
+              IconButton(onClick = { isMenuShown.value = true }) {
+                Icon(Icons.Rounded.MoreVert, contentDescription = "More options")
+              }
+            }
+          )
         }
       }
     }
-    popupMenu.show()
   }
 
-  private fun cascadeMenuStyler(): CascadePopupMenu.Styler {
-    val rippleDrawable = {
-      RippleDrawable(ColorStateList.valueOf(Color.parseColor("#B1DDC6")), null, ColorDrawable(BLACK))
+  @Composable
+  private fun Menu(
+    isShown: MutableState<Boolean>,
+    modifier: Modifier = Modifier
+  ) {
+    CascadeDropdownMenu(
+      modifier = modifier,
+      expanded = isShown.value,
+      onDismissRequest = { isShown.value = false }
+    ) {
+      DropdownMenuItem(
+        text = { Text("About") },
+        leadingIcon = { Icon(Icons.TwoTone.Language, contentDescription = null) },
+        onClick = {},
+      )
+      DropdownMenuItem(
+        text = { Text("Copy") },
+        leadingIcon = { Icon(Icons.TwoTone.ContentCopy, contentDescription = null) },
+        onClick = {},
+      )
+      DropdownMenuItem(
+        text = { Text("Share") },
+        leadingIcon = { Icon(Icons.TwoTone.Share, contentDescription = null) },
+        children = {
+          DropdownMenuItem(
+            text = { Text("To clipboard") },
+            children = {
+              DropdownMenuItem(
+                text = { Text("PDF") },
+                onClick = {}
+              )
+              DropdownMenuItem(
+                text = { Text("HTML") },
+                onClick = {}
+              )
+            }
+          )
+          DropdownMenuItem(
+            text = { Text("As a file") },
+            children = {
+              DropdownMenuItem(
+                text = { Text("PDF") },
+                onClick = {}
+              )
+              DropdownMenuItem(
+                text = { Text("HTML") },
+                onClick = {}
+              )
+            }
+          )
+        }
+      )
+      DropdownMenuItem(
+        text = { Text("Remove") },
+        leadingIcon = { Icon(Icons.TwoTone.DeleteSweep, contentDescription = null) },
+        onClick = {},
+      )
+      DropdownMenuItem(
+        text = { Text("Cash App") },
+        leadingIcon = { Icon(painterResource(R.drawable.ic_cash_app_24), contentDescription = null) },
+        onClick = {},
+      )
     }
-
-    return CascadePopupMenu.Styler(
-      background = {
-        RoundedRectDrawable(Color.parseColor("#E0EEE7"), radius = 8f.dip)
-      },
-      menuTitle = {
-        it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
-        it.setBackground(rippleDrawable())
-      },
-      menuItem = {
-        it.titleView.typeface = ResourcesCompat.getFont(this, R.font.work_sans_medium)
-        it.setBackground(rippleDrawable())
-        it.setGroupDividerColor(Color.parseColor("#BED9CF"))
-      }
-    )
   }
-
-  private fun cashAppIcon() =
-    AppCompatResources.getDrawable(this, R.drawable.ic_cash_app_24)!!.also {
-      it.mutate()
-      it.setTint(ContextCompat.getColor(this, R.color.color_control_normal))
-    }
-
-  private fun intent(url: String) =
-    Intent(ACTION_VIEW, Uri.parse(url))
-
-  private fun showcaseMenuButton(toolbar: Toolbar?, menuButton: View) {
-    val tapTarget = TapTarget
-      .forToolbarMenuItem(toolbar, R.id.overflow_menu, "Tap to see Cascade in action")
-      .transparentTarget(true)
-      .outerCircleColor(R.color.color_control_normal)
-      .titleTextColor(R.color.window_background)
-
-    TapTargetView.showFor(this, tapTarget, object : Listener() {
-      override fun onTargetClick(view: TapTargetView) {
-        super.onTargetClick(view)
-        view.postDelayed(200) { menuButton.performClick() }
-      }
-    })
-  }
-
-  private val Float.dip: Float
-    get() {
-      val metrics = resources.displayMetrics
-      return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, metrics)
-    }
 }
-
