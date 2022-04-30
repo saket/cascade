@@ -51,7 +51,7 @@ interface CascadeBackNavigator2 {
   fun navigateBack()
 }
 
-class CascadeBackStackEntry(
+internal class CascadeBackStackEntry(
   val header: @Composable () -> Unit,
   val pageContent: @Composable CascadeColumnScope.() -> Unit
 )

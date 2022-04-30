@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.twotone.ContentCopy
-import androidx.compose.material.icons.twotone.DeleteSweep
+import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Language
 import androidx.compose.material.icons.twotone.Share
 import androidx.compose.material3.DropdownMenuItem
@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -127,13 +126,14 @@ class MainActivity : AppCompatActivity() {
       )
       DropdownMenuItem(
         text = { Text("Remove") },
-        leadingIcon = { Icon(Icons.TwoTone.DeleteSweep, contentDescription = null) },
-        onClick = {},
+        leadingIcon = { Icon(Icons.TwoTone.Delete, contentDescription = null) },
+        childrenHeader = { Text("Are you sure?") },
+        children = {},
       )
       DropdownMenuItem(
         text = { Text("Cash App") },
         leadingIcon = { Icon(painterResource(R.drawable.ic_cash_app_24), contentDescription = null) },
-        onClick = {},
+        children = {},
       )
     }
   }
