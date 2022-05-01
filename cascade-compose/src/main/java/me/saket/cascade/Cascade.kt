@@ -1,7 +1,13 @@
+@file:OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
+
 package me.saket.cascade
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,7 +35,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -37,6 +45,7 @@ import androidx.compose.ui.unit.LayoutDirection.Ltr
 import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
+import me.saket.cascade.internal.cascadeTransitionSpec
 
 @Composable
 fun CascadeDropdownMenu(
@@ -62,37 +71,26 @@ fun CascadeDropdownMenu(
       }
     }
 
-    val backStackEntry = state.backStack.lastOrNull()
-    val currentContent = backStackEntry?.pageContent ?: content
+    AnimatedContent(
+      targetState = state.backStack.snapshot(),
+      transitionSpec = { cascadeTransitionSpec() }
+    ) { snapshot ->
+      Column(
+        Modifier
+          // A background is required to prevent the pages
+          // contents from cross-leaking into each other.
+          .background(MaterialTheme.colorScheme.surface)
+          // The current transitionSpec isn't great at handling
+          // another navigation while one is already running.
+          .pointerInteropFilter { transition.isRunning }
+      ) {
+        val currentContent = snapshot.topMostEntry?.pageContent ?: content
+        snapshot.topMostEntry?.header?.invoke()
 
-    backStackEntry?.header?.invoke()
-
-    val columnScope: ColumnScope = this
-    val scope = remember(columnScope) {
-      object : CascadeColumnScope, ColumnScope by columnScope {
-        override val cascadeState: CascadeState get() = state
+        val contentScope = remember { CascadeColumnScope(state) }
+        contentScope.currentContent()
       }
     }
-    scope.currentContent()
-
-    //    val state by remember { mutableStateOf(CascadeMenuState(menu)) }
-    //    AnimatedContent(
-    //      targetState = state.currentMenuItem,
-    //      transitionSpec = {
-    //        if (isNavigatingBack(initialState, targetState)) {
-    //          animateToPrevious()
-    //        } else {
-    //          animateToNext()
-    //        }
-    //      }
-    //    ) { targetMenu ->
-    //      CascadeMenuContent(
-    //        state = state,
-    //        targetMenu = targetMenu,
-    //        onItemSelected = onItemSelected,
-    //        colors = colors,
-    //      )
-    //    }
   }
 }
 
@@ -189,3 +187,8 @@ inline fun CascadeColumnScope.DropdownMenuHeader(
     }
   }
 }
+
+private fun ColumnScope.CascadeColumnScope(state: CascadeState): CascadeColumnScope =
+  object : CascadeColumnScope, ColumnScope by this {
+    override val cascadeState: CascadeState get() = state
+  }
