@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.twotone.Check
+import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material.icons.twotone.ContentCopy
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Language
@@ -22,9 +24,10 @@ import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
         ) {
-          val isMenuShown = rememberSaveable { mutableStateOf(true) }
+          var isMenuShown by rememberSaveable { mutableStateOf(true) }
           Box(
             Modifier
               .padding(4.dp)
@@ -53,7 +56,8 @@ class MainActivity : AppCompatActivity() {
               .align(Alignment.TopEnd)
           ) {
             Menu(
-              isShown = isMenuShown
+              expanded = isMenuShown,
+              onDismiss = { isMenuShown = false }
             )
           }
 
@@ -63,7 +67,7 @@ class MainActivity : AppCompatActivity() {
               containerColor = Color.Transparent
             ),
             actions = {
-              IconButton(onClick = { isMenuShown.value = true }) {
+              IconButton(onClick = { isMenuShown = true }) {
                 Icon(Icons.Rounded.MoreVert, contentDescription = "More options")
               }
             }
@@ -75,13 +79,14 @@ class MainActivity : AppCompatActivity() {
 
   @Composable
   private fun Menu(
-    isShown: MutableState<Boolean>,
+    expanded: Boolean,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier
   ) {
     CascadeDropdownMenu(
       modifier = modifier,
-      expanded = isShown.value,
-      onDismissRequest = { isShown.value = false }
+      expanded = expanded,
+      onDismissRequest = onDismiss
     ) {
       DropdownMenuItem(
         text = { Text("About") },
@@ -99,29 +104,11 @@ class MainActivity : AppCompatActivity() {
         children = {
           DropdownMenuItem(
             text = { Text("To clipboard") },
-            children = {
-              DropdownMenuItem(
-                text = { Text("PDF") },
-                onClick = {}
-              )
-              DropdownMenuItem(
-                text = { Text("HTML") },
-                onClick = {}
-              )
-            }
+            children = { FileMenuItems() }
           )
           DropdownMenuItem(
             text = { Text("As a file") },
-            children = {
-              DropdownMenuItem(
-                text = { Text("PDF") },
-                onClick = {}
-              )
-              DropdownMenuItem(
-                text = { Text("HTML") },
-                onClick = {}
-              )
-            }
+            children = { FileMenuItems() }
           )
         }
       )
@@ -133,7 +120,20 @@ class MainActivity : AppCompatActivity() {
             Text("Are you sure?")
           }
         },
-        children = {},
+        children = {
+          DropdownMenuItem(
+            text = { Text("Yep") },
+            leadingIcon = { Icon(Icons.TwoTone.Check, contentDescription = null) },
+            onClick = { onDismiss() }
+          )
+          DropdownMenuItem(
+            text = { Text("Go back") },
+            leadingIcon = { Icon(Icons.TwoTone.Close, contentDescription = null) },
+            onClick = {
+              navigator.navigateBack()
+            }
+          )
+        },
       )
       DropdownMenuItem(
         text = { Text("Cash App") },
@@ -141,5 +141,25 @@ class MainActivity : AppCompatActivity() {
         children = {},
       )
     }
+  }
+
+  @Composable
+  private fun FileMenuItems() {
+    DropdownMenuItem(
+      text = { Text("PDF") },
+      onClick = {}
+    )
+    DropdownMenuItem(
+      text = { Text("Image") },
+      onClick = {}
+    )
+    DropdownMenuItem(
+      text = { Text("Markdown") },
+      onClick = {}
+    )
+    DropdownMenuItem(
+      text = { Text("Plain text") },
+      onClick = {}
+    )
   }
 }
