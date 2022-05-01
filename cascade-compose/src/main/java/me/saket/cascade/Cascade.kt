@@ -48,16 +48,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import me.saket.cascade.internal.cascadeTransitionSpec
 
+/**
+ * Material Design dropdown menu with support for nested menus.
+ * See [DropdownMenu] for documentation about its parameters.
+ *
+ * Example usage:
+ *
+ * ```
+ * val expanded by rememberSaveable { mutableStateOf(false) }
+ *
+ * CascadeDropdownMenu(
+ *   expanded = expanded,
+ *   onDismissRequest = { expanded = false }
+ * ) {
+ *   DropdownMenuItem(
+ *     text = { Text("Horizon") },
+ *     children = {
+ *       DropdownMenuItem(
+ *         text = { Text("Zero Dawn") },
+ *         onClick = { ... }
+ *       )
+ *       DropdownMenuItem(
+ *         text = { Text("Forbidden West") },
+ *         onClick = { ... }
+ *       )
+ *     }
+ *   )
+ * }
+ * ```
+ */
 @Composable
 fun CascadeDropdownMenu(
   expanded: Boolean,
   onDismissRequest: () -> Unit,
   modifier: Modifier = Modifier,
-  state: CascadeState = rememberCascadeState(),
   offset: DpOffset = DpOffset(0.dp, 0.dp),
-  requiredWidth: Dp = 196.dp,
   properties: PopupProperties = PopupProperties(focusable = true),
-  content: @Composable CascadeColumnScope.() -> Unit
+  requiredWidth: Dp = 196.dp,
+  state: CascadeState = rememberCascadeState(),
+  content: @Composable CascadeScope.() -> Unit
 ) {
   DropdownMenu(
     modifier = modifier.requiredWidth(requiredWidth),
@@ -86,7 +115,7 @@ fun CascadeDropdownMenu(
           // another navigation while one is already running.
           .pointerInteropFilter { transition.isRunning }
       ) {
-        val currentContent = snapshot.topMostEntry?.pageContent ?: content
+        val currentContent = snapshot.topMostEntry?.childrenContent ?: content
         snapshot.topMostEntry?.header?.invoke()
 
         val contentScope = remember { CascadeColumnScope(state) }
@@ -98,14 +127,14 @@ fun CascadeDropdownMenu(
 
 @Immutable
 @LayoutScopeMarker
-interface CascadeColumnScope : ColumnScope {
+interface CascadeScope : ColumnScope {
   val cascadeState: CascadeState
-  val navigator get() = cascadeState
+  val cascadeNavigator: CascadeBackNavigator2
 
   @Composable
   fun DropdownMenuItem(
     text: @Composable () -> Unit,
-    children: @Composable CascadeColumnScope.() -> Unit,
+    children: @Composable CascadeScope.() -> Unit,
     modifier: Modifier = Modifier,
     childrenHeader: @Composable () -> Unit = { DropdownMenuHeader(text = text) },
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -121,7 +150,7 @@ interface CascadeColumnScope : ColumnScope {
         cascadeState.backStack.add(
           CascadeBackStackEntry(
             header = childrenHeader,
-            pageContent = children
+            childrenContent = children
           )
         )
       },
@@ -151,17 +180,20 @@ interface CascadeColumnScope : ColumnScope {
   }
 }
 
+/**
+ * Displays `text` with a back icon. Navigates to its parent menu when clicked.
+ */
 // FYI making this function non-inline causes a strange bug where
 // the header stops changing when navigating deeper into a sub-menu.
 @Composable
-inline fun CascadeColumnScope.DropdownMenuHeader(
+inline fun CascadeScope.DropdownMenuHeader(
   modifier: Modifier = Modifier,
   contentPadding: PaddingValues = PaddingValues(vertical = 4.dp),
   crossinline text: @Composable () -> Unit,
 ) {
   Row(
     modifier = modifier
-      .clickable { navigator.navigateBack() }
+      .clickable { cascadeNavigator.navigateBack() }
       .fillMaxWidth()
       .padding(contentPadding),
     verticalAlignment = CenterVertically
@@ -192,7 +224,9 @@ inline fun CascadeColumnScope.DropdownMenuHeader(
   }
 }
 
-private fun ColumnScope.CascadeColumnScope(state: CascadeState): CascadeColumnScope =
-  object : CascadeColumnScope, ColumnScope by this {
-    override val cascadeState: CascadeState get() = state
+@Suppress("FunctionName")
+private fun ColumnScope.CascadeColumnScope(state: CascadeState): CascadeScope =
+  object : CascadeScope, ColumnScope by this {
+    override val cascadeState get() = state
+    override val cascadeNavigator get() = state
   }

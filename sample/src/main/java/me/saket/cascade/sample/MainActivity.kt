@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
             text = { Text("Go back") },
             leadingIcon = { Icon(Icons.TwoTone.Close, contentDescription = null) },
             onClick = {
-              navigator.navigateBack()
+              cascadeNavigator.navigateBack()
             }
           )
         },
