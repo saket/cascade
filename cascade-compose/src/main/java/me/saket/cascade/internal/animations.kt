@@ -9,15 +9,21 @@ import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.LayoutDirection.Ltr
 import me.saket.cascade.BackStackSnapshot
 
-internal fun AnimatedContentScope<BackStackSnapshot>.cascadeTransitionSpec(): ContentTransform {
+internal fun AnimatedContentScope<BackStackSnapshot>.cascadeTransitionSpec(
+  layoutDirection: LayoutDirection
+): ContentTransform {
   val navigatingForward = targetState.backStackSize > initialState.backStackSize
+
+  val inverseMultiplier = if (layoutDirection == Ltr) 1 else -1
   val initialOffset = { width: Int ->
-    if (navigatingForward) width else -width / 4
+    inverseMultiplier * if (navigatingForward) width else -width / 4
   }
   val targetOffset = { width: Int ->
-    if (navigatingForward) -width / 4 else width
+    inverseMultiplier * if (navigatingForward) -width / 4 else width
   }
 
   val duration = 350

@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
@@ -71,9 +72,10 @@ fun CascadeDropdownMenu(
       }
     }
 
+    val layoutDirection = LocalLayoutDirection.current
     AnimatedContent(
       targetState = state.backStack.snapshot(),
-      transitionSpec = { cascadeTransitionSpec() }
+      transitionSpec = { cascadeTransitionSpec(layoutDirection) }
     ) { snapshot ->
       Column(
         Modifier
@@ -183,7 +185,9 @@ inline fun CascadeColumnScope.DropdownMenuHeader(
         },
         contentDescription = null
       )
-      text()
+      Box(Modifier.weight(1f)) {
+        text()
+      }
     }
   }
 }
