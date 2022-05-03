@@ -4,7 +4,6 @@ package me.saket.cascade
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -30,6 +29,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -89,6 +89,8 @@ fun CascadeDropdownMenu(
   content: @Composable CascadeScope.() -> Unit
 ) {
   DropdownMenu(
+    // A fixed width is needed because DropdownMenu
+    // does not handle width changes smoothly.
     modifier = modifier.requiredWidth(requiredWidth),
     expanded = expanded,
     onDismissRequest = { onDismissRequest() },
@@ -106,20 +108,21 @@ fun CascadeDropdownMenu(
       targetState = state.backStack.snapshot(),
       transitionSpec = { cascadeTransitionSpec(layoutDirection) }
     ) { snapshot ->
-      Column(
-        Modifier
-          // A background is required to prevent the pages
-          // contents from cross-leaking into each other.
-          .background(MaterialTheme.colorScheme.surface)
-          // The current transitionSpec isn't great at handling
-          // another navigation while one is already running.
-          .pointerInteropFilter { transition.isRunning }
+      // Surface provides a solid background color to prevent the
+      // content of sub-menus from leaking into each other.
+      Surface(
+        // Block navigation while a transition is already playing because the
+        // current transitionSpec isn't great at handling another navigation
+        // while one is already running.
+        Modifier.pointerInteropFilter { transition.isRunning }
       ) {
-        val currentContent = snapshot.topMostEntry?.childrenContent ?: content
-        snapshot.topMostEntry?.header?.invoke()
+        Column {
+          val currentContent = snapshot.topMostEntry?.childrenContent ?: content
+          snapshot.topMostEntry?.header?.invoke()
 
-        val contentScope = remember { CascadeColumnScope(state) }
-        contentScope.currentContent()
+          val contentScope = remember { CascadeScope(state) }
+          contentScope.currentContent()
+        }
       }
     }
   }
@@ -225,7 +228,7 @@ inline fun CascadeScope.DropdownMenuHeader(
 }
 
 @Suppress("FunctionName")
-private fun ColumnScope.CascadeColumnScope(state: CascadeState): CascadeScope =
+private fun ColumnScope.CascadeScope(state: CascadeState): CascadeScope =
   object : CascadeScope, ColumnScope by this {
     override val cascadeState get() = state
     override val cascadeNavigator get() = state
