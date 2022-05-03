@@ -4,19 +4,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 
 @Composable
 fun rememberCascadeState(): CascadeState {
   return remember { CascadeState() }
 }
 
+/**
+ * The state of a [CascadeDropdownMenu].
+ */
 @Stable
-class CascadeState : CascadeBackNavigator2 {
-  internal val backStack = mutableStateListOf<CascadeBackStackEntry>()
+class CascadeState {
+  private val backStack = mutableStateListOf<CascadeBackStackEntry>()
 
-  override fun navigateBack() {
-    backStack.removeLastOrNull()
+  fun navigateBack(): Boolean {
+    val removed = backStack.removeLastOrNull()
+    return removed != null
+  }
+
+  fun resetBackStack() {
+    backStack.clear()
+  }
+
+  internal fun navigateTo(entry: CascadeBackStackEntry) {
+    backStack.add(entry)
+  }
+
+  internal fun backStackSnapshot(): BackStackSnapshot {
+    return BackStackSnapshot(
+      topMostEntry = backStack.lastOrNull(),
+      backStackSize = backStack.size
+    )
   }
 }
 
@@ -24,10 +42,6 @@ internal class CascadeBackStackEntry(
   val header: @Composable () -> Unit,
   val childrenContent: @Composable CascadeScope.() -> Unit
 )
-
-internal fun SnapshotStateList<CascadeBackStackEntry>.snapshot(): BackStackSnapshot {
-  return BackStackSnapshot(topMostEntry = lastOrNull(), backStackSize = size)
-}
 
 internal data class BackStackSnapshot(
   val topMostEntry: CascadeBackStackEntry?,

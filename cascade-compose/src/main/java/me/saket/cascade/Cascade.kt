@@ -84,14 +84,14 @@ fun CascadeDropdownMenu(
   modifier: Modifier = Modifier,
   offset: DpOffset = DpOffset(0.dp, 0.dp),
   properties: PopupProperties = PopupProperties(focusable = true),
-  requiredWidth: Dp = 196.dp,
+  fixedWidth: Dp = 196.dp,
   state: CascadeState = rememberCascadeState(),
   content: @Composable CascadeScope.() -> Unit
 ) {
   DropdownMenu(
     // A fixed width is needed because DropdownMenu
     // does not handle width changes smoothly.
-    modifier = modifier.requiredWidth(requiredWidth),
+    modifier = modifier.requiredWidth(fixedWidth),
     expanded = expanded,
     onDismissRequest = { onDismissRequest() },
     offset = offset,
@@ -99,13 +99,13 @@ fun CascadeDropdownMenu(
   ) {
     DisposableEffect(Unit) {
       onDispose {
-        state.backStack.clear()
+        state.resetBackStack()
       }
     }
 
     val layoutDirection = LocalLayoutDirection.current
     AnimatedContent(
-      targetState = state.backStack.snapshot(),
+      targetState = state.backStackSnapshot(),
       transitionSpec = { cascadeTransitionSpec(layoutDirection) }
     ) { snapshot ->
       // Surface provides a solid background color to prevent the
@@ -132,8 +132,30 @@ fun CascadeDropdownMenu(
 @LayoutScopeMarker
 interface CascadeScope : ColumnScope {
   val cascadeState: CascadeState
-  val cascadeNavigator: CascadeBackNavigator2
 
+  /**
+   * Material Design dropdown menu item that navigates to a sub-menu on click.
+   * See [androidx.compose.material3.DropdownMenuItem] for documentation about its parameters.
+   *
+   * For sub-menus, cascade will automatically navigate to their parent menu when their
+   * header is clicked. For manual navigation, [CascadeState.navigateBack] can be used.
+   *
+   * ```
+   * val state = rememberCascadeState()
+   *
+   * CascadeDropdownMenu(state = state, ...) {
+   *   DropdownMenuItem(
+   *     text = { Text("Are you sure?"),
+   *     children = {
+   *       DropdownMenuItem(
+   *          text = { Text("Not really") },
+   *          onClick = { state.navigateBack() }
+   *        )
+   *     }
+   *   )
+   * }
+   * ```
+   */
   @Composable
   fun DropdownMenuItem(
     text: @Composable () -> Unit,
@@ -150,7 +172,7 @@ interface CascadeScope : ColumnScope {
     DropdownMenuItem(
       text = text,
       onClick = {
-        cascadeState.backStack.add(
+        cascadeState.navigateTo(
           CascadeBackStackEntry(
             header = childrenHeader,
             childrenContent = children
@@ -187,7 +209,7 @@ interface CascadeScope : ColumnScope {
  * Displays `text` with a back icon. Navigates to its parent menu when clicked.
  */
 // FYI making this function non-inline causes a strange bug where
-// the header stops changing when navigating deeper into a sub-menu.
+// `text` stops changing when navigating deeper into a sub-menu.
 @Composable
 inline fun CascadeScope.DropdownMenuHeader(
   modifier: Modifier = Modifier,
@@ -196,7 +218,7 @@ inline fun CascadeScope.DropdownMenuHeader(
 ) {
   Row(
     modifier = modifier
-      .clickable { cascadeNavigator.navigateBack() }
+      .clickable { cascadeState.navigateBack() }
       .fillMaxWidth()
       .padding(contentPadding),
     verticalAlignment = CenterVertically
@@ -231,5 +253,4 @@ inline fun CascadeScope.DropdownMenuHeader(
 private fun ColumnScope.CascadeScope(state: CascadeState): CascadeScope =
   object : CascadeScope, ColumnScope by this {
     override val cascadeState get() = state
-    override val cascadeNavigator get() = state
   }
