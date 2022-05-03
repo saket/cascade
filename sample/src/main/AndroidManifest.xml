@@ -13,8 +13,19 @@
     tools:ignore="AllowBackup">
 
     <activity
-      android:name=".MainActivity"
-      android:exported="true">
+      android:name=".SampleActivity"
+      android:exported="true"
+      android:label="Cascade">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <activity
+      android:name=".ComposeSampleActivity"
+      android:exported="true"
+      android:label="Cascade (compose)">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

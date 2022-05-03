@@ -38,7 +38,8 @@ import androidx.compose.ui.unit.dp
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.DropdownMenuHeader
 
-class MainActivity : AppCompatActivity() {
+class ComposeSampleActivity : AppCompatActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -50,17 +51,6 @@ class MainActivity : AppCompatActivity() {
             .background(MaterialTheme.colorScheme.background)
         ) {
           var isMenuShown by rememberSaveable { mutableStateOf(true) }
-          Box(
-            Modifier
-              .padding(4.dp)
-              .size(1.dp)
-              .align(Alignment.TopEnd)
-          ) {
-            Menu(
-              expanded = isMenuShown,
-              onDismiss = { isMenuShown = false }
-            )
-          }
 
           SmallTopAppBar(
             title = { Text(stringResource(R.string.app_name)) },
@@ -73,6 +63,19 @@ class MainActivity : AppCompatActivity() {
               }
             }
           )
+
+          // Position menu to the top-end so that it overlaps the overflow menu button.
+          Box(
+            Modifier
+              .padding(4.dp)
+              .size(1.dp)
+              .align(Alignment.TopEnd)
+          ) {
+            Menu(
+              expanded = isMenuShown,
+              onDismiss = { isMenuShown = false }
+            )
+          }
         }
       }
     }

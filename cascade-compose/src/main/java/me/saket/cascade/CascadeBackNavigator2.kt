@@ -4,10 +4,10 @@ package me.saket.cascade
  * For sub-menus, cascade will automatically navigate to their parent menu when their header is
  * clicked. For manual navigation, `CascadeBackNavigator#navigateBack()` can be used.
  *
- * A navigator is available to all composables scoped to CascadeDropdownMenu:
+ * A navigator is available to all composables scoped to CascadeDropdownMenu through [CascadeScope]:
  *
  * ```
- * CascadeDropdownMenu {
+ * CascadeDropdownMenu(...) {
  *   DropdownMenuItem(
  *     text = { Text("Are you sure?"),
  *     children = {
