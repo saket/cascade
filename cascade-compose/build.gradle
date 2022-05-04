@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'app.cash.paparazzi'
+apply plugin: 'com.vanniktech.maven.publish'
 
 android {
   resourcePrefix "cascade_"
