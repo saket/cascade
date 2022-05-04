@@ -40,7 +40,7 @@ class CascadeState {
 
 internal class CascadeBackStackEntry(
   val header: @Composable () -> Unit,
-  val childrenContent: @Composable CascadeScope.() -> Unit
+  val childrenContent: @Composable CascadeColumnScope.() -> Unit
 )
 
 internal data class BackStackSnapshot(

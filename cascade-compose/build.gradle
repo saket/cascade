@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'app.cash.paparazzi'
 
 android {
   resourcePrefix "cascade_"
@@ -30,4 +31,7 @@ dependencies {
   implementation "androidx.compose.foundation:foundation:$versions.composeUi"
   implementation "androidx.compose.material3:material3:$versions.composeUiMaterial3"
   implementation "androidx.compose.material:material-icons-extended:$versions.composeUi"
+
+  testImplementation "junit:junit:4.13.2"
+  testImplementation "com.squareup.burst:burst-junit4:1.2.0"
 }

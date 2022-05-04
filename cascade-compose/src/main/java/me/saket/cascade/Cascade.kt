@@ -86,43 +86,57 @@ fun CascadeDropdownMenu(
   properties: PopupProperties = PopupProperties(focusable = true),
   fixedWidth: Dp = 196.dp,
   state: CascadeState = rememberCascadeState(),
-  content: @Composable CascadeScope.() -> Unit
+  content: @Composable CascadeColumnScope.() -> Unit
 ) {
   DropdownMenu(
     // A fixed width is needed because DropdownMenu
     // does not handle width changes smoothly.
-    modifier = modifier.requiredWidth(fixedWidth),
+    modifier = modifier,
     expanded = expanded,
     onDismissRequest = { onDismissRequest() },
     offset = offset,
     properties = properties,
   ) {
-    DisposableEffect(Unit) {
-      onDispose {
-        state.resetBackStack()
-      }
+    CascadeDropdownMenuContent(
+      modifier = Modifier.requiredWidth(fixedWidth),
+      state = state,
+      content = content
+    )
+  }
+}
+
+@Composable
+internal fun CascadeDropdownMenuContent(
+  state: CascadeState,
+  modifier: Modifier = Modifier,
+  content: @Composable CascadeColumnScope.() -> Unit
+) {
+  DisposableEffect(Unit) {
+    onDispose {
+      state.resetBackStack()
     }
+  }
 
-    val layoutDirection = LocalLayoutDirection.current
-    AnimatedContent(
-      targetState = state.backStackSnapshot(),
-      transitionSpec = { cascadeTransitionSpec(layoutDirection) }
-    ) { snapshot ->
-      // Surface provides a solid background color to prevent the
-      // content of sub-menus from leaking into each other.
-      Surface(
-        // Block navigation while a transition is already playing because the
-        // current transitionSpec isn't great at handling another navigation
-        // while one is already running.
-        Modifier.pointerInteropFilter { transition.isRunning }
-      ) {
-        Column {
-          val currentContent = snapshot.topMostEntry?.childrenContent ?: content
-          snapshot.topMostEntry?.header?.invoke()
+  val layoutDirection = LocalLayoutDirection.current
+  AnimatedContent(
+    modifier = modifier,
+    targetState = state.backStackSnapshot(),
+    transitionSpec = { cascadeTransitionSpec(layoutDirection) }
+  ) { snapshot ->
+    // Surface provides a solid background color to prevent the
+    // content of sub-menus from leaking into each other.
+    Surface(
+      // Block navigation while a transition is already playing because the
+      // current transitionSpec isn't great at handling another navigation
+      // while one is already running.
+      Modifier.pointerInteropFilter { transition.isRunning }
+    ) {
+      Column {
+        val currentContent = snapshot.topMostEntry?.childrenContent ?: content
+        snapshot.topMostEntry?.header?.invoke()
 
-          val contentScope = remember { CascadeScope(state) }
-          contentScope.currentContent()
-        }
+        val contentScope = remember { CascadeColumnScope(state) }
+        contentScope.currentContent()
       }
     }
   }
@@ -130,7 +144,7 @@ fun CascadeDropdownMenu(
 
 @Immutable
 @LayoutScopeMarker
-interface CascadeScope : ColumnScope {
+interface CascadeColumnScope : ColumnScope {
   val cascadeState: CascadeState
 
   /**
@@ -159,7 +173,7 @@ interface CascadeScope : ColumnScope {
   @Composable
   fun DropdownMenuItem(
     text: @Composable () -> Unit,
-    children: @Composable CascadeScope.() -> Unit,
+    children: @Composable CascadeColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     childrenHeader: @Composable () -> Unit = { DropdownMenuHeader(text = text) },
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -211,7 +225,7 @@ interface CascadeScope : ColumnScope {
 // FYI making this function non-inline causes a strange bug where
 // `text` stops changing when navigating deeper into a sub-menu.
 @Composable
-inline fun CascadeScope.DropdownMenuHeader(
+inline fun CascadeColumnScope.DropdownMenuHeader(
   modifier: Modifier = Modifier,
   contentPadding: PaddingValues = PaddingValues(vertical = 4.dp),
   crossinline text: @Composable () -> Unit,
@@ -250,7 +264,7 @@ inline fun CascadeScope.DropdownMenuHeader(
 }
 
 @Suppress("FunctionName")
-private fun ColumnScope.CascadeScope(state: CascadeState): CascadeScope =
-  object : CascadeScope, ColumnScope by this {
+private fun ColumnScope.CascadeColumnScope(state: CascadeState): CascadeColumnScope =
+  object : CascadeColumnScope, ColumnScope by this {
     override val cascadeState get() = state
   }
