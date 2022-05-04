@@ -1,5 +1,7 @@
 package me.saket.cascade.sample
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.DropdownMenuHeader
+import me.saket.cascade.rememberCascadeState
 
 class ComposeSampleActivity : AppCompatActivity() {
 
@@ -87,7 +90,9 @@ class ComposeSampleActivity : AppCompatActivity() {
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
   ) {
+    val state = rememberCascadeState()
     CascadeDropdownMenu(
+      state = state,
       modifier = modifier,
       expanded = expanded,
       onDismissRequest = onDismiss
@@ -137,7 +142,7 @@ class ComposeSampleActivity : AppCompatActivity() {
             text = { Text("Go back") },
             leadingIcon = { Icon(Icons.TwoTone.Close, contentDescription = null) },
             onClick = {
-              cascadeNavigator.navigateBack()
+              state.navigateBack()
             }
           )
         },
@@ -145,9 +150,26 @@ class ComposeSampleActivity : AppCompatActivity() {
       DropdownMenuItem(
         text = { Text("Cash App") },
         leadingIcon = { Icon(painterResource(R.drawable.ic_cash_app_24), contentDescription = null) },
-        children = {},
+        children = {
+          DropdownMenuItem(
+            text = { Text("molecule") },
+            onClick = { openUrl("https://github.com/cashapp/molecule") }
+          )
+          DropdownMenuItem(
+            text = { Text("paparazzi") },
+            onClick = { openUrl("https://github.com/cashapp/paparazzi") }
+          )
+          DropdownMenuItem(
+            text = { Text("SQLDelight") },
+            onClick = { openUrl("https://github.com/cashapp/sqldelight") }
+          )
+        },
       )
     }
+  }
+
+  private fun openUrl(url: String) {
+    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
   }
 
   @Composable
