@@ -55,7 +55,7 @@ import me.saket.cascade.internal.cascadeTransitionSpec
  * Example usage:
  *
  * ```
- * val expanded by rememberSaveable { mutableStateOf(false) }
+ * var expanded by rememberSaveable { mutableStateOf(false) }
  *
  * CascadeDropdownMenu(
  *   expanded = expanded,
