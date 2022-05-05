@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.SubMenu
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
@@ -38,11 +39,23 @@ class SampleActivity : AppCompatActivity() {
     val menuButton = toolbar.findViewById<View>(R.id.overflow_menu)
     showcaseMenuButton(toolbar, menuButton)
     menuButton.setOnClickListener {
-      showCascadeMenu(anchor = menuButton)
+      showCascadeMenu(anchor = menuButton, showAtLocation = false)
+    }
+    val button = findViewById<Button>(R.id.button)
+    button.setOnClickListener {
+      showCascadeMenu(anchor = button, showAtLocation = true)
+    }
+    val buttonSecond = findViewById<Button>(R.id.buttonSecond)
+    buttonSecond.setOnClickListener {
+      showCascadeMenu(anchor = buttonSecond, showAtLocation = true)
+    }
+    val buttonThird = findViewById<Button>(R.id.buttonThird)
+    buttonThird.setOnClickListener {
+      showCascadeMenu(anchor = buttonThird, showAtLocation = false)
     }
   }
 
-  private fun showCascadeMenu(anchor: View) {
+  private fun showCascadeMenu(anchor: View, showAtLocation: Boolean) {
     val popupMenu = CascadePopupMenu(this, anchor, styler = cascadeMenuStyler())
     popupMenu.menu.apply {
       MenuCompat.setGroupDividerEnabled(this, true)
@@ -85,7 +98,7 @@ class SampleActivity : AppCompatActivity() {
         }
       }
     }
-    popupMenu.show()
+    popupMenu.show(showAtLocation)
   }
 
   private fun cascadeMenuStyler(): CascadePopupMenu.Styler {

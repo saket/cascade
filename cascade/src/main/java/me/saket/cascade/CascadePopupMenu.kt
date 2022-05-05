@@ -5,12 +5,10 @@ package me.saket.cascade
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
-import android.view.SubMenu
-import android.view.View
+import android.util.Log
+import android.view.*
 import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -27,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import me.saket.cascade.internal.OverScrollIfContentScrolls
 import me.saket.cascade.internal.dip
 import me.saket.cascade.internal.setCallback
-import java.util.Stack
+import java.util.*
 import kotlin.DeprecationLevel.ERROR
 
 open class CascadePopupMenu @JvmOverloads constructor(
@@ -68,7 +66,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
   }
 
-  fun show() {
+  fun show(atLocation: Boolean = false) {
     // PopupWindow moves the popup to align with the anchor if a fixed width
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
@@ -85,7 +83,11 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
 
     showMenu(menuBuilder, goingForward = true)
-    popup.showAsDropDown(anchor, 0, 0, gravity)
+    if(atLocation) {
+      popup.showAtLocation(anchor, gravity, anchor.x.toInt(), anchor.y.toInt() + anchor.height)
+    } else {
+      popup.showAsDropDown(anchor, 0, 0, gravity)
+    }
   }
 
   /**
