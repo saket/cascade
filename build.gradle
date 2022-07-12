@@ -3,7 +3,7 @@
 buildscript {
   ext.versions = [
     minSdk: 21,
-    compileSdk: 31,
+    compileSdk: 32,
     composeUi: '1.1.1',
     composeUiMaterial3: '1.0.0-alpha14'
   ]
