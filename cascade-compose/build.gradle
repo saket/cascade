@@ -26,7 +26,7 @@ android {
 dependencies {
   api project(":cascade")
 
-  implementation "androidx.activity:activity-compose:1.4.0"
+  implementation "androidx.activity:activity-compose:1.5.0"
   implementation "androidx.compose.ui:ui:$versions.composeUi"
   implementation "androidx.compose.ui:ui-tooling:$versions.composeUi"
   implementation "androidx.compose.foundation:foundation:$versions.composeUi"
