@@ -6,7 +6,11 @@ package me.saket.cascade
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.*
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
+import android.view.SubMenu
+import android.view.View
 import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -23,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import me.saket.cascade.internal.OverScrollIfContentScrolls
 import me.saket.cascade.internal.dip
 import me.saket.cascade.internal.setCallback
-import java.util.*
+import java.util.Stack
 import kotlin.DeprecationLevel.ERROR
 
 open class CascadePopupMenu @JvmOverloads constructor(
@@ -64,7 +68,8 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
   }
 
-  fun show(atLocation: Boolean = false) {
+  @JvmOverloads
+  fun show(fromAnchor: Boolean = false) {
     // PopupWindow moves the popup to align with the anchor if a fixed width
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
@@ -82,10 +87,10 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
     showMenu(menuBuilder, goingForward = true)
 
-    if (atLocation) {
-      val outLocation = IntArray(2)
-      anchor.getLocationOnScreen(outLocation)
-      popup.showAtLocation(anchor, gravity, outLocation[0], outLocation[1])
+    if (fromAnchor) {
+      val anchorLocation = IntArray(2)
+      anchor.getLocationOnScreen(anchorLocation)
+      popup.showAtLocation(anchor, gravity, anchorLocation[0], anchorLocation[1])
     } else {
       popup.showAsDropDown(anchor, 0, 0, gravity)
     }
