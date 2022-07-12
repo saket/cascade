@@ -3,9 +3,10 @@ apply plugin: 'kotlin-android'
 
 android {
   compileSdkVersion versions.compileSdk
+  namespace "me.saket.cascade.sample"
 
   defaultConfig {
-    applicationId "me.saket.cascade.sample"
+    applicationId namespace
     minSdkVersion versions.minSdk
     targetSdkVersion versions.compileSdk
     versionCode 1
