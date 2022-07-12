@@ -5,9 +5,7 @@ package me.saket.cascade
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.*
 import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
@@ -83,8 +81,11 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
 
     showMenu(menuBuilder, goingForward = true)
-    if(atLocation) {
-      popup.showAtLocation(anchor, gravity, anchor.x.toInt(), anchor.y.toInt() + anchor.height)
+
+    if (atLocation) {
+      val outLocation = IntArray(2)
+      anchor.getLocationOnScreen(outLocation)
+      popup.showAtLocation(anchor, gravity, outLocation[0], outLocation[1])
     } else {
       popup.showAsDropDown(anchor, 0, 0, gravity)
     }
