@@ -34,18 +34,30 @@ fun Menu.add(
   title: CharSequence,
   itemId: Int = Menu.NONE,
   groupId: Int = Menu.NONE,
-  order: Int = Menu.NONE
-): MenuItem {
-  return add(groupId, itemId, order, title)
+  order: Int = Menu.NONE,
+  menuItemClickListener: ((MenuItem) -> Unit)? = null
+): MenuItem = add(groupId, itemId, order, title).apply {
+  if (menuItemClickListener != null) {
+    setOnMenuItemClickListener {
+      menuItemClickListener(it)
+      true
+    }
+  }
 }
 
 fun Menu.add(
   @StringRes titleRes: Int,
   itemId: Int = Menu.NONE,
   groupId: Int = Menu.NONE,
-  order: Int = Menu.NONE
-): MenuItem {
-  return add(groupId, itemId, order, titleRes)
+  order: Int = Menu.NONE,
+  menuItemClickListener: ((MenuItem) -> Unit)? = null
+): MenuItem = add(groupId, itemId, order, titleRes).apply {
+  if (menuItemClickListener != null) {
+    setOnMenuItemClickListener {
+      menuItemClickListener(it)
+      true
+    }
+  }
 }
 
 fun Menu.addSubMenu(
