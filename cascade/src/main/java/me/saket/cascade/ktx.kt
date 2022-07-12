@@ -35,11 +35,11 @@ fun Menu.add(
   itemId: Int = Menu.NONE,
   groupId: Int = Menu.NONE,
   order: Int = Menu.NONE,
-  menuItemClickListener: ((MenuItem) -> Unit)? = null
+  onClick: ((MenuItem) -> Unit)? = null
 ): MenuItem = add(groupId, itemId, order, title).apply {
-  if (menuItemClickListener != null) {
+  if (onClick != null) {
     setOnMenuItemClickListener {
-      menuItemClickListener(it)
+      onClick(it)
       true
     }
   }
@@ -50,11 +50,11 @@ fun Menu.add(
   itemId: Int = Menu.NONE,
   groupId: Int = Menu.NONE,
   order: Int = Menu.NONE,
-  menuItemClickListener: ((MenuItem) -> Unit)? = null
+  onClick: ((MenuItem) -> Unit)? = null
 ): MenuItem = add(groupId, itemId, order, titleRes).apply {
-  if (menuItemClickListener != null) {
+  if (onClick != null) {
     setOnMenuItemClickListener {
-      menuItemClickListener(it)
+      onClick(it)
       true
     }
   }
