@@ -69,7 +69,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
   }
 
   @JvmOverloads
-  fun show(fromAnchor: Boolean = false) {
+  fun show(fromAnchor: Boolean = true) {
     // PopupWindow moves the popup to align with the anchor if a fixed width
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
