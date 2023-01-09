@@ -20,11 +20,13 @@ import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Language
 import androidx.compose.material.icons.twotone.Share
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +45,7 @@ import me.saket.cascade.rememberCascadeState
 
 class ComposeSampleActivity : AppCompatActivity() {
 
+  @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -55,7 +58,7 @@ class ComposeSampleActivity : AppCompatActivity() {
         ) {
           var isMenuShown by rememberSaveable { mutableStateOf(true) }
 
-          SmallTopAppBar(
+          TopAppBar(
             title = { Text(stringResource(R.string.app_name)) },
             colors = TopAppBarDefaults.smallTopAppBarColors(
               containerColor = Color.Transparent

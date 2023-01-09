@@ -20,12 +20,8 @@ android {
     }
   }
 
-  buildFeatures {
-    compose = true
-  }
-  composeOptions {
-    kotlinCompilerExtensionVersion = versions.composeUi
-  }
+  buildFeatures.compose = true
+  composeOptions.kotlinCompilerExtensionVersion = versions.composeUiCompiler
 
   kotlinOptions {
     jvmTarget = "1.8"
