@@ -4,6 +4,7 @@ apply plugin: 'com.vanniktech.maven.publish'
 
 android {
   resourcePrefix "cascade_"
+  namespace "me.saket.cascade"
 
   compileSdkVersion versions.compileSdk
   defaultConfig { minSdkVersion 21 }
