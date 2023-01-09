@@ -39,7 +39,7 @@ fun CascadeMaterialTheme(content: @Composable () -> Unit) {
     ),
   )
   val shapes = Shapes(
-    extraSmall = RoundedCornerShape(8.dp)
+    extraSmall = RoundedCornerShape(12.dp)
   )
   MaterialTheme(
     colorScheme = colors,

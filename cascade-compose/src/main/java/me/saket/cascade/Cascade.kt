@@ -37,6 +37,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -237,26 +238,32 @@ internal fun CascadeDropdownMenuContent(
   }
 
   val layoutDirection = LocalLayoutDirection.current
-  AnimatedContent(
-    modifier = modifier.background(MaterialTheme.colorScheme.surface),
-    targetState = state.backStackSnapshot(),
-    transitionSpec = { cascadeTransitionSpec(layoutDirection) }
-  ) { backStack ->
-    Column(
-      Modifier
-        // Provide a solid background color to prevent the
-        // content of sub-menus from leaking into each other.
-        .background(MaterialTheme.colorScheme.surface)
-        // Block navigation while a transition is already playing because the
-        // current transitionSpec isn't great at handling another navigation
-        // while one is already running.
-        .pointerInteropFilter { transition.isRunning }
-    ) {
-      val currentContent = backStack.topMostEntry?.childrenContent ?: content
-      backStack.topMostEntry?.header?.invoke()
+  Surface(
+    modifier = modifier,
+    shape = MaterialTheme.shapes.extraSmall,
+    tonalElevation = 3.dp,
+    shadowElevation = 3.dp,
+  ) {
+    AnimatedContent(
+      targetState = state.backStackSnapshot(),
+      transitionSpec = { cascadeTransitionSpec(layoutDirection) }
+    ) { backStack ->
+      Column(
+        Modifier
+          // Provide a solid background color to prevent the
+          // content of sub-menus from leaking into each other.
+          .background(MaterialTheme.colorScheme.surface)
+          // Block navigation while a transition is already playing because the
+          // current transitionSpec isn't great at handling another navigation
+          // while one is already running.
+          .pointerInteropFilter { transition.isRunning }
+      ) {
+        val currentContent = backStack.topMostEntry?.childrenContent ?: content
+        backStack.topMostEntry?.header?.invoke()
 
-      val contentScope = remember { CascadeColumnScope(state) }
-      contentScope.currentContent()
+        val contentScope = remember { CascadeColumnScope(state) }
+        contentScope.currentContent()
+      }
     }
   }
 }
