@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -36,7 +37,6 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -193,7 +193,6 @@ fun CascadeDropdownMenu(
                   layoutDirection = layoutDirection,
                   popupContentSize = it,
                 )
-                println("Size changed to = $it. (anchorBounds = $anchorBounds, windowBounds = $windowBounds). calculated position = $popupPosition")
               }
               .padding(start = 4.dp, end = 4.dp, bottom = 4.dp),
             state = state,
@@ -239,25 +238,25 @@ internal fun CascadeDropdownMenuContent(
 
   val layoutDirection = LocalLayoutDirection.current
   AnimatedContent(
-    modifier = modifier,
+    modifier = modifier.background(MaterialTheme.colorScheme.surface),
     targetState = state.backStackSnapshot(),
     transitionSpec = { cascadeTransitionSpec(layoutDirection) }
-  ) { snapshot ->
-    // Surface provides a solid background color to prevent the
-    // content of sub-menus from leaking into each other.
-    Surface(
-      // Block navigation while a transition is already playing because the
-      // current transitionSpec isn't great at handling another navigation
-      // while one is already running.
-      Modifier.pointerInteropFilter { transition.isRunning }
+  ) { backStack ->
+    Column(
+      Modifier
+        // Provide a solid background color to prevent the
+        // content of sub-menus from leaking into each other.
+        .background(MaterialTheme.colorScheme.surface)
+        // Block navigation while a transition is already playing because the
+        // current transitionSpec isn't great at handling another navigation
+        // while one is already running.
+        .pointerInteropFilter { transition.isRunning }
     ) {
-      Column {
-        val currentContent = snapshot.topMostEntry?.childrenContent ?: content
-        snapshot.topMostEntry?.header?.invoke()
+      val currentContent = backStack.topMostEntry?.childrenContent ?: content
+      backStack.topMostEntry?.header?.invoke()
 
-        val contentScope = remember { CascadeColumnScope(state) }
-        contentScope.currentContent()
-      }
+      val contentScope = remember { CascadeColumnScope(state) }
+      contentScope.currentContent()
     }
   }
 }
