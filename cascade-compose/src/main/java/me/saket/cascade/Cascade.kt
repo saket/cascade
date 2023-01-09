@@ -192,7 +192,8 @@ fun CascadeDropdownMenu(
               .onSizeChanged {
                 val windowSize = windowSizeRectBuffer.let { rect ->
                   hostView.getWindowVisibleDisplayFrame(windowSizeRectBuffer)
-                  IntSize(width = rect.width(), height = rect.height())
+                  //IntSize(width = rect.width(), height = rect.height())
+                  IntSize(width = popup.contentView.width, height = popup.contentView.height)
                 }
 
                 popupPosition = popupPositionProvider.calculatePosition(
