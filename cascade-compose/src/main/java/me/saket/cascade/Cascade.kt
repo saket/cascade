@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -45,14 +44,13 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
@@ -66,7 +64,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection.Ltr
 import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
@@ -141,14 +138,12 @@ fun CascadeDropdownMenu(
   val density = LocalDensity.current
   val hostView = LocalView.current
   val layoutDirection = LocalLayoutDirection.current
+  val parentComposition = rememberCompositionContext()
 
   val popupId = rememberSaveable { UUID.randomUUID() }
-  val popup = remember {
-    //PopupWindow(layout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true)
-    ComposablePopupWindow(hostView, popupId)
-  }
+  val popup = remember { ComposablePopupWindow(hostView, popupId) }
 
-  var parentBounds by remember { mutableStateOf(IntRect.Zero) }
+  var anchorBounds by remember { mutableStateOf(IntRect.Zero) }
 
   Box(
     Modifier.onGloballyPositioned { coordinates ->
@@ -157,7 +152,7 @@ fun CascadeDropdownMenu(
         IntOffset(x = offset.x.roundToInt(), y = offset.y.roundToInt())
       }
       val layoutSize = parentCoordinates.size
-      parentBounds = IntRect(layoutPosition, layoutSize)
+      anchorBounds = IntRect(layoutPosition, layoutSize)
     }
   )
 
@@ -170,13 +165,11 @@ fun CascadeDropdownMenu(
     val popupPositionProvider = DropdownMenuPositionProvider(
       contentOffset = offset,
       density = density,
-      //onPositionCalculated = { parentBounds, menuBounds ->
-      //transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
-      //}
     )
 
     popup.contentView.show(
       ComposeView(context).apply {
+        setParentCompositionContext(parentComposition)
         setContent {
           val windowSizeRectBuffer = remember { android.graphics.Rect(0, 0, 0, 0) }
           var popupPosition by remember { mutableStateOf(IntOffset.Zero) }
@@ -184,26 +177,25 @@ fun CascadeDropdownMenu(
           CascadeDropdownMenuContent(
             modifier = modifier
               .fillMaxSize()
-              .padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
               .wrapContentWidth(align = Alignment.Start)  // Without this, requiredWidth() centers the content.
               .requiredWidth(fixedWidth)
               .wrapContentHeight(align = Alignment.Top)
               .absoluteOffset { popupPosition }
               .onSizeChanged {
-                val windowSize = windowSizeRectBuffer.let { rect ->
+                val windowBounds = windowSizeRectBuffer.let { rect ->
                   hostView.getWindowVisibleDisplayFrame(windowSizeRectBuffer)
-                  //IntSize(width = rect.width(), height = rect.height())
-                  IntSize(width = popup.contentView.width, height = popup.contentView.height)
+                  IntRect(left = rect.left, top = rect.top, right = rect.right, bottom = rect.bottom)
                 }
 
                 popupPosition = popupPositionProvider.calculatePosition(
-                  anchorBounds = parentBounds,
-                  windowSize = windowSize,
+                  anchorBounds = anchorBounds,
+                  windowBounds = windowBounds,
                   layoutDirection = layoutDirection,
                   popupContentSize = it,
                 )
-                println("Size changed to = $it. (parentBounds = $parentBounds, windowSize = $windowSize). calculated position = $popupPosition")
-              },
+                println("Size changed to = $it. (anchorBounds = $anchorBounds, windowBounds = $windowBounds). calculated position = $popupPosition")
+              }
+              .padding(start = 4.dp, end = 4.dp, bottom = 4.dp),
             state = state,
             content = content
           )
