@@ -89,8 +89,6 @@ fun CascadeDropdownMenu(
   content: @Composable CascadeColumnScope.() -> Unit
 ) {
   DropdownMenu(
-    // A fixed width is needed because DropdownMenu
-    // does not handle width changes smoothly.
     modifier = modifier,
     expanded = expanded,
     onDismissRequest = { onDismissRequest() },
@@ -98,6 +96,8 @@ fun CascadeDropdownMenu(
     properties = properties,
   ) {
     CascadeDropdownMenuContent(
+      // A fixed width is needed because DropdownMenu
+      // does not handle width changes smoothly.
       modifier = Modifier.requiredWidth(fixedWidth),
       state = state,
       content = content
