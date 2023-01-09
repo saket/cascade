@@ -178,11 +178,10 @@ fun CascadeDropdownMenu(
           CascadeDropdownMenuContent(
             modifier = modifier
               .fillMaxSize()
-              .wrapContentWidth(align = Alignment.Start)  // Without this, requiredWidth() centers the content.
-              .requiredWidth(fixedWidth)
+              .requiredWidth(fixedWidth, align = Alignment.Start)
               .wrapContentHeight(align = Alignment.Top)
               .absoluteOffset { popupPosition }
-              .onSizeChanged {
+              .onSizeChanged { contentSize ->
                 val windowBounds = windowSizeRectBuffer.let { rect ->
                   hostView.getWindowVisibleDisplayFrame(windowSizeRectBuffer)
                   IntRect(left = rect.left, top = rect.top, right = rect.right, bottom = rect.bottom)
@@ -192,7 +191,7 @@ fun CascadeDropdownMenu(
                   anchorBounds = anchorBounds,
                   windowBounds = windowBounds,
                   layoutDirection = layoutDirection,
-                  popupContentSize = it,
+                  popupContentSize = contentSize,
                 )
               }
               .padding(start = 4.dp, end = 4.dp, bottom = 4.dp),
@@ -208,6 +207,10 @@ fun CascadeDropdownMenu(
       popup.dismiss()
     }
   }
+}
+
+private fun Modifier.requiredWidth(width: Dp, align: Alignment.Horizontal): Modifier {
+  return wrapContentWidth(align).requiredWidth(width)
 }
 
 private class ComposablePopupWindow(hostView: View, popupId: UUID) : CascadePopupWindow(hostView.context) {
