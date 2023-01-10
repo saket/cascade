@@ -9,8 +9,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
+/** Copied from [androidx.compose.material3.DropdownMenuPositionProvider] */
 @Immutable
-internal data class DropdownMenuPositionProvider(
+internal data class CascadePopupPositionProvider(
   private val contentOffset: DpOffset,
   private val density: Density,
 ) {
