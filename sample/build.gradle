@@ -8,7 +8,7 @@ android {
   defaultConfig {
     applicationId namespace
     applicationId "me.saket.cascade.sample"
-    minSdkVersion versions.minSdk
+    minSdkVersion 23
     targetSdkVersion versions.compileSdk
     versionCode 1
     versionName "1.0"

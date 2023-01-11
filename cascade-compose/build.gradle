@@ -8,7 +8,7 @@ android {
   namespace "me.saket.cascade"
 
   compileSdkVersion versions.compileSdk
-  defaultConfig.minSdkVersion 21
+  defaultConfig.minSdkVersion 23
 
   buildFeatures.compose = true
   composeOptions.kotlinCompilerExtensionVersion = versions.composeUiCompiler
