@@ -20,6 +20,7 @@ import androidx.compose.material.icons.twotone.ContentCopy
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Language
 import androidx.compose.material.icons.twotone.Share
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -183,15 +184,30 @@ class ComposeSampleActivity : AppCompatActivity() {
       onClick = {}
     )
     DropdownMenuItem(
+      text = { Text("EPUB") },
+      onClick = {}
+    )
+    DropdownMenuItem(
       text = { Text("Image") },
+      onClick = {}
+    )
+    DropdownMenuItem(
+      text = { Text("Web page") },
       onClick = {}
     )
     DropdownMenuItem(
       text = { Text("Markdown") },
       onClick = {}
     )
+    Divider(
+      color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+    )
     DropdownMenuItem(
       text = { Text("Plain text") },
+      onClick = {}
+    )
+    DropdownMenuItem(
+      text = { Text("Microsoft word") },
       onClick = {}
     )
   }
