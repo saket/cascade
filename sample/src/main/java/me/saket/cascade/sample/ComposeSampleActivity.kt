@@ -74,7 +74,7 @@ class ComposeSampleActivity : AppCompatActivity() {
           // Position menu to the top-end so that it overlaps the overflow menu button.
           Box(
             Modifier
-              .padding(4.dp)
+              .padding(end = 12.dp, top = 0.dp)
               .size(1.dp)
               .align(Alignment.TopEnd)
           ) {

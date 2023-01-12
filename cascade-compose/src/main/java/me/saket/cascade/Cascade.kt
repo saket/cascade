@@ -4,6 +4,10 @@ package me.saket.cascade
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -33,26 +38,39 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection.Ltr
 import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import me.saket.cascade.internal.CascadePopup
 import me.saket.cascade.internal.cascadeTransitionSpec
-
+import me.saket.cascade.internal.clickableWithoutRipple
+import me.saket.cascade.internal.clipReveal
 
 /**
  * Material Design dropdown menu with support for nested menus.
@@ -94,20 +112,99 @@ fun CascadeDropdownMenu(
   state: CascadeState = rememberCascadeState(),
   content: @Composable CascadeColumnScope.() -> Unit
 ) {
-  if (expanded) {
-    CascadePopup(
-      offset = offset,
+  val expandedStates = remember { MutableTransitionState(false) }
+  expandedStates.targetState = expanded
+
+  if (expandedStates.currentState || expandedStates.targetState) {
+    val transformOriginState = remember { mutableStateOf(TransformOrigin(1f, 0f)) }
+    val onDismissRequest by rememberUpdatedState(onDismissRequest)
+
+    Popup(
+      onDismissRequest = onDismissRequest,
+      properties = properties,
     ) {
-      CascadeDropdownMenuContent(
-        modifier = modifier
-          .requiredWidth(fixedWidth)
-          .wrapContentHeight(),
-        state = state,
-        content = content
-      )
+      Box(
+        modifier = Modifier
+          .fillMaxSize()
+          .clickableWithoutRipple { onDismissRequest() },
+        contentAlignment = Alignment.TopEnd
+      ) {
+        AnimatedPopupContent(
+          expandedStates = expandedStates,
+          transformOriginState = transformOriginState,
+        ) {
+          CascadeDropdownMenuContent(
+            modifier = modifier
+              .requiredWidth(fixedWidth)
+              .wrapContentHeight(),
+            state = state,
+            content = content
+          )
+        }
+      }
     }
   }
 }
+
+@Composable
+internal fun AnimatedPopupContent(
+  expandedStates: MutableTransitionState<Boolean>,
+  transformOriginState: MutableState<TransformOrigin>,
+  content: @Composable () -> Unit
+) {
+  val isExpandedTransition = updateTransition(expandedStates, label = "CascadeDropDownMenu")
+  val scale by isExpandedTransition.animateFloat(
+    transitionSpec = { tween(if (false isTransitioningTo true) InTransitionDuration else OutTransitionDuration) },
+    label = "scale",
+    targetValueByState = { if (it) 1f else 0f }
+  )
+  val alpha by isExpandedTransition.animateFloat(
+    transitionSpec = { tween(if (false isTransitioningTo true) InTransitionDuration else OutTransitionDuration) },
+    label = "alpha",
+    targetValueByState = { if (it) 1f else 0f }
+  )
+  val reveal = isExpandedTransition.animateFloat(
+    transitionSpec = {
+      tween((if (false isTransitioningTo true) InTransitionDuration * 1.2 else OutTransitionDuration * 0.8).toInt())
+    },
+    label = "clip",
+    targetValueByState = { if (it) 1f else 0.25f }
+  )
+
+  val density = LocalDensity.current
+  var contentSize by remember { mutableStateOf(DpSize.Zero) }
+
+  Box(
+    Modifier
+      .requiredSize(contentSize)
+      .graphicsLayer {
+        scaleX = scale
+        scaleY = scale
+        this.transformOrigin = transformOriginState.value
+      }
+      .shadow(60.dp, clip = false),
+  )
+  Box(
+    modifier = Modifier
+      .graphicsLayer {
+        scaleX = scale
+        scaleY = scale
+        this.alpha = alpha
+        this.transformOrigin = transformOriginState.value
+      }
+      .clipReveal(shape = MaterialTheme.shapes.extraSmall, transitionProgress = reveal)
+      .onGloballyPositioned { coordinates ->
+        val bounds = coordinates.boundsInParent()
+        contentSize = density.run {
+          DpSize(width = bounds.width.toDp(), height = bounds.height.toDp())
+        }
+      },
+    content = { content() },
+  )
+}
+
+internal const val InTransitionDuration = 300
+internal const val OutTransitionDuration = 300
 
 @Composable
 internal fun CascadeDropdownMenuContent(
@@ -121,16 +218,14 @@ internal fun CascadeDropdownMenuContent(
     }
   }
 
-  val layoutDirection = LocalLayoutDirection.current
-  val backgroundColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-
   Surface(
     modifier = modifier,
     shape = MaterialTheme.shapes.extraSmall,
-    color = backgroundColor,
+    color = MaterialTheme.colorScheme.surface,
     contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
-    shadowElevation = 3.dp,
+    tonalElevation = 3.dp,
   ) {
+    val layoutDirection = LocalLayoutDirection.current
     AnimatedContent(
       targetState = state.backStackSnapshot(),
       transitionSpec = { cascadeTransitionSpec(layoutDirection) }
@@ -139,7 +234,7 @@ internal fun CascadeDropdownMenuContent(
         Modifier
           // Provide a solid background color to prevent the
           // content of sub-menus from leaking into each other.
-          .background(backgroundColor)
+          .background(MaterialTheme.colorScheme.surface)
           // Block navigation while a transition is already playing because the
           // current transitionSpec isn't great at handling another navigation
           // while one is already running.
