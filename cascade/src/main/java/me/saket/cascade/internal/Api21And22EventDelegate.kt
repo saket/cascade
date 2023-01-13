@@ -16,6 +16,7 @@ import me.saket.cascade.EventDelegate
  */
 @SuppressLint("ViewConstructor")
 internal class Api21And22EventDelegate(private val onDismiss: () -> Unit) : EventDelegate {
+  // todo: copy PopupWindow's implementation.
   override fun dispatchKeyEvent(event: KeyEvent): Boolean {
     return if (event.keyCode == KEYCODE_BACK && event.action == ACTION_UP && !event.isCanceled) {
       onDismiss()

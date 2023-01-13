@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.DropdownMenuHeader
 import me.saket.cascade.rememberCascadeState
@@ -50,6 +51,8 @@ class ComposeSampleActivity : AppCompatActivity() {
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    WindowCompat.setDecorFitsSystemWindows(window, false)
 
     setContent {
       CascadeMaterialTheme {
@@ -61,7 +64,7 @@ class ComposeSampleActivity : AppCompatActivity() {
           var isMenuShown by rememberSaveable { mutableStateOf(true) }
 
           TopAppBar(
-            title = { Text(stringResource(R.string.app_name)) },
+            title = { Text("Stonks app") },
             colors = TopAppBarDefaults.smallTopAppBarColors(
               containerColor = Color.Transparent
             ),
