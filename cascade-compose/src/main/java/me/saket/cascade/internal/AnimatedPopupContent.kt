@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
@@ -49,8 +50,8 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
-private const val InTransitionDuration = 300 * 1
-private const val OutTransitionDuration = 300 * 1
+private const val InTransitionDuration = 300 * 10
+private const val OutTransitionDuration = 300 * 10
 
 @Composable
 internal fun AnimatedPopupContent(
@@ -73,7 +74,7 @@ internal fun AnimatedPopupContent(
     label = "alpha",
     targetValueByState = { if (it) 1f else 0f }
   )
-  val reveal = isExpandedTransition.animateFloat(
+  val reveal by isExpandedTransition.animateFloat(
     transitionSpec = {
       tween((if (false isTransitioningTo true) InTransitionDuration * 1.2 else OutTransitionDuration * 0.8).toInt())
     },
@@ -83,57 +84,93 @@ internal fun AnimatedPopupContent(
 
   val density = LocalDensity.current
   var contentSize by remember { mutableStateOf(DpSize.Zero) }
+
   val shape = MaterialTheme.shapes.extraSmall
+  val color = MaterialTheme.colorScheme.surface
 
-  Box(
-    Modifier
-      //.border(2.dp, Color.Green)
-      .graphicsLayer {
-        scaleX = scale
-        scaleY = scale
-        this.transformOrigin = transformOriginState.value
-      }
-      .drawWithCache {
-        val path = Path()
-        path.asAndroidPath().rewind()
-        onDrawWithContent {
-          val outline = shape.createOutline(
-            size = size,
-            layoutDirection = layoutDirection,
-            density = this
-          )
-          path.addOutline(outline)
+  val clippingShape = remember(reveal) {
+    object : Shape {
+      override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+      ): Outline {
+        val outline = shape.createOutline(
+          size = size,
+          layoutDirection = layoutDirection,
+          density = density
+        )
+        return when (outline) {
+          is Outline.Generic,
+          is Outline.Rectangle -> {
+            Outline.Rectangle(
+              Rect(Offset.Zero, size = size.copy(height = size.height * reveal))
+            )
+          }
 
-          clipPath(path, clipOp = ClipOp.Difference) {
-            this@onDrawWithContent.drawContent()
+          is Outline.Rounded -> {
+            Outline.Rounded(
+              RoundRect(
+                rect = Rect(Offset.Zero, size = size.copy(height = size.height * reveal)),
+                topLeft = outline.roundRect.topLeftCornerRadius,
+                topRight = outline.roundRect.topRightCornerRadius,
+                bottomRight = outline.roundRect.bottomRightCornerRadius,
+                bottomLeft = outline.roundRect.bottomLeftCornerRadius,
+              )
+            )
           }
         }
       }
-      //.border(4.dp, Color.Red)
-      .shadow(20.dp, shape, clip = false)
-  ) {
-    Box(Modifier.requiredSize(contentSize))
+    }
   }
+
   Box(
     modifier = Modifier
-      //.border(1.dp, Color.Yellow)
       .graphicsLayer {
         scaleX = scale
         scaleY = scale
-        this.alpha = alpha
         this.transformOrigin = transformOriginState.value
       }
-      //.border(0.dp, Color.Blue)
-      //.clipReveal(shape = MaterialTheme.shapes.extraSmall, transitionProgress = reveal)
     ,
     content = {
       Box(
-        Modifier.onGloballyPositioned { coordinates ->
-          val bounds = coordinates.boundsInParent()
-          contentSize = density.run {
-            DpSize(width = bounds.width.toDp(), height = bounds.height.toDp())
+        Modifier
+          .matchParentSize()
+          .drawWithCache {
+            onDrawWithContent {
+              val path = Path()
+              path.asAndroidPath().rewind()
+              val outline = clippingShape.createOutline(
+                size = size,
+                layoutDirection = layoutDirection,
+                density = this
+              )
+              path.addOutline(outline)
+
+              clipPath(path, clipOp = ClipOp.Difference) {
+                this@onDrawWithContent.drawContent()
+              }
+            }
           }
-        }
+          .shadow(
+          elevation = 20.dp,
+          shape = clippingShape,
+          clip = false,
+          ambientColor = Color.Black.copy(alpha = alpha),
+          spotColor = Color.Black.copy(alpha = alpha),
+        )
+      )
+
+      Box(
+//        Modifier.onGloballyPositioned { coordinates ->
+//          val bounds = coordinates.boundsInParent()
+//          contentSize = density.run {
+//            DpSize(width = bounds.width.toDp(), height = bounds.height.toDp())
+//          }
+//        }
+      Modifier.alpha(alpha)
+        //.clipReveal(shape = shape, transitionProgress = reveal)
+        .clip(clippingShape)
       ) {
         content()
       }
@@ -142,41 +179,7 @@ internal fun AnimatedPopupContent(
 
 //  val shape = MaterialTheme.shapes.extraSmall
 //
-//  val clippingShape = remember(reveal) {
-//    object : Shape {
-//      override fun createOutline(
-//        size: Size,
-//        layoutDirection: LayoutDirection,
-//        density: Density
-//      ): Outline {
-//        val outline = shape.createOutline(
-//          size = size,
-//          layoutDirection = layoutDirection,
-//          density = density
-//        )
-//        return when (outline) {
-//          is Outline.Generic,
-//          is Outline.Rectangle -> {
-//            Outline.Rectangle(
-//              Rect(Offset.Zero, size = size.copy(height = size.height * reveal))
-//            )
-//          }
-//
-//          is Outline.Rounded -> {
-//            Outline.Rounded(
-//              RoundRect(
-//                rect = Rect(Offset.Zero, size = size.copy(height = size.height * reveal)),
-//                topLeft = outline.roundRect.topLeftCornerRadius,
-//                topRight = outline.roundRect.topRightCornerRadius,
-//                bottomRight = outline.roundRect.bottomRightCornerRadius,
-//                bottomLeft = outline.roundRect.bottomLeftCornerRadius,
-//              )
-//            )
-//          }
-//        }
-//      }
-//    }
-//  }
+
 //
 //  Box(
 //    modifier = Modifier
