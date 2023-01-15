@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +21,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowLeft
@@ -49,18 +46,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.LayoutDirection.Ltr
 import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
@@ -68,8 +61,8 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import me.saket.cascade.internal.AnimatedPopupContent
 import me.saket.cascade.internal.DropdownMenuPositionProvider
-import me.saket.cascade.internal.ImmutableLayoutCoordinates
 import me.saket.cascade.internal.PositionPopupContent
+import me.saket.cascade.internal.RelativeBounds
 import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
 import me.saket.cascade.internal.clickableWithoutRipple
@@ -127,17 +120,18 @@ fun CascadeDropdownMenu(
       transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
     }
 
-    var anchorPositionInWindow: ImmutableLayoutCoordinates? by remember { mutableStateOf(null) }
-
-    val hostView = LocalView.current
+    val anchorHostView = LocalView.current
+    var anchorBounds: RelativeBounds? by remember { mutableStateOf(null) }
     Box(
       Modifier.onGloballyPositioned { coordinates ->
         // FYI:
         // coordinates -> this box.
         // coordinates.parent -> "anchor" composable that contains CascadeDropdownMenu().
-        anchorPositionInWindow = ImmutableLayoutCoordinates(coordinates.parentLayoutCoordinates!!)
+        anchorBounds = RelativeBounds(coordinates.parentLayoutCoordinates!!, owner = anchorHostView)
       }
     )
+
+    val popupHostView = LocalView.current
 
     // todo: explain
     // A full sized popup is shown so that content can render
@@ -151,8 +145,8 @@ fun CascadeDropdownMenu(
           .fillMaxSize()
           .clickableWithoutRipple(onClick = onDismissRequest),
         positionProvider = popupPositionProvider,
-        anchorPosition = anchorPositionInWindow,
-        anchorView = hostView
+        anchorBounds = anchorBounds,
+        anchorView = popupHostView
       ) {
         AnimatedPopupContent(
           expandedStates = expandedStates,

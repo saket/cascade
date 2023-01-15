@@ -8,19 +8,17 @@
     <item name="colorPrimaryDark">@color/window_background</item>
     <item name="colorAccent">@color/color_accent</item>
     <item name="android:windowBackground">@color/window_background</item>
-    <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+    <item name="android:windowLightStatusBar">true</item>
     <item name="toolbarStyle">@style/ToolbarStyle</item>
 
     <item name="colorControlNormal">@color/color_control_normal</item>    <!-- Menu icons -->
     <item name="android:textColorPrimary">@color/color_accent</item>      <!-- Menu items -->
     <item name="android:textColorSecondary">#729288</item>                <!-- Sub-menu titles -->
 
-    <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
-    <item name="android:navigationBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
-    <item name="android:windowTranslucentStatus">false</item>
-    <item name="android:windowTranslucentNavigation">false</item>
-    <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
-    <item name="android:fitsSystemWindows">false</item>
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+    <item name="android:fitsSystemWindows">true</item>
   </style>
 
   <style name="ToolbarStyle" parent="Widget.MaterialComponents.Toolbar">
