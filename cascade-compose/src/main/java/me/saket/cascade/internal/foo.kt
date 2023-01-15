@@ -27,7 +27,7 @@ internal data class DropdownMenuPositionProvider(
     popupContentSize: IntSize
   ): IntOffset {
     // The min margin above and below the menu, relative to the screen.
-    val verticalMargin = with(density) { 48.dp.roundToPx() }
+    val verticalMargin = with(density) { 48.dp.roundToPx() }  // todo: make 0
     // The content offset specified using the dropdown offset parameter.
     val contentOffsetX = with(density) { contentOffset.x.roundToPx() }
     val contentOffsetY = with(density) { contentOffset.y.roundToPx() }

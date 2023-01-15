@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowLeft
@@ -43,25 +45,32 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.LayoutDirection.Ltr
 import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import me.saket.cascade.internal.AnimatedPopupContent
-import me.saket.cascade.internal.CascadePopup
+import me.saket.cascade.internal.DropdownMenuPositionProvider
+import me.saket.cascade.internal.ImmutableLayoutCoordinates
+import me.saket.cascade.internal.PositionPopupContent
+import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
 import me.saket.cascade.internal.clickableWithoutRipple
 
@@ -110,17 +119,40 @@ fun CascadeDropdownMenu(
 
   if (expandedStates.currentState || expandedStates.targetState) {
     val transformOriginState = remember { mutableStateOf(TransformOrigin(1f, 0f)) }
-    val onDismissRequest by rememberUpdatedState(onDismissRequest)
 
+    val popupPositionProvider = DropdownMenuPositionProvider(
+      offset,
+      LocalDensity.current
+    ) { parentBounds, menuBounds ->
+      transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
+    }
+
+    var anchorPositionInWindow: ImmutableLayoutCoordinates? by remember { mutableStateOf(null) }
+
+    val hostView = LocalView.current
+    Box(
+      Modifier.onGloballyPositioned { coordinates ->
+        // FYI:
+        // coordinates -> this box.
+        // coordinates.parent -> "anchor" composable that contains CascadeDropdownMenu().
+        anchorPositionInWindow = ImmutableLayoutCoordinates(coordinates.parentLayoutCoordinates!!)
+      }
+    )
+
+    // todo: explain
+    // A full sized popup is shown so that content can render
+    // (fake) shadows with blur radius larger than its limit of 8dp.
     Popup(
       onDismissRequest = onDismissRequest,
       properties = properties,
     ) {
-      Box(
+      PositionPopupContent(
         modifier = Modifier
           .fillMaxSize()
-          .clickableWithoutRipple { onDismissRequest() },
-        contentAlignment = Alignment.TopEnd
+          .clickableWithoutRipple(onClick = onDismissRequest),
+        positionProvider = popupPositionProvider,
+        anchorPosition = anchorPositionInWindow,
+        anchorView = hostView
       ) {
         AnimatedPopupContent(
           expandedStates = expandedStates,
@@ -172,6 +204,7 @@ internal fun CascadeDropdownMenuContent(
           // current transitionSpec isn't great at handling another navigation
           // while one is already running.
           .pointerInteropFilter { transition.isRunning }
+          //.onSizeChanged { size -> println("Actual actual content size = $size") }
       ) {
         val currentContent = backStackSnapshot.topMostEntry?.childrenContent ?: content
         backStackSnapshot.topMostEntry?.header?.invoke()
