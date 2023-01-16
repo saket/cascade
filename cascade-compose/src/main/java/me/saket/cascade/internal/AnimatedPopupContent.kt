@@ -115,10 +115,9 @@ internal fun AnimatedPopupContent(
       Modifier
         .matchParentSize()
         .drawWithCache {  // todo: no-op this out when alpha=1f
-          // rewind() is faster than reset().
           path
             .asAndroidPath()
-            .rewind()
+            .rewind() // rewind() is faster than reset().
           path.addOutline(
             clippingShape.createOutline(
               size = size,

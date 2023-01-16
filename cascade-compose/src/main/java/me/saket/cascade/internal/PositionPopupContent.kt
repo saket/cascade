@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
@@ -51,25 +52,11 @@ internal fun PositionPopupContent(
   anchorView: View,
   content: @Composable () -> Unit
 ) {
+  val popupView = LocalView.current
   val layoutDirection = LocalLayoutDirection.current
 
   var popupPosition: RelativePosition? by remember { mutableStateOf(null) }
   val windowSizeRectBuffer = remember { android.graphics.Rect(0, 0, 0, 0) }
-
-//  anchorBounds?.let { anchorPosition ->
-//    LaunchedEffect(anchorPosition) {
-//      val layoutPosition = anchorPosition.coordinates.positionInWindow().let {
-//        IntOffset(x = it.x.roundToInt(), y = it.y.roundToInt())
-//      }
-//      val layoutSize = anchorPosition.coordinates.size
-//      anchorBounds = IntRect(layoutPosition, layoutSize)
-//      anchorRootPosition = anchorPosition.coordinates.findRootCoordinates().positionInWindow().let {
-//        IntOffset(x = it.x.roundToInt(), y = it.y.roundToInt())
-//      }
-//    }
-//  }
-
-  val popupView = LocalView.current
 
   Box(modifier) {
     Box(

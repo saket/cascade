@@ -17,6 +17,7 @@ internal data class RelativeBounds(
   val windowPositionOnScreen: Offset
 ) {
   companion object {
+    // todo: does this get called on every frame of the animation?
     operator fun invoke(coordinates: LayoutCoordinates, owner: View): RelativeBounds {
       return coordinates.findRootCoordinates().let { rootCoordinates ->
         RelativeBounds(
@@ -36,7 +37,7 @@ internal data class RelativeBounds(
 internal data class RelativePosition(
   val positionInRoot: Offset,
   val rootPositionInWindow: Offset,
-  val windowPositionOnScreen: Offset, //todo: rename to "OnScreen"
+  val windowPositionOnScreen: Offset,
 ) {
   fun alignedWithRootOf(other: RelativeBounds): RelativePosition {
     return RelativePosition(
