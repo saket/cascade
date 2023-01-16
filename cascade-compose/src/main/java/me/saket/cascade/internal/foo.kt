@@ -13,11 +13,12 @@ import androidx.compose.ui.window.PopupPositionProvider
 import kotlin.math.max
 import kotlin.math.min
 
+// todo: rename file
 @Immutable
 internal data class DropdownMenuPositionProvider(
   val contentOffset: DpOffset,
   val density: Density,
-  val onPositionCalculated: (IntRect, IntRect) -> Unit = { _, _ -> }
+  val onPositionCalculated: (anchorBounds: IntRect, menuBounds: IntRect) -> Unit = { _, _ -> }
 ) : PopupPositionProvider {
 
   override fun calculatePosition(

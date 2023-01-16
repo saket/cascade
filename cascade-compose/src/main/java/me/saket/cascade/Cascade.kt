@@ -64,6 +64,7 @@ import androidx.compose.ui.window.PopupProperties
 import me.saket.cascade.internal.AnimatedPopupContent
 import me.saket.cascade.internal.DropdownMenuPositionProvider
 import me.saket.cascade.internal.PositionPopupContent
+import me.saket.cascade.internal.CoercePositiveValues
 import me.saket.cascade.internal.RelativeBounds
 import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
@@ -113,14 +114,19 @@ fun CascadeDropdownMenu(
   expandedStates.targetState = expanded
 
   if (expandedStates.currentState || expandedStates.targetState) {
-    val transformOriginState = remember { mutableStateOf(TransformOrigin(1f, 0f)) }
-
-    val popupPositionProvider = DropdownMenuPositionProvider(
-      offset,
-      LocalDensity.current
-    ) { parentBounds, menuBounds ->
-      transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
-    }
+    val transformOriginState = remember { mutableStateOf(TransformOrigin.Center) }
+    val popupPositionProvider = CoercePositiveValues(
+      DropdownMenuPositionProvider(
+        contentOffset = offset,
+        density = LocalDensity.current,
+        onPositionCalculated = { parentBounds, menuBounds ->
+          transformOriginState.value = calculateTransformOrigin(
+            parentBounds = parentBounds,
+            menuBounds = CoercePositiveValues.correctMenuBounds(menuBounds)
+          )
+        }
+      )
+    )
 
     val anchorHostView = LocalView.current
     var anchorBounds: RelativeBounds? by remember { mutableStateOf(null) }
@@ -132,8 +138,6 @@ fun CascadeDropdownMenu(
         anchorBounds = RelativeBounds(coordinates.parentLayoutCoordinates!!, owner = anchorHostView)
       }
     )
-
-    val popupHostView = LocalView.current
 
     // todo: explain
     // A full sized popup is shown so that content can render
@@ -148,7 +152,7 @@ fun CascadeDropdownMenu(
           .clickableWithoutRipple(onClick = onDismissRequest),
         positionProvider = popupPositionProvider,
         anchorBounds = anchorBounds,
-        anchorView = popupHostView
+        anchorView = anchorHostView
       ) {
         AnimatedPopupContent(
           expandedStates = expandedStates,

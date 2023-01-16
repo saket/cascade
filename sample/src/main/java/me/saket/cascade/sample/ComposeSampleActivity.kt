@@ -235,7 +235,15 @@ class ComposeSampleActivity : AppCompatActivity() {
       onClick = {}
     )
     DropdownMenuItem(
-      text = { Text("Microsoft word") },
+      text = { Text("Microsoft Word") },
+      onClick = {}
+    )
+    DropdownMenuItem(
+      text = { Text("Microsoft PowerPoint") },
+      onClick = {}
+    )
+    DropdownMenuItem(
+      text = { Text("Microsoft Excel") },
       onClick = {}
     )
   }
