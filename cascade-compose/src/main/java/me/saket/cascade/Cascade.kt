@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowLeft
 import androidx.compose.material.icons.rounded.ArrowRight
@@ -198,7 +200,7 @@ internal fun CascadeDropdownMenuContent(
           // current transitionSpec isn't great at handling another navigation
           // while one is already running.
           .pointerInteropFilter { transition.isRunning }
-          //.onSizeChanged { size -> println("Actual actual content size = $size") }
+          .verticalScroll(rememberScrollState())
       ) {
         val currentContent = backStackSnapshot.topMostEntry?.childrenContent ?: content
         backStackSnapshot.topMostEntry?.header?.invoke()
