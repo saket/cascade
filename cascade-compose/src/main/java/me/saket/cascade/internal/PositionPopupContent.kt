@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
@@ -48,14 +47,14 @@ internal fun FullSizedPopup(
 internal fun PositionPopupContent(
   modifier: Modifier = Modifier,
   positionProvider: PopupPositionProvider,
-  anchorBounds: RelativeBounds?,
+  anchorBounds: ScreenRelativeBounds?,
   anchorView: View,
   content: @Composable () -> Unit
 ) {
   val popupView = LocalView.current
   val layoutDirection = LocalLayoutDirection.current
 
-  var popupPosition: RelativePosition? by remember { mutableStateOf(null) }
+  var popupPosition: ScreenRelativePosition? by remember { mutableStateOf(null) }
   val windowSizeRectBuffer = remember { android.graphics.Rect(0, 0, 0, 0) }
 
   Box(modifier) {
@@ -67,7 +66,7 @@ internal fun PositionPopupContent(
             anchorView.getWindowVisibleDisplayFrame(rect)
             IntRect(left = rect.left, top = rect.top, right = rect.right, bottom = rect.bottom)
           }
-          val popupContentBounds = RelativeBounds(coordinates, owner = popupView)
+          val popupContentBounds = ScreenRelativeBounds(coordinates, owner = popupView)
           val contentSize = coordinates.size
 
           if (anchorBounds != null) {

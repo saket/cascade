@@ -65,7 +65,7 @@ import me.saket.cascade.internal.AnimatedPopupContent
 import me.saket.cascade.internal.DropdownMenuPositionProvider
 import me.saket.cascade.internal.PositionPopupContent
 import me.saket.cascade.internal.CoercePositiveValues
-import me.saket.cascade.internal.RelativeBounds
+import me.saket.cascade.internal.ScreenRelativeBounds
 import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
 import me.saket.cascade.internal.clickableWithoutRipple
@@ -129,13 +129,13 @@ fun CascadeDropdownMenu(
     )
 
     val anchorHostView = LocalView.current
-    var anchorBounds: RelativeBounds? by remember { mutableStateOf(null) }
+    var anchorBounds: ScreenRelativeBounds? by remember { mutableStateOf(null) }
     Box(
       Modifier.onGloballyPositioned { coordinates ->
         // FYI:
         // coordinates -> this box.
         // coordinates.parent -> "anchor" composable that contains CascadeDropdownMenu().
-        anchorBounds = RelativeBounds(coordinates.parentLayoutCoordinates!!, owner = anchorHostView)
+        anchorBounds = ScreenRelativeBounds(coordinates.parentLayoutCoordinates!!, owner = anchorHostView)
       }
     )
 

@@ -8,19 +8,18 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.unit.toOffset
 
 @Immutable
-internal data class RelativeBounds(
+internal data class ScreenRelativeBounds(
   val boundsInRoot: Rect,
   val rootPositionInWindow: Offset,
   val windowPositionOnScreen: Offset
 ) {
   companion object {
     // todo: does this get called on every frame of the animation?
-    operator fun invoke(coordinates: LayoutCoordinates, owner: View): RelativeBounds {
+    operator fun invoke(coordinates: LayoutCoordinates, owner: View): ScreenRelativeBounds {
       return coordinates.findRootCoordinates().let { rootCoordinates ->
-        RelativeBounds(
+        ScreenRelativeBounds(
           boundsInRoot = rootCoordinates.localBoundingBoxOf(coordinates),
           rootPositionInWindow = rootCoordinates.positionInWindow(),
           windowPositionOnScreen = IntArray(size = 2).let {
@@ -34,13 +33,13 @@ internal data class RelativeBounds(
 }
 
 @Immutable
-internal data class RelativePosition(
+internal data class ScreenRelativePosition(
   val positionInRoot: Offset,
   val rootPositionInWindow: Offset,
   val windowPositionOnScreen: Offset,
 ) {
-  fun alignedWithRootOf(other: RelativeBounds): RelativePosition {
-    return RelativePosition(
+  fun alignedWithRootOf(other: ScreenRelativeBounds): ScreenRelativePosition {
+    return ScreenRelativePosition(
       positionInRoot = positionInRoot.minus(
         other.rootPositionInWindow - rootPositionInWindow
       ).minus(
@@ -52,8 +51,8 @@ internal data class RelativePosition(
   }
 
   companion object {
-    operator fun invoke(coordinates: LayoutCoordinates, owner: View): RelativePosition {
-      return RelativePosition(
+    operator fun invoke(coordinates: LayoutCoordinates, owner: View): ScreenRelativePosition {
+      return ScreenRelativePosition(
         positionInRoot = coordinates.positionInRoot(),
         rootPositionInWindow = coordinates.findRootCoordinates().positionInWindow(),
         windowPositionOnScreen = IntArray(size = 2).let {
@@ -65,8 +64,8 @@ internal data class RelativePosition(
   }
 }
 
-internal fun Offset.relativeTo(other: RelativeBounds): RelativePosition {
-  return RelativePosition(
+internal fun Offset.relativeTo(other: ScreenRelativeBounds): ScreenRelativePosition {
+  return ScreenRelativePosition(
     positionInRoot = this,
     rootPositionInWindow = other.rootPositionInWindow,
     windowPositionOnScreen = other.windowPositionOnScreen,
