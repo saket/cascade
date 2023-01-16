@@ -12,36 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toOffset
-import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
-import androidx.compose.ui.window.PopupProperties
-
-@Composable
-internal fun FullSizedPopup(
-  onDismissRequest: () -> Unit,
-  properties: PopupProperties,
-  content: @Composable () -> Unit
-) {
-  Box(
-    Modifier.onGloballyPositioned { coordinates ->
-      val parentCoordinates = coordinates.parentLayoutCoordinates!!
-      println("onGloballyPositioned() -> coordinates = ${parentCoordinates.positionInWindow()}")
-    }
-  )
-
-  Popup(
-    onDismissRequest = onDismissRequest,
-    properties = properties,
-    content = content
-  )
-}
 
 @Composable
 internal fun PositionPopupContent(
@@ -54,17 +32,16 @@ internal fun PositionPopupContent(
   val popupView = LocalView.current
   val layoutDirection = LocalLayoutDirection.current
 
-  var popupPosition: ScreenRelativePosition? by remember { mutableStateOf(null) }
-  val windowSizeRectBuffer = remember { android.graphics.Rect(0, 0, 0, 0) }
+  var popupPosition: ScreenRelativeOffset? by remember { mutableStateOf(null) }
+  val rectBuffer = remember { android.graphics.Rect(0, 0, 0, 0) }
 
   Box(modifier) {
     Box(
       Modifier
         .onGloballyPositioned { coordinates ->
-          // todo: can this be calculated from RelativeBounds?
-          val anchorWindowBounds = windowSizeRectBuffer.let { rect ->
-            anchorView.getWindowVisibleDisplayFrame(rect)
-            IntRect(left = rect.left, top = rect.top, right = rect.right, bottom = rect.bottom)
+          val anchorWindowSizeWithInsets = run {
+            anchorView.getWindowVisibleDisplayFrame(rectBuffer)
+            IntSize(width = rectBuffer.width(), height = rectBuffer.height())
           }
           val popupContentBounds = ScreenRelativeBounds(coordinates, owner = popupView)
           val contentSize = coordinates.size
@@ -72,22 +49,26 @@ internal fun PositionPopupContent(
           if (anchorBounds != null) {
             popupPosition = positionProvider.calculatePosition(
               anchorBounds = anchorBounds.boundsInRoot.round(),
-              windowSize = anchorWindowBounds.size,
+              windowSize = anchorWindowSizeWithInsets,
               layoutDirection = layoutDirection,
               popupContentSize = contentSize,
-            ).let { position ->
-              // todo: explain better.
-              // popupPosition was calculated relative to anchor's window.
-              // it must be offset to account for popup's window.
-              val positionInAnchorWindow = position.toOffset().relativeTo(anchorBounds)
-              positionInAnchorWindow.alignedWithRootOf(popupContentBounds)
+            )
+            .let { position ->
+              // Material3's DropdownMenuPositionProvider was written to calculate
+              // a position in the anchor's window. Cascade will have to adjust the
+              // position to use it inside the popup's window.
+              val positionInAnchorWindow = ScreenRelativeOffset(
+                positionInRoot = position.toOffset(),
+                rootOffsetFromScreen = anchorBounds.rootOffsetFromScreen
+              )
+              positionInAnchorWindow.alignedWithWindowOf(popupContentBounds)
             }
           }
         }
         .absoluteOffset {
           popupPosition?.positionInRoot?.round() ?: IntOffset.Zero
         }
-        // Hide the popup while it can't be positioned correctly.
+        // Hide the popup until it can be positioned.
         .alpha(if (popupPosition != null) 1f else 0f)
     ) {
       content()

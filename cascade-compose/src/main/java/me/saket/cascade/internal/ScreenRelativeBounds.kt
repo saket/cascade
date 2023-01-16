@@ -6,68 +6,53 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.findRootCoordinates
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionInWindow
 
 @Immutable
 internal data class ScreenRelativeBounds(
   val boundsInRoot: Rect,
-  val rootPositionInWindow: Offset,
-  val windowPositionOnScreen: Offset
-) {
-  companion object {
-    // todo: does this get called on every frame of the animation?
-    operator fun invoke(coordinates: LayoutCoordinates, owner: View): ScreenRelativeBounds {
-      return coordinates.findRootCoordinates().let { rootCoordinates ->
-        ScreenRelativeBounds(
-          boundsInRoot = rootCoordinates.localBoundingBoxOf(coordinates),
-          rootPositionInWindow = rootCoordinates.positionInWindow(),
-          windowPositionOnScreen = IntArray(size = 2).let {
-            owner.rootView.getLocationOnScreen(it)
-            Offset(x = it[0].toFloat(), y = it[1].toFloat())
-          }
-        )
-      }
-    }
-  }
-}
+  val rootOffsetFromScreen: RootOffsetFromScreen,
+)
 
 @Immutable
-internal data class ScreenRelativePosition(
+internal data class ScreenRelativeOffset(
   val positionInRoot: Offset,
-  val rootPositionInWindow: Offset,
-  val windowPositionOnScreen: Offset,
-) {
-  fun alignedWithRootOf(other: ScreenRelativeBounds): ScreenRelativePosition {
-    return ScreenRelativePosition(
-      positionInRoot = positionInRoot.minus(
-        other.rootPositionInWindow - rootPositionInWindow
-      ).minus(
-        other.windowPositionOnScreen - windowPositionOnScreen
-      ),
-      rootPositionInWindow = other.rootPositionInWindow,
-      windowPositionOnScreen = other.windowPositionOnScreen,
-    )
-  }
+  val rootOffsetFromScreen: RootOffsetFromScreen,
+)
 
-  companion object {
-    operator fun invoke(coordinates: LayoutCoordinates, owner: View): ScreenRelativePosition {
-      return ScreenRelativePosition(
-        positionInRoot = coordinates.positionInRoot(),
-        rootPositionInWindow = coordinates.findRootCoordinates().positionInWindow(),
-        windowPositionOnScreen = IntArray(size = 2).let {
-          owner.rootView.getLocationOnScreen(it)
-          Offset(x = it[0].toFloat(), y = it[1].toFloat())
+@Immutable
+internal data class RootOffsetFromScreen(
+  val rootLayoutPositionInWindow: Offset,
+  val windowPositionOnScreen: Offset,
+)
+
+internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): ScreenRelativeBounds {
+  return coordinates.findRootCoordinates().let { rootCoordinates ->
+    ScreenRelativeBounds(
+      boundsInRoot = rootCoordinates.localBoundingBoxOf(coordinates),
+      rootOffsetFromScreen = RootOffsetFromScreen(
+        rootLayoutPositionInWindow = rootCoordinates.positionInWindow(),
+        windowPositionOnScreen = run {
+          owner.rootView.getLocationOnScreen(intArrayBuffer)
+          Offset(x = intArrayBuffer[0].toFloat(), y = intArrayBuffer[1].toFloat())
         }
       )
-    }
+    )
   }
 }
 
-internal fun Offset.relativeTo(other: ScreenRelativeBounds): ScreenRelativePosition {
-  return ScreenRelativePosition(
-    positionInRoot = this,
-    rootPositionInWindow = other.rootPositionInWindow,
-    windowPositionOnScreen = other.windowPositionOnScreen,
+// I do not expect this to be shared across threads to need any synchronization.
+private val intArrayBuffer = IntArray(size = 2)
+
+/**
+ * Calculate a position in another window such that its visual location on screen
+ * remains unchanged. That is, its offset from screen's 0,0 remains the same.
+ * */
+internal fun ScreenRelativeOffset.alignedWithWindowOf(other: ScreenRelativeBounds): ScreenRelativeOffset {
+  return ScreenRelativeOffset(
+    positionInRoot = positionInRoot
+      - (rootOffsetFromScreen.rootLayoutPositionInWindow - other.rootOffsetFromScreen.rootLayoutPositionInWindow)
+      - (rootOffsetFromScreen.windowPositionOnScreen - other.rootOffsetFromScreen.windowPositionOnScreen),
+    rootOffsetFromScreen = other.rootOffsetFromScreen,
   )
 }
