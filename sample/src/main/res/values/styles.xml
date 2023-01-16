@@ -18,7 +18,6 @@
     <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
     <item name="android:navigationBarColor">@android:color/transparent</item>
-    <item name="android:fitsSystemWindows">true</item>
   </style>
 
   <style name="ToolbarStyle" parent="Widget.MaterialComponents.Toolbar">

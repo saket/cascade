@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.DropdownMenuHeader
@@ -47,6 +45,7 @@ class ComposeSampleActivity : AppCompatActivity() {
 
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
+    WindowCompat.setDecorFitsSystemWindows(window, /* decorFitsSystemWindows = */ false)
     super.onCreate(savedInstanceState)
 
     setContent {
@@ -60,34 +59,19 @@ class ComposeSampleActivity : AppCompatActivity() {
 
           TopAppBar(
             title = { Text(stringResource(R.string.app_name)) },
-            //title = { Text("Stonks app") },
             colors = TopAppBarDefaults.smallTopAppBarColors(
               containerColor = Color.Transparent
             ),
             actions = {
               IconButton(onClick = { isMenuShown = true }) {
                 /*Material*/Menu(
-                  expanded = isMenuShown,
-                  onDismiss = { isMenuShown = false }
-                )
+                expanded = isMenuShown,
+                onDismiss = { isMenuShown = false }
+              )
                 Icon(Icons.Rounded.MoreVert, contentDescription = "More options")
               }
             }
           )
-
-          // Position menu to the top-end so that it overlaps the overflow menu button.
-//          Box(
-//            Modifier
-//              .padding(end = 12.dp, top = 40.dp)
-//              .background(Color.Red, CircleShape)
-//              .size(10.dp)
-//              .align(Alignment.TopEnd)
-//          ) {
-//            /*Material*/Menu(
-//              expanded = isMenuShown,
-//              onDismiss = { isMenuShown = false }
-//            )
-//          }
         }
       }
     }
