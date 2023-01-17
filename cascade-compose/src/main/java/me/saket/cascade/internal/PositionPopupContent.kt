@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -45,25 +44,27 @@ internal fun PositionPopupContent(
             IntSize(width = rectBuffer.width(), height = rectBuffer.height())
           }
           val popupContentBounds = ScreenRelativeBounds(coordinates, owner = popupView)
-          val contentSize = coordinates.size
 
           if (anchorBounds != null) {
-            contentPosition = positionProvider.calculatePosition(
-              anchorBounds = anchorBounds.boundsInRoot.round(),
-              windowSize = anchorWindowSizeWithInsets,
-              layoutDirection = layoutDirection,
-              popupContentSize = contentSize,
-            )
-            .let { position ->
-              // Material3's DropdownMenuPositionProvider was written to calculate
-              // a position in the anchor's window. Cascade will have to adjust the
-              // position to use it inside the popup's window.
-              val positionInAnchorWindow = ScreenRelativeOffset(
-                positionInRoot = position.toOffset(),
-                rootOffsetFromScreen = anchorBounds.rootOffsetFromScreen
+            contentPosition = positionProvider
+              .calculatePosition(
+                anchorBounds = anchorBounds.boundsInRoot.roundToIntRect(),
+                windowSize = anchorWindowSizeWithInsets,
+                layoutDirection = layoutDirection,
+                popupContentSize = coordinates.size,
               )
-              positionInAnchorWindow.positionInWindowOf(popupContentBounds).round()
-            }
+              .let { position ->
+                // Material3's DropdownMenuPositionProvider was written to calculate
+                // a position in the anchor's window. Cascade will have to adjust the
+                // position to use it inside the popup's window.
+                val positionInAnchorWindow = ScreenRelativeOffset(
+                  positionInRoot = position.toOffset(),
+                  rootOffsetFromScreen = anchorBounds.rootOffsetFromScreen
+                )
+                positionInAnchorWindow
+                  .positionInWindowOf(popupContentBounds)
+                  .round()
+              }
           }
         }
         // Hide the popup until it can be positioned.
@@ -75,6 +76,6 @@ internal fun PositionPopupContent(
   }
 }
 
-private fun Rect.round(): IntRect {
+private fun Rect.roundToIntRect(): IntRect {
   return IntRect(topLeft = topLeft.round(), bottomRight = bottomRight.round())
 }

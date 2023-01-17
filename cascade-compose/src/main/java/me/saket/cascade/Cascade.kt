@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -98,6 +99,9 @@ import me.saket.cascade.internal.clickableWithoutRipple
  *   )
  * }
  * ```
+ *
+ * @param fixedWidth A width that will be shared by all nested menus. This can be removed in
+ *                  the future once cascade is able to animate width changes between nested menus.
  */
 @Composable
 fun CascadeDropdownMenu(
@@ -139,9 +143,8 @@ fun CascadeDropdownMenu(
       }
     )
 
-    // todo: explain
-    // A full sized popup is shown so that content can render
-    // (fake) shadows with blur radius larger than its limit of 8dp.
+    // A full sized popup is shown so that content can render fake shadows
+    // that do not suffer from https://issuetracker.google.com/issues/236109671.
     Popup(
       onDismissRequest = onDismissRequest,
       properties = properties,

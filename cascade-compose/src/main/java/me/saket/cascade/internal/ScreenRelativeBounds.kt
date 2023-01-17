@@ -11,17 +11,17 @@ import androidx.compose.ui.layout.positionInWindow
 @Immutable
 internal data class ScreenRelativeBounds(
   val boundsInRoot: Rect,
-  val rootOffsetFromScreen: RootOffsetFromScreen,
+  val rootOffsetFromScreen: RootLayoutOffsetFromScreen,
 )
 
 @Immutable
 internal data class ScreenRelativeOffset(
   val positionInRoot: Offset,
-  val rootOffsetFromScreen: RootOffsetFromScreen,
+  val rootOffsetFromScreen: RootLayoutOffsetFromScreen,
 )
 
 @Immutable
-internal data class RootOffsetFromScreen(
+internal data class RootLayoutOffsetFromScreen(
   val rootLayoutPositionInWindow: Offset,
   val windowPositionOnScreen: Offset,
 )
@@ -30,7 +30,7 @@ internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): 
   return coordinates.findRootCoordinates().let { rootCoordinates ->
     ScreenRelativeBounds(
       boundsInRoot = rootCoordinates.localBoundingBoxOf(coordinates),
-      rootOffsetFromScreen = RootOffsetFromScreen(
+      rootOffsetFromScreen = RootLayoutOffsetFromScreen(
         rootLayoutPositionInWindow = rootCoordinates.positionInWindow(),
         windowPositionOnScreen = run {
           owner.rootView.getLocationOnScreen(intArrayBuffer)

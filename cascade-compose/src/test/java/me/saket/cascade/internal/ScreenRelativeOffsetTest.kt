@@ -9,14 +9,14 @@ class ScreenRelativeOffsetTest {
   @Test fun canary() {
     val first = ScreenRelativeOffset(
       positionInRoot = Offset(544f, 200f),
-      rootOffsetFromScreen = RootOffsetFromScreen(
+      rootOffsetFromScreen = RootLayoutOffsetFromScreen(
         rootLayoutPositionInWindow = Offset.Zero,
         windowPositionOnScreen = Offset.Zero
       )
     )
     val second = ScreenRelativeBounds(
       boundsInRoot = Rect(0f, 0f, 515f, 630f),
-      rootOffsetFromScreen = RootOffsetFromScreen(
+      rootOffsetFromScreen = RootLayoutOffsetFromScreen(
         rootLayoutPositionInWindow = Offset.Zero,
         windowPositionOnScreen = Offset(1f, 63f)
       )
