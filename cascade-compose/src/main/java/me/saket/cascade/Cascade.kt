@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -63,9 +62,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import me.saket.cascade.internal.AnimatedPopupContent
+import me.saket.cascade.internal.CoercePositiveValues
 import me.saket.cascade.internal.DropdownMenuPositionProvider
 import me.saket.cascade.internal.PositionPopupContent
-import me.saket.cascade.internal.CoercePositiveValues
 import me.saket.cascade.internal.ScreenRelativeBounds
 import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
@@ -121,15 +120,14 @@ fun CascadeDropdownMenu(
     val transformOriginState = remember { mutableStateOf(TransformOrigin.Center) }
     val popupPositionProvider = CoercePositiveValues(
       DropdownMenuPositionProvider(
-        contentOffset = offset,
-        density = LocalDensity.current,
-        onPositionCalculated = { parentBounds, menuBounds ->
-          transformOriginState.value = calculateTransformOrigin(
-            parentBounds = parentBounds,
-            menuBounds = CoercePositiveValues.correctMenuBounds(menuBounds)
-          )
-        }
-      )
+        offset,
+        LocalDensity.current
+      ) { parentBounds, menuBounds ->
+        transformOriginState.value = calculateTransformOrigin(
+          parentBounds = parentBounds,
+          menuBounds = CoercePositiveValues.correctMenuBounds(menuBounds)
+        )
+      }
     )
 
     val anchorHostView = LocalView.current
@@ -152,7 +150,9 @@ fun CascadeDropdownMenu(
       PositionPopupContent(
         modifier = Modifier
           .fillMaxSize()
-          .clickableWithoutRipple(onClick = onDismissRequest),
+          .let {
+            if (properties.dismissOnClickOutside) it.clickableWithoutRipple(onClick = onDismissRequest) else it
+          },
         positionProvider = popupPositionProvider,
         anchorBounds = anchorBounds,
         anchorView = anchorHostView
