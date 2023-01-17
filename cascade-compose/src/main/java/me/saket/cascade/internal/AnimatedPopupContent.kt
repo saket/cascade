@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
@@ -39,7 +42,7 @@ private const val OutTransitionDuration = 300
 @Composable
 internal fun AnimatedPopupContent(
   expandedStates: MutableTransitionState<Boolean>,
-  transformOriginState: MutableState<TransformOrigin>,
+  transformOriginState: State<TransformOrigin>,
   content: @Composable () -> Unit
 ) {
   val isExpandedTransition = updateTransition(expandedStates, label = "CascadeDropDownMenu")
@@ -104,34 +107,29 @@ internal fun AnimatedPopupContent(
   }
 
   Box(
-    Modifier.graphicsLayer {
-      scaleX = scale
-      scaleY = scale
-      transformOrigin = transformOriginState.value
-    }
+    Modifier.scale(scale, transformOrigin = transformOriginState.value)
   ) {
-    val path = remember { Path() }
+    // Drop shadows and content are drawn in separate sibling layouts because:
+    //
+    // - shadow().alpha() will not apply alpha to shadows.
+    //
+    // - alpha().shadow() will cause shadows to get clipped of content bounds
+    //   because its usage of graphicsLayer().
+    //
+    // - shadow() applied on the parent will cause shadows to get clipped outside
+    //   of Popup's bounds, e.g., behind the status bar.
+    //
+    // FWIW material3.DropdownMenu() also suffers from these same problems. Its
+    // shadows get clipped during entry/exit transitions, but the 8dp shadows are
+    // small enough for the clipping to go unnoticed.
     Box(
       Modifier
         .matchParentSize()
-        .drawWithCache {  // todo: no-op this out when alpha=1f
-          path
-            .asAndroidPath()
-            .rewind() // rewind() is faster than reset().
-          path.addOutline(
-            clippingShape.createOutline(
-              size = size,
-              layoutDirection = layoutDirection,
-              density = this
-            )
-          )
-          onDrawWithContent {
-            clipPath(path, ClipOp.Difference) {
-              this@onDrawWithContent.drawContent()
-            }
-          }
-        }
-        // todo: it feels weird that shadow is inside AnimatedPopupContent.
+        // Because the drop shadows are drawn separately from the popup's content,
+        // this layout's inner shadows must be clipped out to prevent it from
+        // showing up behind the translucent content.
+        .let { if (alpha < 1f) it.clipDifference(clippingShape) else it }
+        // todo: it feels weird that shadows is inside AnimatedPopupContent.
         .shadow(
           elevation = 20.dp,
           shape = clippingShape,
@@ -149,4 +147,35 @@ internal fun AnimatedPopupContent(
       content()
     }
   }
+}
+
+// Like Modifier.clip() but uses ClipOp.Difference instead of ClipOp.Intersect.
+private fun Modifier.clipDifference(shape: Shape): Modifier = composed {
+  val path = remember { Path() }
+  drawWithCache {
+    path.asAndroidPath().rewind() // rewind() is faster than reset().
+    path.addOutline(
+      shape.createOutline(
+        size = size,
+        layoutDirection = layoutDirection,
+        density = this
+      )
+    )
+    onDrawWithContent {
+      clipPath(path, ClipOp.Difference) {
+        this@onDrawWithContent.drawContent()
+      }
+    }
+  }
+}
+
+@Stable
+fun Modifier.scale(scale: Float, transformOrigin: TransformOrigin): Modifier {
+  return if (scale != 1f) {
+    graphicsLayer(
+      scaleX = scale,
+      scaleY = scale,
+      transformOrigin = transformOrigin
+    )
+  } else this
 }
