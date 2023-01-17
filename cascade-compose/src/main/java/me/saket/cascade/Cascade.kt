@@ -69,6 +69,7 @@ import me.saket.cascade.internal.ScreenRelativeBounds
 import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
 import me.saket.cascade.internal.clickableWithoutRipple
+import me.saket.cascade.internal.copy
 
 /**
  * Material Design dropdown menu with support for nested menus.
@@ -145,7 +146,7 @@ fun CascadeDropdownMenu(
     // that do not suffer from https://issuetracker.google.com/issues/236109671.
     Popup(
       onDismissRequest = onDismissRequest,
-      properties = properties,
+      properties = properties.copy(usePlatformDefaultWidth = false),
     ) {
       PositionPopupContent(
         modifier = Modifier
