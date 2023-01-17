@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -32,7 +33,7 @@ internal fun PositionPopupContent(
   val popupView = LocalView.current
   val layoutDirection = LocalLayoutDirection.current
 
-  var popupPosition: ScreenRelativeOffset? by remember { mutableStateOf(null) }
+  var contentPosition: IntOffset? by remember { mutableStateOf(null) }
   val rectBuffer = remember { android.graphics.Rect(0, 0, 0, 0) }
 
   Box(modifier) {
@@ -47,7 +48,7 @@ internal fun PositionPopupContent(
           val contentSize = coordinates.size
 
           if (anchorBounds != null) {
-            popupPosition = positionProvider.calculatePosition(
+            contentPosition = positionProvider.calculatePosition(
               anchorBounds = anchorBounds.boundsInRoot.round(),
               windowSize = anchorWindowSizeWithInsets,
               layoutDirection = layoutDirection,
@@ -61,15 +62,13 @@ internal fun PositionPopupContent(
                 positionInRoot = position.toOffset(),
                 rootOffsetFromScreen = anchorBounds.rootOffsetFromScreen
               )
-              positionInAnchorWindow.alignedWithWindowOf(popupContentBounds)
+              positionInAnchorWindow.positionInWindowOf(popupContentBounds).round()
             }
           }
         }
-        .absoluteOffset {
-          popupPosition?.positionInRoot?.round() ?: IntOffset.Zero
-        }
         // Hide the popup until it can be positioned.
-        .alpha(if (popupPosition != null) 1f else 0f)
+        .alpha(if (contentPosition != null) 1f else 0f)
+        .absoluteOffset { contentPosition ?: IntOffset.Zero }
     ) {
       content()
     }

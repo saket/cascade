@@ -32,4 +32,5 @@ dependencies {
 
   testImplementation "junit:junit:4.13.2"
   testImplementation "com.squareup.burst:burst-junit4:1.2.0"
+  testImplementation "com.google.truth:truth:1.1.3"
 }

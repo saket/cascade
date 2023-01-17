@@ -48,11 +48,8 @@ private val intArrayBuffer = IntArray(size = 2)
  * Calculate a position in another window such that its visual location on screen
  * remains unchanged. That is, its offset from screen's 0,0 remains the same.
  * */
-internal fun ScreenRelativeOffset.alignedWithWindowOf(other: ScreenRelativeBounds): ScreenRelativeOffset {
-  return ScreenRelativeOffset(
-    positionInRoot = positionInRoot
-      - (rootOffsetFromScreen.rootLayoutPositionInWindow - other.rootOffsetFromScreen.rootLayoutPositionInWindow)
-      - (rootOffsetFromScreen.windowPositionOnScreen - other.rootOffsetFromScreen.windowPositionOnScreen),
-    rootOffsetFromScreen = other.rootOffsetFromScreen,
-  )
+internal fun ScreenRelativeOffset.positionInWindowOf(other: ScreenRelativeBounds): Offset {
+  return positionInRoot -
+    (other.rootOffsetFromScreen.rootLayoutPositionInWindow - rootOffsetFromScreen.rootLayoutPositionInWindow) -
+    (other.rootOffsetFromScreen.windowPositionOnScreen - rootOffsetFromScreen.windowPositionOnScreen)
 }
