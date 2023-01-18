@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
@@ -43,6 +44,7 @@ private const val OutTransitionDuration = 300
 internal fun AnimatedPopupContent(
   expandedStates: MutableTransitionState<Boolean>,
   transformOriginState: State<TransformOrigin>,
+  shadowElevation: Dp,
   content: @Composable () -> Unit
 ) {
   val isExpandedTransition = updateTransition(expandedStates, label = "CascadeDropDownMenu")
@@ -129,9 +131,8 @@ internal fun AnimatedPopupContent(
         // this layout's inner shadows must be clipped out to prevent it from
         // showing up behind the translucent content.
         .let { if (alpha < 1f) it.clipDifference(clippingShape) else it }
-        // todo: it feels weird that shadows is inside AnimatedPopupContent.
         .shadow(
-          elevation = 20.dp,
+          elevation = shadowElevation,
           shape = clippingShape,
           clip = false,
           ambientColor = Color.Black.copy(alpha = alpha),

@@ -100,8 +100,11 @@ import me.saket.cascade.internal.copy
  * }
  * ```
  *
- * @param fixedWidth A width that will be shared by all nested menus. This can be removed in
- *                  the future once cascade is able to animate width changes between nested menus.
+ * @param fixedWidth A width that will be shared by all nested menus. This can be removed
+ * in the future once cascade is able to animate width changes across nested menus.
+ *
+ * @param shadowElevation A value between 0dp and 8dp. Cascade trims values above 8dp to match [DropdownMenu]'s behavior.
+ * [More context can be found here](https://android-review.googlesource.com/c/platform/frameworks/support/+/2117953).
  */
 @Composable
 fun CascadeDropdownMenu(
@@ -110,6 +113,7 @@ fun CascadeDropdownMenu(
   modifier: Modifier = Modifier,
   offset: DpOffset = DpOffset.Zero,
   fixedWidth: Dp = 196.dp,
+  shadowElevation: Dp = 3.dp,
   properties: PopupProperties = PopupProperties(focusable = true),
   state: CascadeState = rememberCascadeState(),
   content: @Composable CascadeColumnScope.() -> Unit
@@ -161,6 +165,9 @@ fun CascadeDropdownMenu(
         AnimatedPopupContent(
           expandedStates = expandedStates,
           transformOriginState = transformOriginState,
+          // 8dp is the maximum recommended elevation.
+          // More context here: https://android-review.googlesource.com/c/platform/frameworks/support/+/2117953
+          shadowElevation = shadowElevation.coerceAtMost(8.dp),
         ) {
           CascadeDropdownMenuContent(
             modifier = modifier

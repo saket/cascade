@@ -154,7 +154,8 @@ class CascadeDropdownMenuTest(
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
           AnimatedPopupContent(
             expandedStates = MutableTransitionState(true),
-            transformOriginState = remember { mutableStateOf(TransformOrigin.Center) }
+            transformOriginState = remember { mutableStateOf(TransformOrigin.Center) },
+            shadowElevation = 3.dp,
           ) {
             content()
           }
