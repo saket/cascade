@@ -17,13 +17,16 @@ fun rememberCascadeState(): CascadeState {
 class CascadeState internal constructor() {
   private val backStack = mutableStateListOf<CascadeBackStackEntry>()
 
-  fun navigateBack(): Boolean {
-    val removed = backStack.removeLastOrNull()
-    return removed != null
+  fun navigateBack() {
+    backStack.removeLast()
   }
 
   fun resetBackStack() {
     backStack.clear()
+  }
+
+  fun isBackStackEmpty(): Boolean {
+    return backStack.isEmpty()
   }
 
   internal fun navigateTo(entry: CascadeBackStackEntry) {
