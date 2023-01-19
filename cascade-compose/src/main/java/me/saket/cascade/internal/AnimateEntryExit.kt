@@ -7,7 +7,6 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -35,13 +34,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 
 private const val InTransitionDuration = 300
 private const val OutTransitionDuration = 300
 
 @Composable
-internal fun AnimatedPopupContent(
+internal fun AnimateEntryExit(
+  modifier: Modifier = Modifier,
   expandedStates: MutableTransitionState<Boolean>,
   transformOriginState: State<TransformOrigin>,
   shadowElevation: Dp,
@@ -109,7 +108,7 @@ internal fun AnimatedPopupContent(
   }
 
   Box(
-    Modifier.scale(scale, transformOrigin = transformOriginState.value)
+    modifier.scale(scale, transformOrigin = transformOriginState.value)
   ) {
     // Drop shadows and content are drawn in separate sibling layouts because:
     //
@@ -130,7 +129,7 @@ internal fun AnimatedPopupContent(
         // Because the drop shadows are drawn separately from the popup's content,
         // this layout's inner shadows must be clipped out to prevent it from
         // showing up behind the translucent content.
-        .let { if (alpha < 1f) it.clipDifference(clippingShape) else it }
+        .then(alpha < 1f) { clipDifference(clippingShape) }
         .shadow(
           elevation = shadowElevation,
           shape = clippingShape,

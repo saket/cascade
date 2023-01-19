@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,6 +40,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +65,7 @@ import androidx.compose.ui.window.PopupProperties
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
-import me.saket.cascade.internal.AnimatedPopupContent
+import me.saket.cascade.internal.AnimateEntryExit
 import me.saket.cascade.internal.CoercePositiveValues
 import me.saket.cascade.internal.DropdownMenuPositionProvider
 import me.saket.cascade.internal.PositionPopupContent
@@ -74,6 +74,7 @@ import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
 import me.saket.cascade.internal.clickableWithoutRipple
 import me.saket.cascade.internal.copy
+import me.saket.cascade.internal.then
 
 /**
  * Material Design dropdown menu with support for nested menus.
@@ -159,38 +160,58 @@ fun CascadeDropdownMenu(
       PositionPopupContent(
         modifier = Modifier
           .fillMaxSize()
-          .let {
-            if (properties.dismissOnClickOutside) it.clickableWithoutRipple(onClick = onDismissRequest) else it
+          .then(properties.dismissOnClickOutside) {
+            clickableWithoutRipple(onClick = onDismissRequest)
           },
         positionProvider = popupPositionProvider,
         anchorBounds = anchorBounds,
         anchorView = anchorHostView
       ) {
-        AnimatedPopupContent(
+        PopupContent(
+          modifier = modifier,
+          state = state,
+          fixedWidth = fixedWidth,
           expandedStates = expandedStates,
           transformOriginState = transformOriginState,
-          // 8dp is the maximum recommended elevation.
-          // More context here: https://android-review.googlesource.com/c/platform/frameworks/support/+/2117953
-          shadowElevation = shadowElevation.coerceAtMost(8.dp),
-        ) {
-          CascadeDropdownMenuContent(
-            modifier = modifier
-              .requiredWidth(fixedWidth)
-              .wrapContentHeight(),
-            state = state,
-            content = content
-          )
-        }
+          shadowElevation = shadowElevation,
+          content = content
+        )
       }
     }
   }
 }
 
 @Composable
-internal fun CascadeDropdownMenuContent(
+internal fun PopupContent(
+  modifier: Modifier = Modifier,
+  state: CascadeState,
+  fixedWidth: Dp,
+  shadowElevation: Dp,
+  expandedStates: MutableTransitionState<Boolean>,
+  transformOriginState: MutableState<TransformOrigin>,
+  content: @Composable() (CascadeColumnScope.() -> Unit)
+) {
+  AnimateEntryExit(
+    modifier = modifier.requiredWidth(fixedWidth),
+    expandedStates = expandedStates,
+    transformOriginState = transformOriginState,
+    // 8dp is the maximum recommended elevation.
+    // More context here: https://android-review.googlesource.com/c/platform/frameworks/support/+/2117953
+    shadowElevation = shadowElevation.coerceAtMost(8.dp),
+  ) {
+    CascadeDropdownMenuContent(
+      modifier = Modifier.fillMaxWidth(),
+      state = state,
+      content = content
+    )
+  }
+}
+
+@Composable
+private fun CascadeDropdownMenuContent(
   state: CascadeState,
   modifier: Modifier = Modifier,
-  content: @Composable CascadeColumnScope.() -> Unit
+  content: @Composable CascadeColumnScope.() -> Unit,
 ) {
   DisposableEffect(Unit) {
     onDispose {

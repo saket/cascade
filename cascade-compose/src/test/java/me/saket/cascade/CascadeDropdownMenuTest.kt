@@ -7,8 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
@@ -23,12 +21,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -37,7 +32,6 @@ import app.cash.paparazzi.Paparazzi
 import app.cash.paparazzi.androidHome
 import app.cash.paparazzi.detectEnvironment
 import com.squareup.burst.BurstJUnit4
-import me.saket.cascade.internal.AnimatedPopupContent
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,7 +42,6 @@ class CascadeDropdownMenuTest(
 ) {
 
   @get:Rule val paparazzi = Paparazzi(
-
     environment = detectEnvironment().copy(
       platformDir = "${androidHome()}/platforms/android-32",
     )
@@ -57,16 +50,14 @@ class CascadeDropdownMenuTest(
   @Test fun `menu with no sub-menus`() {
     paparazzi.snapshot {
       PopupScaffold {
-        CascadeDropdownMenuContent(state = rememberCascadeState()) {
-          DropdownMenuItem(
-            text = { Text("Horizon") },
-            onClick = {}
-          )
-          DropdownMenuItem(
-            text = { Text("The Witcher 3") },
-            onClick = {}
-          )
-        }
+        DropdownMenuItem(
+          text = { Text("Horizon") },
+          onClick = {}
+        )
+        DropdownMenuItem(
+          text = { Text("The Witcher 3") },
+          onClick = {}
+        )
       }
     }
   }
@@ -74,25 +65,23 @@ class CascadeDropdownMenuTest(
   @Test fun `menu with sub-menus`() {
     paparazzi.snapshot {
       PopupScaffold {
-        CascadeDropdownMenuContent(state = rememberCascadeState()) {
-          DropdownMenuItem(
-            text = { Text("Horizon") },
-            children = {
-              DropdownMenuItem(
-                text = { Text("Zero Dawn") },
-                onClick = {}
-              )
-              DropdownMenuItem(
-                text = { Text("Forbidden West") },
-                onClick = {}
-              )
-            }
-          )
-          DropdownMenuItem(
-            text = { Text("The Witcher 3") },
-            onClick = {}
-          )
-        }
+        DropdownMenuItem(
+          text = { Text("Horizon") },
+          children = {
+            DropdownMenuItem(
+              text = { Text("Zero Dawn") },
+              onClick = {}
+            )
+            DropdownMenuItem(
+              text = { Text("Forbidden West") },
+              onClick = {}
+            )
+          }
+        )
+        DropdownMenuItem(
+          text = { Text("The Witcher 3") },
+          onClick = {}
+        )
       }
     }
   }
@@ -122,25 +111,20 @@ class CascadeDropdownMenuTest(
           }
         )
       )
-      PopupScaffold {
-        CascadeDropdownMenuContent(
-          modifier = Modifier.testTag("foo"),
-          state = state,
-          content = {}
-        )
+      PopupScaffold(state) {
+        Text("This should get replaced by the sub-menu")
       }
     }
-  }
-
-  @Test fun `popup with content longer than available window height`() {
-    // todo.
   }
 
   /**
    * Recreates [androidx.compose.material3.DropdownMenuContent]
    */
   @Composable
-  private fun PopupScaffold(content: @Composable () -> Unit) {
+  private fun PopupScaffold(
+    state: CascadeState = rememberCascadeState(),
+    content: @Composable CascadeColumnScope.() -> Unit
+  ) {
     CascadeMaterialTheme {
       Box(
         Modifier
@@ -148,17 +132,16 @@ class CascadeDropdownMenuTest(
           .background(MaterialTheme.colorScheme.background)
           .padding(24.dp)
           .wrapContentSize(align = Alignment.TopEnd)
-          .requiredWidth(196.dp)  // Same as used by CascadeDropdownMenu().
-          .wrapContentHeight()
       ) {
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-          AnimatedPopupContent(
+          PopupContent(
+            state = state,
+            fixedWidth = 196.dp, // Same as used by CascadeDropdownMenu().
+            shadowElevation = 8.dp,
             expandedStates = MutableTransitionState(true),
             transformOriginState = remember { mutableStateOf(TransformOrigin.Center) },
-            shadowElevation = 3.dp,
-          ) {
-            content()
-          }
+            content = content,
+          )
         }
       }
     }

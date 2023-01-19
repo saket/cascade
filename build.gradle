@@ -6,8 +6,9 @@ buildscript {
     compileSdk: 33,
     kotlin: '1.7.20',
     composeUi: '1.3.1',
-    composeUiCompiler: '1.4.0-alpha01',
-    composeUiMaterial3: '1.0.1'
+    composeCompiler: '1.4.0-alpha01',
+    composeUiMaterial3: '1.0.1',
+    appCompat: '1.5.1'
   ]
 
   repositories {

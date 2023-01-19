@@ -13,3 +13,7 @@ internal fun Modifier.clickableWithoutRipple(onClick: () -> Unit) = composed {
     onClick = onClick
   )
 }
+
+internal inline fun Modifier.then(predicate: Boolean, modifier: Modifier.() -> Modifier): Modifier {
+  return if (predicate) modifier() else this
+}

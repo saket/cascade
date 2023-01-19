@@ -45,7 +45,7 @@ class ComposeSampleActivity : AppCompatActivity() {
 
   @OptIn(ExperimentalMaterial3Api::class)
   override fun onCreate(savedInstanceState: Bundle?) {
-    WindowCompat.setDecorFitsSystemWindows(window, /* decorFitsSystemWindows = */ false)
+    WindowCompat.setDecorFitsSystemWindows(window, false)
     super.onCreate(savedInstanceState)
 
     setContent {
@@ -64,10 +64,10 @@ class ComposeSampleActivity : AppCompatActivity() {
             ),
             actions = {
               IconButton(onClick = { isMenuShown = true }) {
-                /*Material*/Menu(
-                expanded = isMenuShown,
-                onDismiss = { isMenuShown = false }
-              )
+                Menu(
+                  expanded = isMenuShown,
+                  onDismiss = { isMenuShown = false }
+                )
                 Icon(Icons.Rounded.MoreVert, contentDescription = "More options")
               }
             }
