@@ -14,7 +14,7 @@ fun rememberCascadeState(): CascadeState {
  * The state of a [CascadeDropdownMenu].
  */
 @Stable
-class CascadeState {
+class CascadeState internal constructor() {
   private val backStack = mutableStateListOf<CascadeBackStackEntry>()
 
   fun navigateBack(): Boolean {
