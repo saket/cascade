@@ -1,6 +1,7 @@
 package me.saket.cascade
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -41,11 +42,13 @@ class CascadeState internal constructor() {
   }
 }
 
+@Immutable
 internal class CascadeBackStackEntry(
   val header: @Composable () -> Unit,
   val childrenContent: @Composable CascadeColumnScope.() -> Unit
 )
 
+@Immutable
 internal data class BackStackSnapshot(
   val topMostEntry: CascadeBackStackEntry?,
   val backStackSize: Int,
