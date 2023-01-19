@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.LayoutDirection.Ltr
 import me.saket.cascade.BackStackSnapshot
 
+@OptIn(ExperimentalAnimationApi::class)
 internal fun AnimatedContentScope<BackStackSnapshot>.cascadeTransitionSpec(
   layoutDirection: LayoutDirection
 ): ContentTransform {

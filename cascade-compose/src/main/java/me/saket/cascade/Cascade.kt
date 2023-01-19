@@ -36,20 +36,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Surface
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -61,6 +62,9 @@ import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import me.saket.cascade.internal.AnimatedPopupContent
 import me.saket.cascade.internal.CoercePositiveValues
 import me.saket.cascade.internal.DropdownMenuPositionProvider
@@ -198,30 +202,40 @@ internal fun CascadeDropdownMenuContent(
     modifier = modifier,
     shape = MaterialTheme.shapes.extraSmall,
     color = MaterialTheme.colorScheme.surface,
-    contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
-    tonalElevation = 3.dp,
+    tonalElevation = 3.dp,  // Same as material3.DropdownMenu()
   ) {
+    val isTransitionRunning = remember { MutableStateFlow(false) }
+    val backStackSnapshot by remember {
+      snapshotFlow { state.backStackSnapshot() }
+        .onEach {
+          // Block until any ongoing transition has finished. This is a very crude
+          // way of queueing navigations. AnimatedContent() does not like it when
+          // the content is changed before it is able to finish a transition.
+          isTransitionRunning.first { running -> !running }
+        }
+    }.collectAsState(initial = state.backStackSnapshot())
+
     val layoutDirection = LocalLayoutDirection.current
     AnimatedContent(
-      targetState = state.backStackSnapshot(),
+      targetState = backStackSnapshot,
       transitionSpec = { cascadeTransitionSpec(layoutDirection) }
-    ) { backStackSnapshot ->
+    ) { snapshot ->
       Column(
         Modifier
           // Provide a solid background color to prevent the
           // content of sub-menus from leaking into each other.
           .background(MaterialTheme.colorScheme.surface)
-          // Block navigation while a transition is already playing because the
-          // current transitionSpec isn't great at handling another navigation
-          // while one is already running.
-          .pointerInteropFilter { transition.isRunning }
           .verticalScroll(rememberScrollState())
       ) {
-        val currentContent = backStackSnapshot.topMostEntry?.childrenContent ?: content
-        backStackSnapshot.topMostEntry?.header?.invoke()
+        val currentContent = snapshot.topMostEntry?.childrenContent ?: content
+        snapshot.topMostEntry?.header?.invoke()
 
         val contentScope = remember { CascadeColumnScope(state) }
         contentScope.currentContent()
+      }
+
+      LaunchedEffect(transition.isRunning) {
+        isTransitionRunning.tryEmit(transition.isRunning)
       }
     }
   }
