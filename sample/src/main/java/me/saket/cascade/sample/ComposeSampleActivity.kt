@@ -18,7 +18,6 @@ import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.icons.twotone.Language
 import androidx.compose.material.icons.twotone.Share
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -157,30 +156,6 @@ class ComposeSampleActivity : AppCompatActivity() {
             onClick = { openUrl("https://github.com/cashapp/sqldelight") }
           )
         },
-      )
-    }
-  }
-
-  @Composable
-  private fun MaterialMenu(
-    expanded: Boolean,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
-  ) {
-    DropdownMenu(
-      modifier = modifier,
-      expanded = expanded,
-      onDismissRequest = onDismiss
-    ) {
-      DropdownMenuItem(
-        text = { Text("About") },
-        leadingIcon = { Icon(Icons.TwoTone.Language, contentDescription = null) },
-        onClick = {},
-      )
-      DropdownMenuItem(
-        text = { Text("Copy") },
-        leadingIcon = { Icon(Icons.TwoTone.ContentCopy, contentDescription = null) },
-        onClick = {},
       )
     }
   }
