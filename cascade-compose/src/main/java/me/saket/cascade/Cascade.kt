@@ -192,7 +192,6 @@ internal fun PopupContent(
   content: @Composable() (CascadeColumnScope.() -> Unit)
 ) {
   AnimateEntryExit(
-    modifier = modifier.requiredWidth(fixedWidth),
     expandedStates = expandedStates,
     transformOriginState = transformOriginState,
     // 8dp is the maximum recommended elevation.
@@ -200,7 +199,9 @@ internal fun PopupContent(
     shadowElevation = shadowElevation.coerceAtMost(8.dp),
   ) {
     CascadeDropdownMenuContent(
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier
+        .requiredWidth(fixedWidth)
+        .then(modifier),
       state = state,
       content = content
     )
@@ -220,7 +221,6 @@ private fun CascadeDropdownMenuContent(
   }
 
   Surface(
-    modifier = modifier,
     shape = MaterialTheme.shapes.extraSmall,
     color = MaterialTheme.colorScheme.surface,
     tonalElevation = 3.dp,  // Same as material3.DropdownMenu()
@@ -238,6 +238,7 @@ private fun CascadeDropdownMenuContent(
 
     val layoutDirection = LocalLayoutDirection.current
     AnimatedContent(
+      modifier = modifier,
       targetState = backStackSnapshot,
       transitionSpec = { cascadeTransitionSpec(layoutDirection) }
     ) { snapshot ->

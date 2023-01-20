@@ -1,3 +1,9 @@
+import com.android.build.api.dsl.ManagedVirtualDevice
+
+plugins {
+  id("com.dropbox.dropshots") version "0.4.0"
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'app.cash.paparazzi'
@@ -8,10 +14,26 @@ android {
   namespace "me.saket.cascade"
 
   compileSdkVersion versions.compileSdk
-  defaultConfig.minSdkVersion 23
+  defaultConfig {
+    minSdkVersion 23
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  }
 
   buildFeatures.compose = true
-  composeOptions.kotlinCompilerExtensionVersion = versions.composeUiCompiler
+  composeOptions.kotlinCompilerExtensionVersion = versions.composeCompiler
+
+  testOptions {
+    animationsDisabled = true
+    managedDevices {
+      devices {
+        pixel2api30 (ManagedVirtualDevice) {
+          device = "Pixel 2"
+          apiLevel = 30
+          systemImageSource = "aosp"
+        }
+      }
+    }
+  }
 
   kotlinOptions {
     jvmTarget = "1.8"
@@ -33,4 +55,11 @@ dependencies {
   testImplementation "junit:junit:4.13.2"
   testImplementation "com.squareup.burst:burst-junit4:1.2.0"
   testImplementation "com.google.truth:truth:1.1.3"
+
+  debugImplementation "androidx.appcompat:appcompat:$versions.appCompat"
+  androidTestDebugImplementation "androidx.test:core-ktx:1.5.0"
+  androidTestDebugImplementation "androidx.test:rules:1.5.0"
+  androidTestDebugImplementation "androidx.test.ext:junit-ktx:1.1.5"
+  androidTestDebugImplementation "androidx.compose.ui:ui-test-junit4:$versions.composeUi"
+  androidTestDebugImplementation "com.squareup.burst:burst-junit4:1.2.0"
 }

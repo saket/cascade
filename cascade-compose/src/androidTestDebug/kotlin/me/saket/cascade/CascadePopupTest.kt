@@ -1,0 +1,201 @@
+@file:Suppress("TestFunctionName", "JUnitMalformedDeclaration")
+
+package me.saket.cascade
+
+import android.app.Activity
+import android.graphics.Bitmap
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Text
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import androidx.test.core.app.takeScreenshot
+import com.dropbox.dropshots.Dropshots
+import com.squareup.burst.BurstJUnit4
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TestName
+import org.junit.runner.RunWith
+
+@RunWith(BurstJUnit4::class)
+internal class CascadePopupTest {
+  @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
+  @get:Rule val testName = TestName()
+  @get:Rule val dropshots = Dropshots()
+
+  @Test fun canary() {
+    composeTestRule.setContent {
+      MaterialTheme {
+        PopupScaffold {
+          CascadeDropdownMenu(
+            expanded = true,
+            onDismissRequest = {}
+          ) {
+            DropdownMenuItem(text = { Text("Never gonna") }, onClick = {})
+            DropdownMenuItem(text = { Text("Give you up") }, onClick = {})
+            DropdownMenuItem(text = { Text("Never gonna") }, onClick = {})
+            DropdownMenuItem(text = { Text("Let you down") }, onClick = {})
+          }
+        }
+      }
+    }
+    dropshots.assertDeviceSnapshot(composeTestRule.activity)
+  }
+
+  @Test fun size_given_to_cascade_should_be_correctly_applied_to_its_content() {
+    composeTestRule.setContent {
+      CascadeMaterialTheme {
+        PopupScaffold {
+          CascadeDropdownMenu(
+            modifier = Modifier.requiredHeight(100.dp),
+            fixedWidth = 200.dp,
+            expanded = true,
+            onDismissRequest = {}
+          ) {
+            Text(
+              modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+              text = "This text should get cut-off",
+              fontSize = 25.sp,
+              lineHeight = 1.33.em,
+            )
+          }
+        }
+      }
+    }
+    dropshots.assertDeviceSnapshot(composeTestRule.activity)
+  }
+
+  @Test fun alignment_of_popup_should_match_with_material3(alignment: PopupAlignment) {
+    composeTestRule.setContent {
+      CascadeMaterialTheme {
+        PopupScaffold(alignment.alignment) {
+          val popupSize = DpSize(width = 196.dp, height = 100.dp)
+
+          CascadeDropdownMenu(
+            modifier = Modifier.requiredHeight(popupSize.height),
+            fixedWidth = popupSize.width,
+            expanded = true,
+            onDismissRequest = {}
+          ) {
+            Box(
+              Modifier
+                .fillMaxWidth()
+                .height(popupSize.height)
+                .background(Color.Blue)
+            )
+          }
+
+          // Material's DropdownMenu is overlayed on top of cascade as
+          // a position guide. It should cover exact pixels of cascade.
+          DropdownMenu(
+            modifier = Modifier
+              .requiredSize(popupSize)
+              .background(Color.Red),
+            expanded = true,
+            onDismissRequest = {}
+          ) {
+            LocalView.current.alpha = 0.5f
+          }
+        }
+      }
+    }
+    dropshots.assertDeviceSnapshot(composeTestRule.activity)
+  }
+
+  @Test fun popup_with_content_longer_than_available_window_height() {
+    // todo.
+  }
+
+  @Composable
+  private fun PopupScaffold(align: Alignment = Alignment.TopStart, content: @Composable () -> Unit) {
+    Box(
+      Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp))
+        .wrapContentSize(align)
+        .padding(4.dp)
+        .size(1.dp)
+    ) {
+      content()
+    }
+  }
+
+  private fun Dropshots.assertDeviceSnapshot(activity: Activity) {
+    // This screenshots the entire device instead of just the active Activity's content.
+    val screenshot: Bitmap = takeScreenshot()
+
+    // The navigation bar's handle cross-fades its color smoothly and can
+    // appear slightly different each time. Crop it out to affect screenshots.
+    val navigationBarHeightInPx = 66
+
+    val screenshotWithoutNavBars: Bitmap = Bitmap.createBitmap(
+      /* source = */ screenshot,
+      /* x = */ 0,
+      /* y = */ 0,
+      /* width = */ screenshot.width,
+      /* height = */ screenshot.height - navigationBarHeightInPx
+    )
+
+    assertSnapshot(
+      bitmap = screenshotWithoutNavBars,
+      name = testName.methodName
+    )
+  }
+}
+
+// These enums produce better test names than Alignment#toString().
+enum class PopupAlignment(val alignment: Alignment) {
+  TopStart(Alignment.TopStart),
+  TopCenter(Alignment.TopCenter),
+  TopEnd(Alignment.TopEnd),
+  CenterStart(Alignment.CenterStart),
+  Center(Alignment.Center),
+  CenterEnd(Alignment.CenterEnd),
+  BottomStart(Alignment.BottomStart),
+  BottomCenter(Alignment.BottomCenter),
+  BottomEnd(Alignment.BottomEnd),
+}
+
+@Composable
+fun CascadeMaterialTheme(content: @Composable () -> Unit) {
+  val colors = lightColorScheme(
+    primary = Color(0xFFB5D2C3),
+    background = Color(0xFFB5D2C3),
+    surface = Color(0xFFE5F0EB),
+    onSurface = Color(0xFF356859),
+    onSurfaceVariant = Color(0xFF356859),
+  )
+  val shapes = Shapes(
+    extraSmall = RoundedCornerShape(8.dp)
+  )
+  MaterialTheme(
+    colorScheme = colors,
+    shapes = shapes,
+    content = content
+  )
+}

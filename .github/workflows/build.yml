@@ -18,5 +18,5 @@ jobs:
         distribution: 'zulu'
         java-version: 11
 
-    - name: Run build
-      run: ./gradlew build
+    - name: Build and run tests
+      run: ./gradlew cascade-compose:verifyPaparazziDebug cascade-compose:pixel2api30DebugAndroidTest
