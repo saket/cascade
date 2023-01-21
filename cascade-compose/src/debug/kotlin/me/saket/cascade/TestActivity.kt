@@ -19,7 +19,6 @@ internal class TestActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     window.setDecorFitsSystemWindows(false)
     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-    window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     window.statusBarColor = Color.Transparent.toArgb()
     window.navigationBarColor = Color.Transparent.toArgb()
 

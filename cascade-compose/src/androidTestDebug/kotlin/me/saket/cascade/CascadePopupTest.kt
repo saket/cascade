@@ -2,8 +2,8 @@
 
 package me.saket.cascade
 
-import android.app.Activity
 import android.graphics.Bitmap
+import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,13 +34,14 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.test.core.app.takeScreenshot
 import com.dropbox.dropshots.Dropshots
-import com.squareup.burst.BurstJUnit4
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
 
-@RunWith(BurstJUnit4::class)
+@RunWith(TestParameterInjector::class)
 internal class CascadePopupTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
   @get:Rule val testName = TestName()
@@ -62,7 +63,7 @@ internal class CascadePopupTest {
         }
       }
     }
-    dropshots.assertDeviceSnapshot(composeTestRule.activity)
+    dropshots.assertDeviceSnapshot()
   }
 
   @Test fun size_given_to_cascade_should_be_correctly_applied_to_its_content() {
@@ -87,10 +88,20 @@ internal class CascadePopupTest {
         }
       }
     }
-    dropshots.assertDeviceSnapshot(composeTestRule.activity)
+    dropshots.assertDeviceSnapshot()
   }
 
-  @Test fun alignment_of_popup_should_match_with_material3(alignment: PopupAlignment) {
+  @Test fun alignment_of_popup_should_match_with_material3(
+    @TestParameter alignment: PopupAlignment,
+    @TestParameter useNoLimitsFlag: Boolean,
+  ) {
+    if (useNoLimitsFlag) {
+      composeTestRule.activity.run {
+        runOnUiThread {
+          window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        }
+      }
+    }
     composeTestRule.setContent {
       CascadeMaterialTheme {
         PopupScaffold(alignment.alignment) {
@@ -132,7 +143,10 @@ internal class CascadePopupTest {
   }
 
   @Composable
-  private fun PopupScaffold(align: Alignment = Alignment.TopStart, content: @Composable () -> Unit) {
+  private fun PopupScaffold(
+    align: Alignment = Alignment.TopStart,
+    content: @Composable () -> Unit
+  ) {
     Box(
       Modifier
         .fillMaxSize()
@@ -145,7 +159,7 @@ internal class CascadePopupTest {
     }
   }
 
-  private fun Dropshots.assertDeviceSnapshot(activity: Activity) {
+  private fun Dropshots.assertDeviceSnapshot() {
     // This screenshots the entire device instead of just the active Activity's content.
     val screenshot: Bitmap = takeScreenshot()
 
