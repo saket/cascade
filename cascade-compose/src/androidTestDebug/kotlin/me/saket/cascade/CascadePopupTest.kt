@@ -23,9 +23,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Blue
+import androidx.compose.ui.graphics.Color.Companion.Cyan
+import androidx.compose.ui.graphics.Color.Companion.Magenta
+import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.DpSize
@@ -117,7 +125,7 @@ internal class CascadePopupTest {
               Modifier
                 .fillMaxWidth()
                 .height(popupSize.height)
-                .background(Color.Blue)
+                .background(Blue)
             )
           }
 
@@ -126,7 +134,7 @@ internal class CascadePopupTest {
           DropdownMenu(
             modifier = Modifier
               .requiredSize(popupSize)
-              .background(Color.Red),
+              .background(Red),
             expanded = true,
             onDismissRequest = {}
           ) {
@@ -135,11 +143,35 @@ internal class CascadePopupTest {
         }
       }
     }
-    dropshots.assertDeviceSnapshot(composeTestRule.activity)
+    dropshots.assertDeviceSnapshot()
   }
 
-  @Test fun popup_with_content_longer_than_available_window_height() {
-    // todo.
+  @Test fun content_inside_popup_can_be_updated() {
+    var color by mutableStateOf(Yellow)
+
+    composeTestRule.setContent {
+      CascadeMaterialTheme {
+        PopupScaffold {
+          CascadeDropdownMenu(
+            expanded = true,
+            onDismissRequest = {}
+          ) {
+            Box(
+              Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .background(color),
+            )
+          }
+        }
+      }
+    }
+
+    listOf(Red, Magenta, Blue, Cyan).forEachIndexed { num, nextColor ->
+      color = nextColor
+      dropshots.assertDeviceSnapshot(nameSuffix = "[$num]")
+      composeTestRule.mainClock.advanceTimeByFrame()
+    }
   }
 
   @Composable
@@ -159,14 +191,13 @@ internal class CascadePopupTest {
     }
   }
 
-  private fun Dropshots.assertDeviceSnapshot() {
+  private fun Dropshots.assertDeviceSnapshot(nameSuffix: String = "") {
     // This screenshots the entire device instead of just the active Activity's content.
     val screenshot: Bitmap = takeScreenshot()
 
     // The navigation bar's handle cross-fades its color smoothly and can
     // appear slightly different each time. Crop it out to affect screenshots.
     val navigationBarHeightInPx = 66
-
     val screenshotWithoutNavBars: Bitmap = Bitmap.createBitmap(
       /* source = */ screenshot,
       /* x = */ 0,
@@ -177,7 +208,7 @@ internal class CascadePopupTest {
 
     assertSnapshot(
       bitmap = screenshotWithoutNavBars,
-      name = testName.methodName
+      name = testName.methodName + "_$nameSuffix"
     )
   }
 }
