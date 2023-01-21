@@ -1,6 +1,5 @@
 package me.saket.cascade.internal
 
-import android.view.View
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.runtime.Composable
@@ -20,36 +19,33 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.window.PopupPositionProvider
+import kotlin.math.roundToInt
 
 @Composable
 internal fun PositionPopupContent(
   modifier: Modifier = Modifier,
   positionProvider: PopupPositionProvider,
   anchorBounds: ScreenRelativeBounds?,
-  anchorView: View,
   content: @Composable () -> Unit
 ) {
   val popupView = LocalView.current
   val layoutDirection = LocalLayoutDirection.current
-
   var contentPosition: IntOffset? by remember { mutableStateOf(null) }
-  val rectBuffer = remember { android.graphics.Rect(0, 0, 0, 0) }
 
   Box(modifier) {
     Box(
       Modifier
         .onGloballyPositioned { coordinates ->
-          val anchorWindowSizeWithInsets = run {
-            anchorView.getWindowVisibleDisplayFrame(rectBuffer)
-            IntSize(width = rectBuffer.width(), height = rectBuffer.height())
-          }
           val popupContentBounds = ScreenRelativeBounds(coordinates, owner = popupView)
 
           if (anchorBounds != null) {
             contentPosition = positionProvider
               .calculatePosition(
                 anchorBounds = anchorBounds.boundsInRoot.roundToIntRect(),
-                windowSize = anchorWindowSizeWithInsets,
+                // material3 uses View#getWindowVisibleDisplayFrame() for calculating window size,
+                // but that produces infinite-like values for windows that have FLAG_LAYOUT_NO_LIMITS set.
+                // material3 ends up looking okay because WindowManager sanitizes bad values.
+                windowSize = anchorBounds.root.layoutBoundsInWindow.intSize(),
                 layoutDirection = layoutDirection,
                 popupContentSize = coordinates.size,
               )
@@ -59,7 +55,7 @@ internal fun PositionPopupContent(
                 // position to use it inside the popup's window.
                 val positionInAnchorWindow = ScreenRelativeOffset(
                   positionInRoot = position.toOffset(),
-                  rootOffsetFromScreen = anchorBounds.rootOffsetFromScreen
+                  root = anchorBounds.root
                 )
                 positionInAnchorWindow
                   .positionInWindowOf(popupContentBounds)
@@ -78,4 +74,8 @@ internal fun PositionPopupContent(
 
 private fun Rect.roundToIntRect(): IntRect {
   return IntRect(topLeft = topLeft.round(), bottomRight = bottomRight.round())
+}
+
+private fun Rect.intSize(): IntSize {
+  return IntSize(width = width.roundToInt(), height = height.roundToInt())
 }

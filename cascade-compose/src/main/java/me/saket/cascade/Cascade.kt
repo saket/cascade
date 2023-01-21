@@ -164,8 +164,7 @@ fun CascadeDropdownMenu(
             clickableWithoutRipple(onClick = onDismissRequest)
           },
         positionProvider = popupPositionProvider,
-        anchorBounds = anchorBounds,
-        anchorView = anchorHostView
+        anchorBounds = anchorBounds
       ) {
         PopupContent(
           modifier = modifier,

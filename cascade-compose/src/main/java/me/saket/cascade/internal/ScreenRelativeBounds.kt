@@ -5,33 +5,35 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
-import androidx.compose.ui.layout.positionInWindow
 
 @Immutable
 internal data class ScreenRelativeBounds(
   val boundsInRoot: Rect,
-  val rootOffsetFromScreen: RootLayoutOffsetFromScreen,
+  val root: RootLayoutCoordinatesInfo,
 )
 
 @Immutable
 internal data class ScreenRelativeOffset(
   val positionInRoot: Offset,
-  val rootOffsetFromScreen: RootLayoutOffsetFromScreen,
+  val root: RootLayoutCoordinatesInfo,
 )
 
 @Immutable
-internal data class RootLayoutOffsetFromScreen(
-  val rootLayoutPositionInWindow: Offset,
+internal data class RootLayoutCoordinatesInfo(
+  val layoutBoundsInWindow: Rect,
   val windowPositionOnScreen: Offset,
-)
+) {
+  val layoutPositionInWindow: Offset get() = layoutBoundsInWindow.topLeft
+}
 
 internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): ScreenRelativeBounds {
   return coordinates.findRootCoordinates().let { rootCoordinates ->
     ScreenRelativeBounds(
       boundsInRoot = rootCoordinates.localBoundingBoxOf(coordinates),
-      rootOffsetFromScreen = RootLayoutOffsetFromScreen(
-        rootLayoutPositionInWindow = rootCoordinates.positionInWindow(),
+      root = RootLayoutCoordinatesInfo(
+        layoutBoundsInWindow = rootCoordinates.boundsInWindow(),
         windowPositionOnScreen = run {
           owner.rootView.getLocationOnScreen(intArrayBuffer)
           Offset(x = intArrayBuffer[0].toFloat(), y = intArrayBuffer[1].toFloat())
@@ -50,6 +52,6 @@ private val intArrayBuffer = IntArray(size = 2)
  * */
 internal fun ScreenRelativeOffset.positionInWindowOf(other: ScreenRelativeBounds): Offset {
   return positionInRoot -
-    (other.rootOffsetFromScreen.rootLayoutPositionInWindow - rootOffsetFromScreen.rootLayoutPositionInWindow) -
-    (other.rootOffsetFromScreen.windowPositionOnScreen - rootOffsetFromScreen.windowPositionOnScreen)
+    (other.root.layoutPositionInWindow - root.layoutPositionInWindow) -
+    (other.root.windowPositionOnScreen - root.windowPositionOnScreen)
 }

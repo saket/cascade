@@ -19,4 +19,4 @@ jobs:
         java-version: 11
 
     - name: Build and run tests
-      run: ./gradlew cascade-compose:verifyPaparazziDebug cascade-compose:pixel2api30DebugAndroidTest
+      run: ./gradlew check cascade-compose:verifyPaparazziDebug cascade-compose:pixel2api30DebugAndroidTest
