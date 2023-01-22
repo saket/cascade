@@ -14,6 +14,7 @@
     <activity
       android:name=".SampleActivity"
       android:exported="true"
+      android:taskAffinity="me.saket.cascade"
       android:label="Cascade">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -24,6 +25,7 @@
     <activity
       android:name=".ComposeSampleActivity"
       android:exported="true"
+      android:taskAffinity="me.saket.cascade.compose"
       android:label="Cascade (compose)">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />

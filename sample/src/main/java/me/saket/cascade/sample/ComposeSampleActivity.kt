@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
+import com.canopas.lib.showcase.IntroShowCaseScaffold
+import com.canopas.lib.showcase.ShowcaseStyle
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
 
@@ -48,31 +51,60 @@ class ComposeSampleActivity : AppCompatActivity() {
 
     setContent {
       CascadeMaterialTheme {
-        Box(
-          Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-        ) {
-          var isMenuShown by rememberSaveable { mutableStateOf(true) }
+        var isMenuShown by rememberSaveable { mutableStateOf(false) }
+        var isMenuButtonShowcased by remember { mutableStateOf(true) }
 
-          TopAppBar(
-            title = { Text(stringResource(R.string.app_name)) },
-            colors = TopAppBarDefaults.smallTopAppBarColors(
-              containerColor = Color.Transparent
-            ),
-            actions = {
-              IconButton(onClick = { isMenuShown = true }) {
-                Menu(
-                  expanded = isMenuShown,
-                  onDismiss = { isMenuShown = false }
-                )
-                Icon(Icons.Rounded.MoreVert, contentDescription = "More options")
+        IntroShowCaseScaffold(
+          showIntroShowCase = isMenuButtonShowcased,
+          onShowCaseCompleted = {
+            isMenuButtonShowcased = false
+            isMenuShown = true
+          }
+        ) {
+          Box(
+            Modifier
+              .fillMaxSize()
+              .background(MaterialTheme.colorScheme.background)
+          ) {
+
+            TopAppBar(
+              title = { Text(stringResource(R.string.app_name)) },
+              colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = Color.Transparent
+              ),
+              actions = {
+                IconButton(
+                  modifier = Modifier.introShowCaseTarget(
+                    index = 0,
+                    style = ShowcaseStyle(
+                      backgroundColor = MaterialTheme.colorScheme.onSurface,
+                      targetCircleColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    content = { ShowcaseContent() }
+                  ),
+                  onClick = { isMenuShown = true }
+                ) {
+                  Menu(
+                    expanded = isMenuShown,
+                    onDismiss = { isMenuShown = false }
+                  )
+                  Icon(Icons.Rounded.MoreVert, contentDescription = "More options")
+                }
               }
-            }
-          )
+            )
+          }
         }
       }
     }
+  }
+
+  @Composable
+  private fun ShowcaseContent() {
+    Text(
+      text = "Tap to see Cascade in action",
+      style = MaterialTheme.typography.titleLarge,
+      color = MaterialTheme.colorScheme.background
+    )
   }
 
   @Composable
