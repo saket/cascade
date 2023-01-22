@@ -31,14 +31,15 @@ import androidx.compose.ui.unit.sp
 import app.cash.paparazzi.Paparazzi
 import app.cash.paparazzi.androidHome
 import app.cash.paparazzi.detectEnvironment
-import com.squareup.burst.BurstJUnit4
+import com.google.testing.junit.testparameterinjector.TestParameter
+import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(BurstJUnit4::class)
+@RunWith(TestParameterInjector::class)
 class CascadeDropdownMenuTest(
-  private val layoutDirection: LayoutDirection
+  @TestParameter val layoutDirection: LayoutDirection
 ) {
 
   @get:Rule val paparazzi = Paparazzi(
