@@ -94,11 +94,11 @@ import me.saket.cascade.internal.then
  *     children = {
  *       DropdownMenuItem(
  *         text = { Text("Zero Dawn") },
- *         onClick = { ... }
+ *         onClick = { … }
  *       )
  *       DropdownMenuItem(
  *         text = { Text("Forbidden West") },
- *         onClick = { ... }
+ *         onClick = { … }
  *       )
  *     }
  *   )
