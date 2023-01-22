@@ -191,7 +191,7 @@ internal class CascadePopupTest {
     }
   }
 
-  private fun Dropshots.assertDeviceSnapshot(nameSuffix: String = "") {
+  private fun Dropshots.assertDeviceSnapshot(nameSuffix: String? = null) {
     // This screenshots the entire device instead of just the active Activity's content.
     val screenshot: Bitmap = takeScreenshot()
 
@@ -208,7 +208,7 @@ internal class CascadePopupTest {
 
     assertSnapshot(
       bitmap = screenshotWithoutNavBars,
-      name = testName.methodName + "_$nameSuffix"
+      name = testName.methodName + (if (nameSuffix != null) "_$nameSuffix" else "")
     )
   }
 }

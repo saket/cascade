@@ -11,8 +11,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 
-// Can be moved to test sources when https://issuetracker.google.com/issues/127986458 is fixed.
-// In the meantime, this must be exposed to the main source-set to be picked up in tests.
+/**
+ * Used by [me.saket.cascade.CascadePopupTest].
+ *
+ * Can be moved to test sources when https://issuetracker.google.com/issues/127986458 is fixed.
+ * In the meantime, this must be exposed to the main source-set to be picked up in tests.
+ */
 @RequiresApi(Build.VERSION_CODES.R)
 internal class TestActivity : AppCompatActivity() {
 
