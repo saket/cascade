@@ -339,47 +339,46 @@ interface CascadeColumnScope : ColumnScope {
       interactionSource = interactionSource,
     )
   }
-}
 
-/**
- * Displays `text` with a back icon. Navigates to its parent menu when clicked.
- */
-// FYI making this function non-inline causes a strange bug where
-// `text` stops changing when navigating deeper into a sub-menu.
-@Composable
-inline fun CascadeColumnScope.DropdownMenuHeader(
-  modifier: Modifier = Modifier,
-  contentPadding: PaddingValues = PaddingValues(vertical = 4.dp),
-  crossinline text: @Composable () -> Unit,
-) {
-  Row(
-    modifier = modifier
-      .clickable { cascadeState.navigateBack() }
-      .fillMaxWidth()
-      .padding(contentPadding),
-    verticalAlignment = CenterVertically
+
+  /**
+   * Displays `text` with a back icon. Navigates to its parent menu when clicked.
+   */
+  @Composable
+  fun DropdownMenuHeader(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(vertical = 4.dp),
+    text: @Composable () -> Unit,
   ) {
-    val headerColor = LocalContentColor.current.copy(alpha = 0.6f)
-    val headerStyle = MaterialTheme.typography.labelLarge.run { // labelLarge is also used by DropdownMenuItem().
-      copy(
-        fontSize = fontSize * 0.9f,
-        letterSpacing = letterSpacing * 0.9f
-      )
-    }
-    CompositionLocalProvider(
-      LocalContentColor provides headerColor,
-      LocalTextStyle provides headerStyle
+    Row(
+      modifier = modifier
+        .clickable { cascadeState.navigateBack() }
+        .fillMaxWidth()
+        .padding(contentPadding),
+      verticalAlignment = CenterVertically
     ) {
-      Icon(
-        modifier = Modifier.requiredSize(32.dp),
-        imageVector = when (LocalLayoutDirection.current) {
-          Ltr -> Icons.Rounded.ArrowLeft
-          Rtl -> Icons.Rounded.ArrowRight
-        },
-        contentDescription = null
-      )
-      Box(Modifier.weight(1f)) {
-        text()
+      val headerColor = LocalContentColor.current.copy(alpha = 0.6f)
+      val headerStyle = MaterialTheme.typography.labelLarge.run { // labelLarge is also used by DropdownMenuItem().
+        copy(
+          fontSize = fontSize * 0.9f,
+          letterSpacing = letterSpacing * 0.9f
+        )
+      }
+      CompositionLocalProvider(
+        LocalContentColor provides headerColor,
+        LocalTextStyle provides headerStyle
+      ) {
+        Icon(
+          modifier = Modifier.requiredSize(32.dp),
+          imageVector = when (LocalLayoutDirection.current) {
+            Ltr -> Icons.Rounded.ArrowLeft
+            Rtl -> Icons.Rounded.ArrowRight
+          },
+          contentDescription = null
+        )
+        Box(Modifier.weight(1f)) {
+          text()
+        }
       }
     }
   }

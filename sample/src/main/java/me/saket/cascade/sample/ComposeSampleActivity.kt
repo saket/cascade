@@ -37,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import me.saket.cascade.CascadeDropdownMenu
-import me.saket.cascade.DropdownMenuHeader
 import me.saket.cascade.rememberCascadeState
 
 class ComposeSampleActivity : AppCompatActivity() {
