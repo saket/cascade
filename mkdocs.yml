@@ -1,0 +1,59 @@
+site_name: Cascade
+site_url: https://saket.github.io/cascade/
+repo_name: cascade
+repo_url: https://github.com/saket/cascade
+site_description: 'Nested popup menus with smooth height animations for Android'
+site_author: Saket Narayan
+copyright: 'Copyright &copy; 2020 Saket Narayan'
+remote_branch: gh-pages
+
+theme:
+  name: 'material'
+  font:
+    code: 'JetBrains Mono'
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      media: "(prefers-color-scheme)"
+      primary: 'teal'
+      accent: 'pink'
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      media: "(prefers-color-scheme: dark)"
+      primary: 'teal'
+      accent: 'pink'
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - content.tabs.link
+    - content.code.copy # For showing a copy button in code blocks.
+
+markdown_extensions:
+  - pymdownx.highlight:
+      use_pygments: true
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - 'Cascade':
+    - 'Overview': index.md
+
+  - 'Compose UI':
+    - 'Overview': compose/index.md
+    - 'Navigation': compose/navigation.md
+    - 'Theming': compose/theming.md
+
+  - 'Views':
+      - 'Overview': views/index.md
+      - 'Navigation': views/navigation.md
+      - 'Theming': views/theming.md
+      - 'Custom layouts': views/custom_layouts.md
