@@ -202,6 +202,7 @@ internal fun PopupContent(
         .requiredWidth(fixedWidth)
         .then(modifier),
       state = state,
+      tonalElevation = shadowElevation,
       content = content
     )
   }
@@ -211,6 +212,7 @@ internal fun PopupContent(
 private fun CascadeDropdownMenuContent(
   state: CascadeState,
   modifier: Modifier = Modifier,
+  tonalElevation: Dp,
   content: @Composable CascadeColumnScope.() -> Unit,
 ) {
   DisposableEffect(Unit) {
@@ -222,7 +224,7 @@ private fun CascadeDropdownMenuContent(
   Surface(
     shape = MaterialTheme.shapes.extraSmall,
     color = MaterialTheme.colorScheme.surface,
-    tonalElevation = 3.dp,  // Same as material3.DropdownMenu()
+    tonalElevation = tonalElevation,
   ) {
     val isTransitionRunning = remember { MutableStateFlow(false) }
     val backStackSnapshot by remember {
