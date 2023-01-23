@@ -174,6 +174,38 @@ internal class CascadePopupTest {
     }
   }
 
+  @Test fun zero_sized_anchor() {
+    composeTestRule.setContent {
+      CascadeMaterialTheme {
+        Box(
+          Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp))
+        ) {
+          // This anchor has a non-zero size, but its internal
+          // padding does not leave any space for content.
+          Box(
+            Modifier
+              .size(10.dp)
+              .align(Alignment.TopEnd)
+              .padding(5.dp)
+          ) {
+            CascadeDropdownMenu(
+              expanded = true,
+              onDismissRequest = {}
+            ) {
+              DropdownMenuItem(
+                text = { Text("Batman Ipsum") },
+                onClick = {}
+              )
+            }
+          }
+        }
+      }
+    }
+    dropshots.assertDeviceSnapshot()
+  }
+
   @Composable
   private fun PopupScaffold(
     align: Alignment = Alignment.TopStart,

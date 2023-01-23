@@ -7,6 +7,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.unit.toSize
 
 @Immutable
 internal data class ScreenRelativeBounds(
@@ -29,18 +31,19 @@ internal data class RootLayoutCoordinatesInfo(
 }
 
 internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): ScreenRelativeBounds {
-  return coordinates.findRootCoordinates().let { rootCoordinates ->
-    ScreenRelativeBounds(
-      boundsInRoot = rootCoordinates.localBoundingBoxOf(coordinates),
-      root = RootLayoutCoordinatesInfo(
-        layoutBoundsInWindow = rootCoordinates.boundsInWindow(),
-        windowPositionOnScreen = run {
-          owner.rootView.getLocationOnScreen(intArrayBuffer)
-          Offset(x = intArrayBuffer[0].toFloat(), y = intArrayBuffer[1].toFloat())
-        }
-      )
+  return ScreenRelativeBounds(
+    boundsInRoot = Rect(
+      offset = coordinates.positionInRoot(),
+      size = coordinates.size.toSize()
+    ),
+    root = RootLayoutCoordinatesInfo(
+      layoutBoundsInWindow = coordinates.findRootCoordinates().boundsInWindow(),
+      windowPositionOnScreen = run {
+        owner.rootView.getLocationOnScreen(intArrayBuffer)
+        Offset(x = intArrayBuffer[0].toFloat(), y = intArrayBuffer[1].toFloat())
+      }
     )
-  }
+  )
 }
 
 // I do not expect this to be shared across threads to need any synchronization.
