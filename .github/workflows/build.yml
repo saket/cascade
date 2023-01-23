@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -18,5 +18,17 @@ jobs:
         distribution: 'zulu'
         java-version: 11
 
+    - name: Run instrumented tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 31
+        arch: x86_64
+        profile: pixel_5
+        disable-animations: true
+        force-avd-creation: false
+        ram-size: 4096M
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
+        script: ./gradlew connectedCheck --stacktrace
+
     - name: Build and run tests
-      run: ./gradlew check cascade-compose:verifyPaparazziDebug cascade-compose:allDevicesDebugAndroidTest
+      run: ./gradlew check cascade-compose:verifyPaparazziDebug

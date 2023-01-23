@@ -19,26 +19,15 @@ android {
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
 
-  buildFeatures.compose = true
-  composeOptions.kotlinCompilerExtensionVersion = versions.composeCompiler
-
-  testOptions {
-    animationsDisabled = true
-    managedDevices {
-      devices {
-        pixel2api30 (ManagedVirtualDevice) {
-          device = "Pixel 2"
-          apiLevel = 30
-          systemImageSource = "aosp"
-        }
-      }
-    }
+  buildFeatures {
+    compose = true
   }
-
+  composeOptions {
+    kotlinCompilerExtensionVersion = versions.composeCompiler
+  }
   kotlinOptions {
     jvmTarget = "1.8"
   }
-
   lintOptions {
     abortOnError true
   }
