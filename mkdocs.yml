@@ -14,7 +14,7 @@ theme:
   palette:
     # Palette toggle for light mode
     - scheme: default
-      media: "(prefers-color-scheme)"
+      media: "(prefers-color-scheme: light)"
       primary: 'teal'
       accent: 'pink'
       toggle:
