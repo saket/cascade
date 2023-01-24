@@ -217,12 +217,12 @@ class ComposeSampleActivity : AppCompatActivity() {
       text = { Text("Markdown") },
       onClick = {}
     )
-    Divider(
-      color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-    )
     DropdownMenuItem(
       text = { Text("Plain text") },
       onClick = {}
+    )
+    Divider(
+      color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
     )
     DropdownMenuItem(
       text = { Text("Microsoft Word") },
