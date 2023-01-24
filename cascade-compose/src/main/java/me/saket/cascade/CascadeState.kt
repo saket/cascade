@@ -26,8 +26,8 @@ class CascadeState internal constructor() {
     backStack.clear()
   }
 
-  fun isBackStackEmpty(): Boolean {
-    return backStack.isEmpty()
+  fun canNavigateBack(): Boolean {
+    return backStack.isNotEmpty()
   }
 
   internal fun navigateTo(entry: CascadeBackStackEntry) {
