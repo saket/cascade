@@ -6,6 +6,7 @@
 
 ```groovy
 implementation "me.saket.cascade:cascade-compose:1.3.0"
+implementation "androidx.compose.material3:material3:…" // https://d.android.com/jetpack/androidx/releases/compose-material3
 ```
 
 ```kotlin
