@@ -7,7 +7,7 @@ on:
     branches: [ trunk ]
 
 jobs:
-  build:
+  test:
     runs-on: macos-latest
 
     steps:
@@ -30,5 +30,16 @@ jobs:
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
         script: ./gradlew connectedCheck --stacktrace
 
-    - name: Build and run tests
+    - name: (Fail-only) Bundle test reports
+      if: failure()
+      run: find . -type d '(' -name 'reports' -o -name 'androidTest-results' ')' | zip -@ -r instrumentation-test-build-reports.zip
+
+    - name: (Fail-only) Upload the build report
+      if: failure()
+      uses: actions/upload-artifact@v2
+      with:
+        name: instrumentation-test-report
+        path: instrumentation-test-build-reports.zip
+
+    - name: Build and run unit tests
       run: ./gradlew check cascade-compose:verifyPaparazziDebug
