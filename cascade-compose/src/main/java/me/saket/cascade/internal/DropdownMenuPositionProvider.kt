@@ -14,7 +14,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Copied from [material3](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt;l=304;drc=071c483c7223af673a5c0145e2fee7b0c94af1fd).
+ * Copied from [material3](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Menu.kt?q=file:androidx%2Fcompose%2Fmaterial3%2FMenu.kt%20class:androidx.compose.material3.DropdownMenuPositionProvider).
  */
 @Immutable
 internal data class DropdownMenuPositionProvider(

@@ -167,7 +167,12 @@ fun CascadeDropdownMenu(
         anchorBounds = anchorBounds
       ) {
         PopupContent(
-          modifier = modifier,
+          modifier = Modifier
+            // Prevent clicks from leaking behind. Otherwise, they'll get picked up as outside
+            // clicks to dismiss the popup. This must be set _before_ the downstream modifiers to
+            // avoid overriding any clickable modifiers registered by the developer.
+            .clickableWithoutRipple {}
+            .then(modifier),
           state = state,
           fixedWidth = fixedWidth,
           expandedStates = expandedStates,
@@ -232,7 +237,7 @@ private fun CascadeDropdownMenuContent(
         .onEach {
           // Block until any ongoing transition has finished. This is a very crude
           // way of queueing navigations. AnimatedContent() does not like it when
-          // the content is changed before it is able to finish a transition.
+          // its content is changed before it is able to finish a transition.
           isTransitionRunning.first { running -> !running }
         }
     }.collectAsState(initial = state.backStackSnapshot())
