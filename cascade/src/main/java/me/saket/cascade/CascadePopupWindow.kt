@@ -3,7 +3,6 @@ package me.saket.cascade
 import android.R.attr.listChoiceBackgroundIndicator
 import android.R.attr.popupBackground
 import android.R.attr.popupElevation
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -20,7 +19,6 @@ import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.PopupWindowCompat
-import me.saket.cascade.internal.Api21And22EventDelegate
 import me.saket.cascade.internal.DrawableWrapperCompat
 
 /**
@@ -52,12 +50,6 @@ open class CascadePopupWindow @JvmOverloads constructor(
     contentView = HeightAnimatableViewFlipper(context).apply {
       background = themeAttrs.popupBackground
       clipToOutline = true
-
-      if (SDK_INT == 21 || SDK_INT == 22) {
-        @SuppressLint("NewApi") // Was @hide on old API levels. Shouldn't be an actual issue.
-        isTouchModal = true
-        eventDelegate = Api21And22EventDelegate(onDismiss = ::dismiss)
-      }
     }
   }
 
@@ -105,11 +97,8 @@ open class CascadePopupWindow @JvmOverloads constructor(
   }
 
   private fun runWithMargins(action: () -> Unit) {
-    if (SDK_INT > 21) {
-      // PopupWindow's content View does not have any parent on
-      // API 21 (poor kid) that can be used for faking margins.
-      width += margins.left + margins.right
-    }
+    // Reserve space for margins.
+    width += margins.left + margins.right
 
     action()
     (contentView.parent as? View)?.updatePaddingRelative(

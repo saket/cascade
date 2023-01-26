@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,6 @@ import me.saket.cascade.internal.ViewFlipper2
 open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context) {
   var animationDuration = 350L
   var animationInterpolator = FastOutSlowInInterpolator()
-  var eventDelegate: EventDelegate = NoOpEventDelegate
 
   private var clipBounds2: Rect? = null // Because View#clipBounds creates a new Rect on every call.
   private var animator: ValueAnimator = ObjectAnimator()
@@ -153,13 +151,8 @@ open class HeightAnimatableViewFlipper(context: Context) : ViewFlipper2(context)
   }
 
   override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-    if (eventDelegate.dispatchTouchEvent(this, ev)) return true
     if (clipBounds2 != null && !clipBounds2!!.contains(ev)) return false
     return super.dispatchTouchEvent(ev)
-  }
-
-  override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-    return eventDelegate.dispatchKeyEvent(event) || super.dispatchKeyEvent(event)
   }
 }
 
