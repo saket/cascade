@@ -1,0 +1,21 @@
+name: Publish project website to GitHub Pages
+
+on:
+  push:
+    branches: [ trunk ]
+
+jobs:
+  deploy-website:
+    name: Deploy mkdocs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: mkdocs.yml
+          REQUIREMENTS: .github/workflows/mkdocs_requirements.txt
