@@ -19,6 +19,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.surfaceColorAtElevation
@@ -54,6 +55,21 @@ internal class CascadePopupTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
   @get:Rule val testName = TestName()
   @get:Rule val dropshots = Dropshots()
+
+  @Test fun single_window_screenshot() {
+    composeTestRule.setContent {
+      CascadeMaterialTheme {
+        Surface(Modifier.fillMaxSize()) {
+          Text(
+            modifier = Modifier.padding(16.dp),
+            text = "Test",
+            style = MaterialTheme.typography.titleLarge,
+          )
+        }
+      }
+    }
+    dropshots.assertSnapshot(composeTestRule.activity)
+  }
 
   @Test fun canary() {
     composeTestRule.setContent {
@@ -224,8 +240,12 @@ internal class CascadePopupTest {
   }
 
   private fun Dropshots.assertDeviceSnapshot(nameSuffix: String? = null) {
+    println("-------------------------------------")
+    println("${testName}()")
+
     // This screenshots the entire device instead of just the active Activity's content.
     val screenshot: Bitmap = takeScreenshot()
+    println("Screenshot taken. Size = ${screenshot.width}x${screenshot.height}")
 
     // The navigation bar's handle cross-fades its color smoothly and can
     // appear slightly different each time. Crop it out to affect screenshots.
@@ -237,6 +257,7 @@ internal class CascadePopupTest {
       /* width = */ screenshot.width,
       /* height = */ screenshot.height - navigationBarHeightInPx
     )
+    println("Screenshot cropped to size = ${screenshotWithoutNavBars.width}x${screenshotWithoutNavBars.height}")
 
     assertSnapshot(
       bitmap = screenshotWithoutNavBars,
@@ -246,6 +267,7 @@ internal class CascadePopupTest {
 }
 
 // These enums produce better test names than Alignment#toString().
+@Suppress("unused")
 enum class PopupAlignment(val alignment: Alignment) {
   TopStart(Alignment.TopStart),
   TopCenter(Alignment.TopCenter),
