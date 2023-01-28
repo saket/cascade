@@ -18,13 +18,14 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 31
+        target: default
         arch: x86_64
         profile: pixel_5
         disable-animations: true
         force-avd-creation: false
         ram-size: 4096M
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
-        script: ./gradlew connectedCheck --stacktrace
+        script: ./gradlew cascade-compose:connectedDebugAndroidTest --stacktrace
 
     - name: (Fail-only) Bundle test reports
       if: failure()
