@@ -25,7 +25,7 @@ jobs:
         force-avd-creation: false
         ram-size: 4096M
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
-        script: ./gradlew cascade-compose:connectedDebugAndroidTest --stacktrace
+        script: ./gradlew cascade-compose:allDevicesDebugAndroidTest --stacktrace
 
     - name: (Fail-only) Bundle test reports
       if: failure()

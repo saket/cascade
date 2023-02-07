@@ -33,6 +33,19 @@ android {
   }
   testOptions {
     animationsDisabled = true
+
+    // FYI dropbox/shots does not support gradle managed devices yet. As a workaround,
+    // the golden values of all instrumented screenshot tests in this project are run
+    // using connectedAndroidCheck on an emulator with the same specs.
+    managedDevices {
+      devices {
+        pixel5Api33 (ManagedVirtualDevice) {
+          device = "Pixel 5"
+          apiLevel = 31
+          systemImageSource = "aosp"
+        }
+      }
+    }
   }
 }
 
