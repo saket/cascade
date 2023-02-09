@@ -15,17 +15,7 @@ jobs:
         java-version: 11
 
     - name: Run instrumented tests
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 31
-        target: default
-        arch: x86_64
-        profile: pixel_5
-        disable-animations: true
-        force-avd-creation: false
-        ram-size: 4096M
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
-        script: ./gradlew cascade-compose:connectedDebugAndroidTest --stacktrace
+      run: ./gradlew cascade-compose:allDevicesDebugAndroidTest --stacktrace -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
 
     - name: (Fail-only) Bundle test reports
       if: failure()
@@ -38,5 +28,5 @@ jobs:
         name: instrumentation-test-report
         path: instrumentation-test-build-reports.zip
 
-    - name: Build and run unit tests
+    - name: Run unit tests
       run: ./gradlew check cascade-compose:verifyPaparazziDebug

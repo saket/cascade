@@ -240,16 +240,14 @@ internal class CascadePopupTest {
   }
 
   private fun Dropshots.assertDeviceSnapshot(nameSuffix: String? = null) {
-    println("-------------------------------------")
-    println("${testName}()")
-
     // This screenshots the entire device instead of just the active Activity's content.
     val screenshot: Bitmap = takeScreenshot()
-    println("Screenshot taken. Size = ${screenshot.width}x${screenshot.height}")
 
     // The navigation bar's handle cross-fades its color smoothly and can
     // appear slightly different each time. Crop it out to affect screenshots.
-    val navigationBarHeightInPx = 66
+    val navigationBarHeightInPx = composeTestRule.activity.resources.run {
+      getDimensionPixelSize(getIdentifier("navigation_bar_height", "dimen", "android"))
+    }
     val screenshotWithoutNavBars: Bitmap = Bitmap.createBitmap(
       /* source = */ screenshot,
       /* x = */ 0,
@@ -257,7 +255,6 @@ internal class CascadePopupTest {
       /* width = */ screenshot.width,
       /* height = */ screenshot.height - navigationBarHeightInPx
     )
-    println("Screenshot cropped to size = ${screenshotWithoutNavBars.width}x${screenshotWithoutNavBars.height}")
 
     assertSnapshot(
       bitmap = screenshotWithoutNavBars,
