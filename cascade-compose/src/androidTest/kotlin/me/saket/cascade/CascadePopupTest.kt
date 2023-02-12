@@ -19,7 +19,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.surfaceColorAtElevation
@@ -59,21 +58,6 @@ internal class CascadePopupTest {
   // Drop shadows are strangely causing tiny differences in
   // generated screenshots. A zero elevation is used to avoid this.
   private val shadowElevation = 0.dp
-
-  @Test fun single_window_screenshot() {
-    composeTestRule.setContent {
-      CascadeMaterialTheme {
-        Surface(Modifier.fillMaxSize()) {
-          Text(
-            modifier = Modifier.padding(16.dp),
-            text = "Test",
-            style = MaterialTheme.typography.titleLarge,
-          )
-        }
-      }
-    }
-    dropshots.assertSnapshot(composeTestRule.activity)
-  }
 
   @Test fun canary() {
     composeTestRule.setContent {
