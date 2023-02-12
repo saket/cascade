@@ -9,7 +9,7 @@ implementation "me.saket.cascade:cascade:2.0.0-rc01"
 implementation "me.saket.cascade:cascade-compose:2.0.0-rc01"
 ```
 
-See project website for full documentation.
+See [project website](https://saket.github.io/cascade) for full documentation.
 
 ## License
 
