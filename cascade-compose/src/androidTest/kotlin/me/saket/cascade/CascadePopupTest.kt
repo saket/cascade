@@ -56,6 +56,10 @@ internal class CascadePopupTest {
   @get:Rule val testName = TestName()
   @get:Rule val dropshots = Dropshots()
 
+  // Drop shadows are strangely causing tiny differences in
+  // generated screenshots. A zero elevation is used to avoid this.
+  private val shadowElevation = 0.dp
+
   @Test fun single_window_screenshot() {
     composeTestRule.setContent {
       CascadeMaterialTheme {
@@ -77,7 +81,8 @@ internal class CascadePopupTest {
         PopupScaffold {
           CascadeDropdownMenu(
             expanded = true,
-            onDismissRequest = {}
+            onDismissRequest = {},
+            shadowElevation = shadowElevation,
           ) {
             DropdownMenuItem(text = { Text("Never gonna") }, onClick = {})
             DropdownMenuItem(text = { Text("Give you up") }, onClick = {})
@@ -97,6 +102,7 @@ internal class CascadePopupTest {
           CascadeDropdownMenu(
             modifier = Modifier.requiredHeight(100.dp),
             fixedWidth = 200.dp,
+            shadowElevation = shadowElevation,
             expanded = true,
             onDismissRequest = {}
           ) {
@@ -134,6 +140,7 @@ internal class CascadePopupTest {
           CascadeDropdownMenu(
             modifier = Modifier.requiredHeight(popupSize.height),
             fixedWidth = popupSize.width,
+            shadowElevation = shadowElevation,
             expanded = true,
             onDismissRequest = {}
           ) {
@@ -170,7 +177,8 @@ internal class CascadePopupTest {
         PopupScaffold {
           CascadeDropdownMenu(
             expanded = true,
-            onDismissRequest = {}
+            onDismissRequest = {},
+            shadowElevation = shadowElevation,
           ) {
             Box(
               Modifier
@@ -208,7 +216,8 @@ internal class CascadePopupTest {
           ) {
             CascadeDropdownMenu(
               expanded = true,
-              onDismissRequest = {}
+              onDismissRequest = {},
+              shadowElevation = shadowElevation,
             ) {
               DropdownMenuItem(
                 text = { Text("Batman Ipsum") },
