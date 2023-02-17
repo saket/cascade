@@ -5,7 +5,7 @@
 [drop_down_menu]: https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#DropdownMenu(kotlin.Boolean,kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.ui.unit.DpOffset,androidx.compose.ui.window.PopupProperties,kotlin.Function1)
 
 ```groovy
-implementation "me.saket.cascade:cascade-compose:2.0.0-rc01"
+implementation "me.saket.cascade:cascade-compose:2.0.0-rc02"
 implementation "androidx.compose.material3:material3:…" // https://d.android.com/jetpack/androidx/releases/compose-material3
 ```
 
