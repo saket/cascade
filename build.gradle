@@ -4,9 +4,9 @@ buildscript {
   ext.versions = [
     minSdk: 23,
     compileSdk: 33,
-    kotlin: '1.8.10',
-    composeUi: '1.4.3',
-    composeCompiler: '1.4.4',
+    kotlin: '1.8.21',
+    composeUi: '1.5.0-alpha04',
+    composeCompiler: '1.4.7',
     composeUiMaterial3: '1.2.0-alpha01',
     appCompat: '1.5.1',
     testParamInjector: '1.10',
@@ -35,6 +35,6 @@ allprojects {
   }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
   delete rootProject.buildDir
 }
