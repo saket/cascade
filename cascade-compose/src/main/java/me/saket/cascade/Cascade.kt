@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalAnimationApi::class)
 
 package me.saket.cascade
 
@@ -48,7 +48,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -246,7 +245,8 @@ private fun CascadeDropdownMenuContent(
     AnimatedContent(
       modifier = modifier,
       targetState = backStackSnapshot,
-      transitionSpec = { cascadeTransitionSpec(layoutDirection) }
+      transitionSpec = { cascadeTransitionSpec(layoutDirection) },
+      label = "cascadeAnimation"
     ) { snapshot ->
       Column(
         Modifier
