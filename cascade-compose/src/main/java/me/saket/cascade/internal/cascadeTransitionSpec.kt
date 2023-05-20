@@ -1,10 +1,7 @@
-@file:OptIn(ExperimentalAnimationApi::class)
-
 package me.saket.cascade.internal
 
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -13,8 +10,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.LayoutDirection.Ltr
 import me.saket.cascade.BackStackSnapshot
 
-@OptIn(ExperimentalAnimationApi::class)
-internal fun AnimatedContentScope<BackStackSnapshot>.cascadeTransitionSpec(
+internal fun AnimatedContentTransitionScope<BackStackSnapshot>.cascadeTransitionSpec(
   layoutDirection: LayoutDirection
 ): ContentTransform {
   val navigatingForward = targetState.backStackSize > initialState.backStackSize
