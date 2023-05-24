@@ -5,9 +5,9 @@ buildscript {
     minSdk: 23,
     compileSdk: 33,
     kotlin: '1.8.21',
-    composeUi: '1.5.0-alpha04',
+    composeUi: '1.5.0-alpha01',
     composeCompiler: '1.4.7',
-    composeUiMaterial3: '1.2.0-alpha01',
+    composeUiMaterial3: '1.1.0',
     appCompat: '1.5.1',
     testParamInjector: '1.10',
   ]
@@ -35,6 +35,6 @@ allprojects {
   }
 }
 
-tasks.register('clean', Delete) {
+task clean(type: Delete) {
   delete rootProject.buildDir
 }
