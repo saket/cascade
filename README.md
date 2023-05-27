@@ -5,8 +5,8 @@
 `cascade` builds nested popup menus with smooth height animations. It is designed to be a *drop-in* replacement for both [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu) and [DropdownMenu](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#DropdownMenu(kotlin.Boolean,kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.ui.unit.DpOffset,androidx.compose.ui.window.PopupProperties,kotlin.Function1)), so using it in your project is beautifully only a word away. Try out the [sample app](https://github.com/saket/cascade/releases/download/2.0.0-rc01/cascade_v2.0.0-rc01_sample.apk) to see it in action.
 
 ```groovy
-implementation "me.saket.cascade:cascade:2.0.0"
-implementation "me.saket.cascade:cascade-compose:2.0.0"
+implementation "me.saket.cascade:cascade:2.1.0"
+implementation "me.saket.cascade:cascade-compose:2.1.0"
 ```
 
 See [project website](https://saket.github.io/cascade) for full documentation.
