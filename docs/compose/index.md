@@ -1,5 +1,7 @@
 # cascade
 
+![demo](https://github.com/saket/cascade/raw/trunk/demo.gif)
+
 `cascade` offers a drop-in replacement for [`DropdownMenu`][drop_down_menu] with support for nested menus, smooth height animations and `0dp` vertical content paddings.
 
 [drop_down_menu]: https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#DropdownMenu(kotlin.Boolean,kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.ui.unit.DpOffset,androidx.compose.ui.window.PopupProperties,kotlin.Function1)
