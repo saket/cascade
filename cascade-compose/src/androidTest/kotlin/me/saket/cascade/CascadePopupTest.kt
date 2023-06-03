@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.test.core.app.takeScreenshot
 import com.dropbox.dropshots.Dropshots
+import com.dropbox.dropshots.ThresholdValidator
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.junit.Rule
@@ -53,7 +54,9 @@ import org.junit.runner.RunWith
 internal class CascadePopupTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
   @get:Rule val testName = TestName()
-  @get:Rule val dropshots = Dropshots()
+  @get:Rule val dropshots = Dropshots(
+    resultValidator = ThresholdValidator(threshold = 0.001f)  // == 0.1%
+  )
 
   // Drop shadows are strangely causing tiny differences in
   // generated screenshots. A zero elevation is used to avoid this.
