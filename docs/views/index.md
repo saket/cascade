@@ -5,7 +5,7 @@
 `cascade` offers a drop-in replacement for [PopupMenu](https://developer.android.com/reference/androidx/appcompat/widget/PopupMenu). For guidance on creating & nesting menus, the [official documentation](https://developer.android.com/develop/ui/views/components/menus) can be followed while replacing any usages of `PopupMenu` with `CascadePopupMenu`.
 
 ```groovy
-implementation "me.saket.cascade:cascade:2.1.0"
+implementation "me.saket.cascade:cascade:2.2.0"
 ```
 
 ```diff
