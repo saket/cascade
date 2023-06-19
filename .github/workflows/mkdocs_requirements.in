@@ -1,2 +1,8 @@
 mkdocs==1.4.2
 mkdocs-material==9.0.6
+
+# Force use newer versions of these dependencies. Their older versions had security vulnerabilities.
+# https://github.com/saket/telephoto/security/dependabot/1
+# https://github.com/saket/telephoto/security/dependabot/2
+pymdown-extensions==10.0
+requests==2.31.0
