@@ -41,7 +41,7 @@ tasks.register('clean', Delete) {
 
 // Used on CI to prevent publishing of non-snapshot versions.
 tasks.register("throwIfVersionIsNotSnapshot") {
-  def libraryVersion = properties["VERSION_NAME"] as String
+  def libraryVersion = project.findProperty("VERSION_NAME") as String
   if (!libraryVersion.endsWith("SNAPSHOT")) {
     throw IllegalStateException("Project isn't using a snapshot version = $libraryVersion")
   }
