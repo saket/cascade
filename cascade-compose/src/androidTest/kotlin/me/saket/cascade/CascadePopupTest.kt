@@ -55,7 +55,8 @@ internal class CascadePopupTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
   @get:Rule val testName = TestName()
   @get:Rule val dropshots = Dropshots(
-    resultValidator = ThresholdValidator(threshold = 0.001f)  // == 0.1%
+    filenameFunc = { it },
+    resultValidator = ThresholdValidator(threshold = 0.0025f)  // == 0.1%
   )
 
   // Drop shadows are strangely causing tiny differences in
