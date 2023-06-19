@@ -1,0 +1,85 @@
+name: Run tests and publish snapshot
+
+on:
+  push:
+    branches: [ trunk ]
+  pull_request:
+
+jobs:
+  checks:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+      - uses: gradle/wrapper-validation-action@v1
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+      - uses: gradle/gradle-build-action@v2.4.2
+
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+
+      - name: Run unit tests
+        run: ./gradlew check
+
+      - name: Run paparazzi screenshot tests
+        run: ./gradlew cascade-compose:verifyPaparazziDebug
+
+      - name: (Fail-only) Upload paparazzi test reports
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-failures
+          path: |
+            **/build/reports/tests/*/
+            **/out/failures/
+            paparazzi/paparazzi-gradle-plugin/src/test/projects/**/build/reports/paparazzi/images/
+
+      - name: Run instrumented screenshot tests
+        env:
+          # https://docs.emulator.wtf/github/tokenless
+          EW_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew cascade-compose:testDebugWithEmulatorWtf
+
+      - name: (Fail-only) Bundle instrumented test reports
+        if: failure()
+        run: find . -type d '(' -name 'reports' -o -name 'test-results' ')' | zip -@ -r instrumentation-test-build-reports.zip
+
+      - name: (Fail-only) Upload instrumented test reports
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: instrumentation-test-report
+          path: instrumentation-test-build-reports.zip
+
+  deploy-snapshot:
+    name: Deploy snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.repository == 'saket/cascade' && github.ref == 'refs/heads/trunk'
+    needs: [ checks ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: gradle/wrapper-validation-action@v1
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+      - uses: gradle/gradle-build-action@v2.4.2
+
+      - name: Ensure snapshot version
+        run: ./gradlew throwIfVersionIsNotSnapshot
+
+      - name: Publish snapshot
+        run: ./gradlew clean publish --no-daemon --no-parallel --no-configuration-cache --stacktrace
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_SIGNING_PASSWORD }}

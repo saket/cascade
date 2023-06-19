@@ -1,7 +1,8 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-  id("com.dropbox.dropshots") version "0.4.0"
+  id "com.dropbox.dropshots" version "0.4.0"
+  id "wtf.emulator.gradle" version "0.14.0"
 }
 
 apply plugin: 'com.android.library'
@@ -33,20 +34,18 @@ android {
   }
   testOptions {
     animationsDisabled = true
-
-    // FYI dropbox/shots does not support gradle managed devices yet. As a workaround,
-    // the golden values of all instrumented screenshot tests in this project are run
-    // using connectedAndroidCheck on an emulator with the same specs.
-    managedDevices {
-      devices {
-        pixel5Api33 (ManagedVirtualDevice) {
-          device = "Pixel 5"
-          apiLevel = 31
-          systemImageSource = "aosp"
-        }
-      }
-    }
   }
+}
+
+emulatorwtf {
+  devices = [
+    [model: 'Pixel7', version: 31, atd: true],
+  ]
+  directoriesToPull = ["/sdcard/Download/"]
+  numFlakyTestAttempts = 2 // 3 runs in total.
+  fileCacheTtl = Duration.ofDays(30)
+  timeout = Duration.ofMinutes(15) // Note to self: this is per shard and not per test.
+  printOutput = true // Print report URL even for successful test runs.
 }
 
 dependencies {
