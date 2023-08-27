@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Surface
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -227,7 +228,7 @@ private fun CascadeDropdownMenuContent(
 
   Surface(
     shape = MaterialTheme.shapes.extraSmall,
-    color = MaterialTheme.colorScheme.surface,
+    color = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
     tonalElevation = tonalElevation,
   ) {
     val isTransitionRunning = remember { MutableStateFlow(false) }
@@ -252,7 +253,7 @@ private fun CascadeDropdownMenuContent(
         Modifier
           // Provide a solid background color to prevent the
           // content of sub-menus from leaking into each other.
-          .background(MaterialTheme.colorScheme.surface)
+          .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
           .verticalScroll(rememberScrollState())
       ) {
         val currentContent = snapshot.topMostEntry?.childrenContent ?: content
