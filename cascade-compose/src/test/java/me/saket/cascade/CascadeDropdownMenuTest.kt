@@ -138,10 +138,11 @@ class CascadeDropdownMenuTest(
           PopupContent(
             state = state,
             fixedWidth = 196.dp, // Same as used by CascadeDropdownMenu().
-            shadowElevation = 8.dp,
+            shadowElevation = 0.dp,
             expandedStates = MutableTransitionState(true),
             transformOriginState = remember { mutableStateOf(TransformOrigin.Center) },
             content = content,
+            tonalElevation = 0.dp,
           )
         }
       }
