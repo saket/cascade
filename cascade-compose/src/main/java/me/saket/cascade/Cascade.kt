@@ -119,6 +119,7 @@ fun CascadeDropdownMenu(
   offset: DpOffset = DpOffset.Zero,
   fixedWidth: Dp = 196.dp,
   shadowElevation: Dp = 3.dp,
+  tonalElevation: Dp = 3.dp,
   properties: PopupProperties = PopupProperties(focusable = true),
   state: CascadeState = rememberCascadeState(),
   content: @Composable CascadeColumnScope.() -> Unit
@@ -178,6 +179,7 @@ fun CascadeDropdownMenu(
           expandedStates = expandedStates,
           transformOriginState = transformOriginState,
           shadowElevation = shadowElevation,
+          tonalElevation = tonalElevation,
           content = content
         )
       }
@@ -190,6 +192,7 @@ internal fun PopupContent(
   modifier: Modifier = Modifier,
   state: CascadeState,
   fixedWidth: Dp,
+  tonalElevation: Dp,
   shadowElevation: Dp,
   expandedStates: MutableTransitionState<Boolean>,
   transformOriginState: MutableState<TransformOrigin>,
@@ -207,7 +210,8 @@ internal fun PopupContent(
         .requiredWidth(fixedWidth)
         .then(modifier),
       state = state,
-      tonalElevation = shadowElevation,
+      tonalElevation = tonalElevation,
+      shadowElevation = shadowElevation,
       content = content
     )
   }
@@ -218,6 +222,7 @@ private fun CascadeDropdownMenuContent(
   state: CascadeState,
   modifier: Modifier = Modifier,
   tonalElevation: Dp,
+  shadowElevation: Dp,
   content: @Composable CascadeColumnScope.() -> Unit,
 ) {
   DisposableEffect(Unit) {
@@ -228,8 +233,9 @@ private fun CascadeDropdownMenuContent(
 
   Surface(
     shape = MaterialTheme.shapes.extraSmall,
-    color = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+    color = MaterialTheme.colorScheme.surface,
     tonalElevation = tonalElevation,
+    shadowElevation = shadowElevation,
   ) {
     val isTransitionRunning = remember { MutableStateFlow(false) }
     val backStackSnapshot by remember {
@@ -253,7 +259,7 @@ private fun CascadeDropdownMenuContent(
         Modifier
           // Provide a solid background color to prevent the
           // content of sub-menus from leaking into each other.
-          .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+          .background(MaterialTheme.colorScheme.surfaceColorAtElevation(tonalElevation))
           .verticalScroll(rememberScrollState())
       ) {
         val currentContent = snapshot.topMostEntry?.childrenContent ?: content
