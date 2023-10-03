@@ -53,7 +53,7 @@ import org.junit.rules.TestName
 import org.junit.runner.RunWith
 
 @RunWith(TestParameterInjector::class)
-internal class CascadePopupTest {
+internal class CascadePopupAlignmentTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
   @get:Rule val testName = TestName()
   @get:Rule val dropshots = Dropshots(
@@ -63,6 +63,7 @@ internal class CascadePopupTest {
 
   // Drop shadows are strangely causing tiny differences in
   // generated screenshots. A zero elevation is used to avoid this.
+  // FWIW shadows are already tested by CascadeDropdownMenuTest.
   private val shadowElevation = 0.dp
 
   @Test fun canary() {
