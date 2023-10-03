@@ -44,6 +44,7 @@ internal fun AnimateEntryExit(
   expandedStates: MutableTransitionState<Boolean>,
   transformOriginState: State<TransformOrigin>,
   shadowElevation: Dp,
+  shape: Shape,
   content: @Composable () -> Unit
 ) {
   val isExpandedTransition = updateTransition(expandedStates, label = "CascadeDropDownMenu")
@@ -68,8 +69,6 @@ internal fun AnimateEntryExit(
     label = "clip",
     targetValueByState = { if (it) 1f else 0.25f }
   )
-
-  val shape = MaterialTheme.shapes.extraSmall
 
   val clippingShape = remember(reveal) {
     object : Shape {

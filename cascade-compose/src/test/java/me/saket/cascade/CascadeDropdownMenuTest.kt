@@ -5,13 +5,13 @@ package me.saket.cascade
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.material3.lightColorScheme
@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
@@ -135,6 +136,18 @@ class CascadeDropdownMenuTest(
     }
   }
 
+  @Test fun `custom shape`() {
+    paparazzi.snapshot {
+      PopupScaffold(
+        shape = RoundedCornerShape(24.dp)
+      ) {
+        DropdownMenuItem(text = { Text("I just called") }, onClick = {})
+        DropdownMenuItem(text = { Text("to say") }, onClick = {})
+        DropdownMenuItem(text = { Text("I love you") }, onClick = {})
+      }
+    }
+  }
+
   @Test fun `custom shadow elevation`() {
     paparazzi.snapshot {
       PopupScaffold(
@@ -153,6 +166,7 @@ class CascadeDropdownMenuTest(
   @Composable
   private fun PopupScaffold(
     state: CascadeState = rememberCascadeState(),
+    shape: Shape = CascadeDefaults.shape,
     shadowElevation: Dp = CascadeDefaults.shadowElevation,
     content: @Composable CascadeColumnScope.() -> Unit
   ) {
@@ -171,6 +185,7 @@ class CascadeDropdownMenuTest(
             shadowElevation = shadowElevation,
             expandedStates = MutableTransitionState(true),
             transformOriginState = remember { mutableStateOf(TransformOrigin.Center) },
+            shape = shape,
             content = content,
           )
         }
@@ -197,13 +212,9 @@ class CascadeDropdownMenuTest(
         fontSize = 16.sp,
       ),
     )
-    val shapes = Shapes(
-      extraSmall = RoundedCornerShape(8.dp)
-    )
     MaterialTheme(
       colorScheme = colors,
       typography = typography,
-      shapes = shapes,
       content = content
     )
   }

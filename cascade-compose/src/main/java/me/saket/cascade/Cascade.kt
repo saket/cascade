@@ -51,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -122,6 +123,7 @@ fun CascadeDropdownMenu(
   shadowElevation: Dp = CascadeDefaults.shadowElevation,
   properties: PopupProperties = PopupProperties(focusable = true),
   state: CascadeState = rememberCascadeState(),
+  shape: Shape = CascadeDefaults.shape,
   content: @Composable CascadeColumnScope.() -> Unit
 ) {
   val expandedStates = remember { MutableTransitionState(false) }
@@ -179,6 +181,7 @@ fun CascadeDropdownMenu(
           expandedStates = expandedStates,
           transformOriginState = transformOriginState,
           shadowElevation = shadowElevation,
+          shape = shape,
           content = content
         )
       }
@@ -192,6 +195,7 @@ internal fun PopupContent(
   state: CascadeState,
   fixedWidth: Dp,
   shadowElevation: Dp,
+  shape: Shape,
   expandedStates: MutableTransitionState<Boolean>,
   transformOriginState: MutableState<TransformOrigin>,
   content: @Composable (CascadeColumnScope.() -> Unit)
@@ -202,6 +206,7 @@ internal fun PopupContent(
     // 8dp is the maximum recommended elevation.
     // More context here: https://android-review.googlesource.com/c/platform/frameworks/support/+/2117953
     shadowElevation = shadowElevation.coerceAtMost(8.dp),
+    shape = shape,
   ) {
     CascadeDropdownMenuContent(
       modifier = Modifier
@@ -209,6 +214,7 @@ internal fun PopupContent(
         .then(modifier),
       state = state,
       tonalElevation = shadowElevation,
+      shape = shape,
       content = content
     )
   }
@@ -219,6 +225,7 @@ private fun CascadeDropdownMenuContent(
   state: CascadeState,
   modifier: Modifier = Modifier,
   tonalElevation: Dp,
+  shape: Shape,
   content: @Composable CascadeColumnScope.() -> Unit,
 ) {
   DisposableEffect(Unit) {
@@ -228,7 +235,7 @@ private fun CascadeDropdownMenuContent(
   }
 
   Surface(
-    shape = MaterialTheme.shapes.extraSmall,
+    shape = shape,
     color = MaterialTheme.colorScheme.surface,
     tonalElevation = tonalElevation,
   ) {
