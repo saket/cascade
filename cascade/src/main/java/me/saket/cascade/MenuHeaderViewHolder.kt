@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import me.saket.cascade.AdapterModel.HeaderModel
 import me.saket.cascade.AdapterModel.ItemModel
 import me.saket.cascade.internal.dip
+import androidx.appcompat.R as appcompatR
 
 class MenuHeaderViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
   val titleView: TextView = view.findViewById(android.R.id.title)
@@ -63,7 +64,7 @@ class MenuHeaderViewHolder(private val view: View) : RecyclerView.ViewHolder(vie
   companion object {
     fun inflate(parent: ViewGroup): MenuHeaderViewHolder {
       val inflater = LayoutInflater.from(parent.context).cloneInContext(parent.context)
-      val view = inflater.inflate(R.layout.abc_popup_menu_header_item_layout, parent, false)
+      val view = inflater.inflate(appcompatR.layout.abc_popup_menu_header_item_layout, parent, false)
       return MenuHeaderViewHolder(view)
     }
   }

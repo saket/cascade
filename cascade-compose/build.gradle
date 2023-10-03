@@ -49,7 +49,7 @@ emulatorwtf {
 }
 
 dependencies {
-  implementation "androidx.activity:activity-compose:1.6.1"
+  implementation "androidx.activity:activity-compose:$versions.activityCompose"
   implementation "androidx.compose.ui:ui:$versions.composeUi"
   implementation "androidx.compose.ui:ui-tooling:$versions.composeUi"
   implementation "androidx.compose.foundation:foundation:$versions.composeUi"
@@ -58,7 +58,7 @@ dependencies {
 
   testImplementation "junit:junit:4.13.2"
   testImplementation "com.google.testparameterinjector:test-parameter-injector:$versions.testParamInjector"
-  testImplementation "com.google.truth:truth:1.1.3"
+  testImplementation "com.google.truth:truth:1.1.5"
 
   debugImplementation "androidx.appcompat:appcompat:$versions.appCompat"
   androidTestImplementation "androidx.test:core-ktx:1.5.0"
