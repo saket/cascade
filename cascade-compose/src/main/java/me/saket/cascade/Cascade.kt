@@ -116,8 +116,8 @@ fun CascadeDropdownMenu(
   onDismissRequest: () -> Unit,
   modifier: Modifier = Modifier,
   offset: DpOffset = DpOffset.Zero,
-  fixedWidth: Dp = 196.dp,
-  shadowElevation: Dp = 3.dp,
+  fixedWidth: Dp = CascadeDefaults.menuWidth,
+  shadowElevation: Dp = CascadeDefaults.shadowElevation,
   properties: PopupProperties = PopupProperties(focusable = true),
   state: CascadeState = rememberCascadeState(),
   content: @Composable CascadeColumnScope.() -> Unit
@@ -192,7 +192,7 @@ internal fun PopupContent(
   shadowElevation: Dp,
   expandedStates: MutableTransitionState<Boolean>,
   transformOriginState: MutableState<TransformOrigin>,
-  content: @Composable() (CascadeColumnScope.() -> Unit)
+  content: @Composable (CascadeColumnScope.() -> Unit)
 ) {
   AnimateEntryExit(
     expandedStates = expandedStates,

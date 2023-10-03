@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -88,15 +89,13 @@ class CascadeDropdownMenuTest(
   }
 
   @Test fun `navigate to a sub-menu with header`() {
-    paparazzi.snapshot {
-      val state = rememberCascadeState()
-
       // Paparazzi currently only composes once so
       // the navigation must happen before hand.
-      state.navigateTo(
+    val state = CascadeState().apply {
+      navigateTo(
         CascadeBackStackEntry(
           header = {
-            FakeCascadeColumnScope(state).DropdownMenuHeader {
+            FakeCascadeColumnScope(this).DropdownMenuHeader {
               Text("Horizon")
             }
           },
@@ -112,18 +111,35 @@ class CascadeDropdownMenuTest(
           }
         )
       )
+    }
+
+    paparazzi.snapshot {
       PopupScaffold(state) {
         Text("This should get replaced by the sub-menu")
       }
     }
   }
 
+
+  @Test fun `custom shadow elevation`() {
+    paparazzi.snapshot {
+      PopupScaffold(
+        shadowElevation = CascadeDefaults.shadowElevation + 20.dp
+      ) {
+        DropdownMenuItem(text = { Text("I just called") }, onClick = {})
+        DropdownMenuItem(text = { Text("to say") }, onClick = {})
+        DropdownMenuItem(text = { Text("I love you") }, onClick = {})
+      }
+    }
+  }
+
   /**
-   * Recreates [androidx.compose.material3.DropdownMenuContent]
+   * Recreates [androidx.compose.material3.DropdownMenuContent] because paparazzi can't screenshot popups yet.
    */
   @Composable
   private fun PopupScaffold(
     state: CascadeState = rememberCascadeState(),
+    shadowElevation: Dp = CascadeDefaults.shadowElevation,
     content: @Composable CascadeColumnScope.() -> Unit
   ) {
     CascadeMaterialTheme {
@@ -137,8 +153,8 @@ class CascadeDropdownMenuTest(
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
           PopupContent(
             state = state,
-            fixedWidth = 196.dp, // Same as used by CascadeDropdownMenu().
-            shadowElevation = 8.dp,
+            fixedWidth = CascadeDefaults.menuWidth,
+            shadowElevation = shadowElevation,
             expandedStates = MutableTransitionState(true),
             transformOriginState = remember { mutableStateOf(TransformOrigin.Center) },
             content = content,
