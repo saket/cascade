@@ -89,8 +89,8 @@ class CascadeDropdownMenuTest(
   }
 
   @Test fun `navigate to a sub-menu with header`() {
-      // Paparazzi currently only composes once so
-      // the navigation must happen before hand.
+    // Paparazzi currently only composes once so
+    // the navigation must happen before hand.
     val state = CascadeState().apply {
       navigateTo(
         CascadeBackStackEntry(
@@ -120,6 +120,20 @@ class CascadeDropdownMenuTest(
     }
   }
 
+  @Test fun `header can be used in menus without any parent`() {
+    paparazzi.snapshot {
+      PopupScaffold {
+        DropdownMenuHeader {
+          Text("A header that overflows to the next line")
+        }
+        DropdownMenuItem(
+          text = { Text("This menu does not have a parent so the header should not have a back icon") },
+          onClick = {},
+          contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp)
+        )
+      }
+    }
+  }
 
   @Test fun `custom shadow elevation`() {
     paparazzi.snapshot {

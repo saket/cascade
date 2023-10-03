@@ -36,6 +36,8 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -65,7 +67,7 @@ internal class CascadePopupTest {
 
   @Test fun canary() {
     composeTestRule.setContent {
-      MaterialTheme {
+      CascadeMaterialTheme {
         PopupScaffold {
           CascadeDropdownMenu(
             expanded = true,
@@ -216,6 +218,38 @@ internal class CascadePopupTest {
         }
       }
     }
+    dropshots.assertDeviceSnapshot()
+  }
+
+  @Test fun clicking_on_a_menu_item_opens_its_sub_menu() {
+    composeTestRule.setContent {
+      CascadeMaterialTheme {
+        PopupScaffold {
+          CascadeDropdownMenu(
+            expanded = true,
+            onDismissRequest = {},
+            shadowElevation = shadowElevation,
+          ) {
+            DropdownMenuItem(
+              text = { Text("I just called") },
+              children = {
+                DropdownMenuItem(
+                  text = { Text("to say") },
+                  onClick = {},
+                )
+                DropdownMenuItem(
+                  text = { Text("I love you") },
+                  onClick = {},
+                )
+              }
+            )
+          }
+        }
+      }
+    }
+
+    composeTestRule.onNodeWithText("I just called").performClick()
+    composeTestRule.waitForIdle()
     dropshots.assertDeviceSnapshot()
   }
 

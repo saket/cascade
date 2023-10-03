@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -352,12 +354,17 @@ interface CascadeColumnScope : ColumnScope {
   @Composable
   fun DropdownMenuHeader(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = 4.dp),
+    contentPadding: PaddingValues = PaddingValues(top = 4.dp, bottom = 4.dp, end = 12.dp),
     text: @Composable () -> Unit,
   ) {
+    val onClickModifier = if (cascadeState.canNavigateBack()) {
+      Modifier.clickable { cascadeState.navigateBack() }
+    } else {
+      Modifier
+    }
     Row(
       modifier = modifier
-        .clickable { cascadeState.navigateBack() }
+        .then(onClickModifier)
         .fillMaxWidth()
         .padding(contentPadding),
       verticalAlignment = CenterVertically
@@ -373,14 +380,18 @@ interface CascadeColumnScope : ColumnScope {
         LocalContentColor provides headerColor,
         LocalTextStyle provides headerStyle
       ) {
-        Icon(
-          modifier = Modifier.requiredSize(32.dp),
-          imageVector = when (LocalLayoutDirection.current) {
-            Ltr -> Icons.Rounded.ArrowLeft
-            Rtl -> Icons.Rounded.ArrowRight
-          },
-          contentDescription = null
-        )
+        if (this@CascadeColumnScope.cascadeState.canNavigateBack()) {
+          Icon(
+            modifier = Modifier.requiredSize(32.dp),
+            imageVector = when (LocalLayoutDirection.current) {
+              Ltr -> Icons.Rounded.ArrowLeft
+              Rtl -> Icons.Rounded.ArrowRight
+            },
+            contentDescription = null
+          )
+        } else {
+          Spacer(Modifier.width(contentPadding.calculateEndPadding(LocalLayoutDirection.current)))
+        }
         Box(Modifier.weight(1f)) {
           text()
         }
