@@ -60,7 +60,7 @@ internal class CascadePopupAlignmentTest {
   @get:Rule val testName = TestName()
   @get:Rule val dropshots = Dropshots(
     filenameFunc = { it },
-    resultValidator = ThresholdValidator(threshold = 0.0025f)  // == 0.1%
+    resultValidator = ThresholdValidator(threshold = 0.25f / 100f)  // == 0.25%
   )
 
   // Drop shadows are strangely causing tiny differences in
@@ -196,7 +196,7 @@ internal class CascadePopupAlignmentTest {
         Box(
           Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp))
+            .background(MaterialTheme.colorScheme.background)
         ) {
           // This anchor has a non-zero size, but its internal
           // padding does not leave any space for content.
@@ -263,7 +263,7 @@ internal class CascadePopupAlignmentTest {
     Box(
       Modifier
         .fillMaxSize()
-        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp))
+        .background(MaterialTheme.colorScheme.background)
     ) {
       Box(
         Modifier
@@ -319,7 +319,7 @@ fun CascadeMaterialTheme(content: @Composable () -> Unit) {
   val colors = lightColorScheme(
     primary = Color(0xFFB5D2C3),
     background = Color(0xFFB5D2C3),
-    surface = Color(0xFFE5F0EB),
+    surface = Color.White,
     onSurface = Color(0xFF356859),
     onSurfaceVariant = Color(0xFF356859),
   )
