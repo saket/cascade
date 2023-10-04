@@ -1,8 +1,8 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-  id "com.dropbox.dropshots" version "0.4.0"
-  id "wtf.emulator.gradle" version "0.14.0"
+  id "com.dropbox.dropshots" version "0.4.1"
+  id "wtf.emulator.gradle" version "0.15.1"
 }
 
 apply plugin: 'com.android.library'
