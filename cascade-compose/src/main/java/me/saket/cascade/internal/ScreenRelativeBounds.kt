@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.positionInRoot
@@ -37,6 +38,10 @@ internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): 
       size = coordinates.size.toSize()
     ),
     root = RootLayoutCoordinatesInfo(
+      // material3 uses View#getWindowVisibleDisplayFrame() for calculating window size,
+      // but that produces infinite-like values for windows that have FLAG_LAYOUT_NO_LIMITS
+      // set (source: WindowLayout.java). material3 ends up looking okay because WindowManager
+      // sanitizes bad values.
       layoutBoundsInWindow = coordinates.findRootCoordinates().boundsInWindow(),
       windowPositionOnScreen = run {
         owner.rootView.getLocationOnScreen(intArrayBuffer)
@@ -46,7 +51,7 @@ internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): 
   )
 }
 
-// I do not expect this to be shared across threads to need any synchronization.
+// I don't expect this to be shared across threads to need any synchronization.
 private val intArrayBuffer = IntArray(size = 2)
 
 /**

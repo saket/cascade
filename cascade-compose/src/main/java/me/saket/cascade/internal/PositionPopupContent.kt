@@ -1,8 +1,10 @@
 package me.saket.cascade.internal
 
+import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,18 +21,32 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 import kotlin.math.roundToInt
+import android.graphics.Rect as AndroidRect
 
 @Composable
+@Suppress("NAME_SHADOWING")
 internal fun PositionPopupContent(
   modifier: Modifier = Modifier,
   positionProvider: PopupPositionProvider,
   anchorBounds: ScreenRelativeBounds?,
+  properties: PopupProperties,
   content: @Composable () -> Unit
 ) {
   val popupView = LocalView.current
   val layoutDirection = LocalLayoutDirection.current
   var contentPosition: IntOffset? by remember { mutableStateOf(null) }
+
+  if (Build.VERSION.SDK_INT >= 29 && properties.excludeFromSystemGesture) {
+    contentPosition?.let { contentPosition ->
+      LaunchedEffect(contentPosition) {
+        popupView.systemGestureExclusionRects = mutableListOf(
+          AndroidRect(0, 0, contentPosition.x, contentPosition.y)
+        )
+      }
+    }
+  }
 
   Box(modifier) {
     Box(
