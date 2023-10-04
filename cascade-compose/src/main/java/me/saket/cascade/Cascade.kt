@@ -1,10 +1,9 @@
-@file:OptIn(ExperimentalAnimationApi::class)
-
 package me.saket.cascade
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,15 +13,13 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -52,12 +49,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.LayoutDirection.Ltr
@@ -223,6 +223,7 @@ internal fun PopupContent(
 }
 
 @Composable
+@OptIn(ExperimentalAnimationApi::class)
 private fun CascadeDropdownMenuContent(
   state: CascadeState,
   modifier: Modifier = Modifier,
@@ -266,11 +267,18 @@ private fun CascadeDropdownMenuContent(
           .background(MaterialTheme.colorScheme.surfaceColorAtElevation(tonalElevation))
           .verticalScroll(rememberScrollState())
       ) {
+        val contentScope = remember(this, snapshot) {
+          object : CascadeColumnScope, ColumnScope by this {
+            override val cascadeState get() = state
+            override val hasParentMenu: Boolean get() = snapshot.hasParentMenu()
+            override val isNavigationRunning: Boolean get() = isTransitionRunning.value
+          }
+        }
         val currentContent = snapshot.topMostEntry?.childrenContent ?: content
-        snapshot.topMostEntry?.header?.invoke()
-
-        val contentScope = remember { CascadeColumnScope(state) }
-        contentScope.currentContent()
+        with(contentScope) {
+          snapshot.topMostEntry?.header?.invoke(contentScope)
+          currentContent()
+        }
       }
 
       LaunchedEffect(transition.isRunning) {
@@ -284,6 +292,12 @@ private fun CascadeDropdownMenuContent(
 @LayoutScopeMarker
 interface CascadeColumnScope : ColumnScope {
   val cascadeState: CascadeState
+
+  /** True if this is a sub-menu and can navigate back. */
+  val hasParentMenu: Boolean
+
+  /** Indicates whether there is any animation running for changing menus. */
+  val isNavigationRunning: Boolean
 
   /**
    * Material Design dropdown menu item that navigates to a sub-menu on click.
@@ -356,14 +370,13 @@ interface CascadeColumnScope : ColumnScope {
     )
   }
 
-
   /**
    * Displays `text` with a back icon. Navigates to its parent menu when clicked.
    */
   @Composable
   fun DropdownMenuHeader(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(top = 4.dp, bottom = 4.dp, end = 12.dp),
+    contentPadding: PaddingValues = PaddingValues(10.5.dp),
     text: @Composable () -> Unit,
   ) {
     Row(
@@ -388,17 +401,15 @@ interface CascadeColumnScope : ColumnScope {
         LocalContentColor provides headerColor,
         LocalTextStyle provides headerStyle
       ) {
-        if (this@CascadeColumnScope.cascadeState.canNavigateBack()) {
-          Icon(
-            modifier = Modifier.requiredSize(32.dp),
-            imageVector = when (LocalLayoutDirection.current) {
-              Ltr -> Icons.Rounded.ArrowLeft
-              Rtl -> Icons.Rounded.ArrowRight
-            },
-            contentDescription = null
+        if (this@CascadeColumnScope.hasParentMenu) {
+          Image(
+            modifier = Modifier
+              .padding(end = contentPadding.calculateEndPadding(LocalLayoutDirection.current))
+              .size(11.dp),
+            painter = painterResource(R.drawable.cascade_ic_arrow_left),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(headerColor),
           )
-        } else {
-          Spacer(Modifier.width(contentPadding.calculateEndPadding(LocalLayoutDirection.current)))
         }
         Box(Modifier.weight(1f)) {
           text()

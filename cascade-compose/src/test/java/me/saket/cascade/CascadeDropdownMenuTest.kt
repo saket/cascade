@@ -7,6 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -89,7 +91,7 @@ class CascadeDropdownMenuTest(
     }
   }
 
-  @Test fun `navigate to a sub-menu with header`() {
+  @Test fun `navigate to a sub-menu with a header`() {
     // Paparazzi currently only composes once so
     // the navigation must happen before hand.
     val state = CascadeState().apply {
@@ -121,6 +123,42 @@ class CascadeDropdownMenuTest(
     }
   }
 
+  @Test fun `navigate to a sub-menu with a custom header`() {
+    // Paparazzi currently only composes once so
+    // the navigation must happen before hand.
+    val state = CascadeState().apply {
+      navigateTo(
+        CascadeBackStackEntry(
+          header = {
+            Text(
+              modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black),
+              text = "Horizon",
+              color = Color.White,
+            )
+          },
+          childrenContent = {
+            DropdownMenuItem(
+              text = { Text("Zero Dawn") },
+              onClick = {}
+            )
+            DropdownMenuItem(
+              text = { Text("Forbidden West") },
+              onClick = {}
+            )
+          }
+        )
+      )
+    }
+
+    paparazzi.snapshot {
+      PopupScaffold(state) {
+        Text("This should get replaced by the sub-menu")
+      }
+    }
+  }
+
   @Test fun `header can be used in menus without any parent`() {
     paparazzi.snapshot {
       PopupScaffold {
@@ -129,6 +167,28 @@ class CascadeDropdownMenuTest(
         }
         DropdownMenuItem(
           text = { Text("This menu does not have a parent so the header should not have a back icon") },
+          onClick = {},
+          contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp)
+        )
+      }
+    }
+  }
+
+  @Test fun `custom padding values for header in the root menu`() {
+    paparazzi.snapshot {
+      PopupScaffold {
+        DropdownMenuHeader(
+          contentPadding = PaddingValues(start = 0.dp, end = 16.dp)
+        ) {
+          Box(
+            Modifier
+              .fillMaxWidth()
+              .height(32.dp)
+              .background(Color.Black)
+          )
+        }
+        DropdownMenuItem(
+          text = { Text("The header should not have any leading space") },
           onClick = {},
           contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp)
         )
