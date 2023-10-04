@@ -44,7 +44,7 @@ class CascadeState internal constructor() {
 
 @Immutable
 internal class CascadeBackStackEntry(
-  val header: @Composable () -> Unit,
+  val header: @Composable CascadeColumnScope.() -> Unit,
   val childrenContent: @Composable CascadeColumnScope.() -> Unit
 )
 
@@ -52,4 +52,6 @@ internal class CascadeBackStackEntry(
 internal data class BackStackSnapshot(
   val topMostEntry: CascadeBackStackEntry?,
   val backStackSize: Int,
-)
+) {
+  fun hasParentMenu(): Boolean = backStackSize > 0
+}

@@ -96,7 +96,7 @@ class CascadeDropdownMenuTest(
       navigateTo(
         CascadeBackStackEntry(
           header = {
-            FakeCascadeColumnScope(this).DropdownMenuHeader {
+            DropdownMenuHeader {
               Text("Horizon")
             }
           },

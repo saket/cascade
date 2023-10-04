@@ -313,7 +313,7 @@ interface CascadeColumnScope : ColumnScope {
     text: @Composable () -> Unit,
     children: @Composable CascadeColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    childrenHeader: @Composable () -> Unit = { DropdownMenuHeader(text = text) },
+    childrenHeader: @Composable CascadeColumnScope.() -> Unit = { DropdownMenuHeader(text = text) },
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
@@ -366,20 +366,19 @@ interface CascadeColumnScope : ColumnScope {
     contentPadding: PaddingValues = PaddingValues(top = 4.dp, bottom = 4.dp, end = 12.dp),
     text: @Composable () -> Unit,
   ) {
-    val onClickModifier = if (cascadeState.canNavigateBack()) {
-      Modifier.clickable { cascadeState.navigateBack() }
-    } else {
-      Modifier
-    }
     Row(
       modifier = modifier
-        .then(onClickModifier)
         .fillMaxWidth()
+        .clickable(enabled = hasParentMenu, role = Role.Button) {
+          if (!isNavigationRunning) { // Prevent accidental double clicks.
+            cascadeState.navigateBack()
+          }
+        }
         .padding(contentPadding),
-      verticalAlignment = CenterVertically
+      verticalAlignment = CenterVertically,
     ) {
       val headerColor = LocalContentColor.current.copy(alpha = 0.6f)
-      val headerStyle = MaterialTheme.typography.labelLarge.run { // labelLarge is also used by DropdownMenuItem().
+      val headerStyle = MaterialTheme.typography.labelLarge.run { // Same style as DropdownMenuItem().
         copy(
           fontSize = fontSize * 0.9f,
           letterSpacing = letterSpacing * 0.9f
@@ -408,8 +407,3 @@ interface CascadeColumnScope : ColumnScope {
     }
   }
 }
-
-private fun ColumnScope.CascadeColumnScope(state: CascadeState): CascadeColumnScope =
-  object : CascadeColumnScope, ColumnScope by this {
-    override val cascadeState get() = state
-  }

@@ -11,6 +11,8 @@ CascadeDropdownMenu(
   DropdownMenuItem(
     text = { Text("Remove") },
     childrenHeader = {
+      // childrenHeader is an optional parameter. If you don't provide one, cascade
+      // will automatically use the text composable ("Remove" in this example).
       DropdownMenuHeader { Text("Are you sure?") }
     },
     children = {
@@ -26,5 +28,3 @@ CascadeDropdownMenu(
   )
 }
 ```
-
-`childrenHeader` is an optional parameter. If you don't provide one, `cascade` will automatically use the `text` composable (which is "Remove" in the above example).
