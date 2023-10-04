@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Anchor
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
@@ -117,10 +119,8 @@ internal class CascadePopupAlignmentTest {
     @TestParameter useNoLimitsFlag: Boolean,
   ) {
     if (useNoLimitsFlag) {
-      composeTestRule.activity.run {
-        runOnUiThread {
-          window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        }
+      composeTestRule.runOnUiThread {
+        composeTestRule.activity.window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
       }
     }
     composeTestRule.setContent {
@@ -139,12 +139,13 @@ internal class CascadePopupAlignmentTest {
               Modifier
                 .fillMaxWidth()
                 .height(popupSize.height)
-                .background(Blue)
+                .background(Blue.copy(alpha = 0.5f))
             )
           }
 
           // Material's DropdownMenu is overlayed on top of cascade as
-          // a position guide. It should cover exact pixels of cascade.
+          // a position guide. It should cover exact pixels of cascade,
+          // except in some cases where cascade's positioning is better.
           DropdownMenu(
             modifier = Modifier
               .requiredSize(popupSize)
@@ -256,18 +257,22 @@ internal class CascadePopupAlignmentTest {
 
   @Composable
   private fun PopupScaffold(
-    align: Alignment = Alignment.TopStart,
+    anchorAlignment: Alignment = Alignment.TopStart,
     content: @Composable () -> Unit
   ) {
     Box(
       Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp))
-        .wrapContentSize(align)
-        .padding(4.dp)
-        .size(1.dp)
     ) {
-      content()
+      Box(
+        Modifier
+          .align(anchorAlignment)
+          .padding(4.dp)
+      ) {
+        Icon(Icons.Filled.Anchor, contentDescription = null)
+        content()
+      }
     }
   }
 

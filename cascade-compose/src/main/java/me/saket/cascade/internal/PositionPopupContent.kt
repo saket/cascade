@@ -42,9 +42,6 @@ internal fun PositionPopupContent(
             contentPosition = positionProvider
               .calculatePosition(
                 anchorBounds = anchorBounds.boundsInRoot.roundToIntRect(),
-                // material3 uses View#getWindowVisibleDisplayFrame() for calculating window size,
-                // but that produces infinite-like values for windows that have FLAG_LAYOUT_NO_LIMITS set.
-                // material3 ends up looking okay because WindowManager sanitizes bad values.
                 windowSize = anchorBounds.root.layoutBoundsInWindow.intSize(),
                 layoutDirection = layoutDirection,
                 popupContentSize = coordinates.size,
