@@ -37,6 +37,7 @@ import app.cash.paparazzi.androidHome
 import app.cash.paparazzi.detectEnvironment
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import me.saket.cascade.internal.MinSdkReader
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,9 +47,10 @@ class CascadeDropdownMenuTest(
   @TestParameter val layoutDirection: LayoutDirection
 ) {
 
+  private val apiLevel = 32
   @get:Rule val paparazzi = Paparazzi(
     environment = detectEnvironment().copy(
-      platformDir = "${androidHome()}/platforms/android-32",
+      platformDir = "${androidHome()}/platforms/android-$apiLevel",
     )
   )
 
@@ -208,10 +210,14 @@ class CascadeDropdownMenuTest(
     }
   }
 
-  @Test fun `custom shadow elevation`() {
+  @Suppress("JUnitMalformedDeclaration")
+  @Test fun `custom shadow elevation`(
+    @TestParameter("23", "31", "34") minSdk: Int
+  ) {
     paparazzi.snapshot {
       PopupScaffold(
-        shadowElevation = CascadeDefaults.shadowElevation + 20.dp
+        shadowElevation = CascadeDefaults.shadowElevation + 20.dp,
+        minSdkReader = { minSdk },
       ) {
         DropdownMenuItem(text = { Text("I just called") }, onClick = {})
         DropdownMenuItem(text = { Text("to say") }, onClick = {})
@@ -228,6 +234,7 @@ class CascadeDropdownMenuTest(
     state: CascadeState = rememberCascadeState(),
     shape: Shape = CascadeDefaults.shape,
     shadowElevation: Dp = CascadeDefaults.shadowElevation,
+    minSdkReader: MinSdkReader = MinSdkReader { apiLevel },
     content: @Composable CascadeColumnScope.() -> Unit
   ) {
     CascadeMaterialTheme {
@@ -246,6 +253,7 @@ class CascadeDropdownMenuTest(
             expandedStates = MutableTransitionState(true),
             transformOriginState = remember { mutableStateOf(TransformOrigin.Center) },
             shape = shape,
+            minSdkReader = minSdkReader,
             content = content,
           )
         }

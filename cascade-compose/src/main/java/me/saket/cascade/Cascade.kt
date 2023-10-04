@@ -71,7 +71,9 @@ import kotlinx.coroutines.flow.onEach
 import me.saket.cascade.internal.AnimateEntryExit
 import me.saket.cascade.internal.CoercePositiveValues
 import me.saket.cascade.internal.DropdownMenuPositionProvider
+import me.saket.cascade.internal.MinSdkReader
 import me.saket.cascade.internal.PositionPopupContent
+import me.saket.cascade.internal.RealMinSdkReader
 import me.saket.cascade.internal.ScreenRelativeBounds
 import me.saket.cascade.internal.calculateTransformOrigin
 import me.saket.cascade.internal.cascadeTransitionSpec
@@ -200,14 +202,19 @@ internal fun PopupContent(
   shape: Shape,
   expandedStates: MutableTransitionState<Boolean>,
   transformOriginState: MutableState<TransformOrigin>,
+  minSdkReader: MinSdkReader = RealMinSdkReader,
   content: @Composable (CascadeColumnScope.() -> Unit)
 ) {
   AnimateEntryExit(
     expandedStates = expandedStates,
     transformOriginState = transformOriginState,
-    // 8dp is the maximum recommended elevation.
-    // More context here: https://android-review.googlesource.com/c/platform/frameworks/support/+/2117953
-    shadowElevation = shadowElevation.coerceAtMost(8.dp),
+    shadowElevation = if (minSdkReader.minSdk() >= 31) {
+      shadowElevation
+    } else {
+      // 8dp is the recommended max elevation on < API 31.
+      // More context here: https://android-review.googlesource.com/c/platform/frameworks/support/+/2117953
+      shadowElevation.coerceAtMost(8.dp)
+    },
     shape = shape,
   ) {
     CascadeDropdownMenuContent(
