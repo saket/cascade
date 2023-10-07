@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -276,8 +275,8 @@ internal class CascadePopupAlignmentTest {
     }
   }
 
+  /** Screenshots the entire device instead of just the active Activity's content. */
   private fun Dropshots.assertDeviceSnapshot(nameSuffix: String? = null) {
-    // This screenshots the entire device instead of just the active Activity's content.
     val screenshot: Bitmap = takeScreenshot()
 
     // The navigation bar's handle cross-fades its color smoothly and can
@@ -285,7 +284,7 @@ internal class CascadePopupAlignmentTest {
     val navigationBarHeightInPx = composeTestRule.activity.resources.run {
       getDimensionPixelSize(getIdentifier("navigation_bar_height", "dimen", "android"))
     }
-    val screenshotWithoutNavBars: Bitmap = Bitmap.createBitmap(
+    val screenshotWithoutNavBar: Bitmap = Bitmap.createBitmap(
       /* source = */ screenshot,
       /* x = */ 0,
       /* y = */ 0,
@@ -294,7 +293,7 @@ internal class CascadePopupAlignmentTest {
     )
 
     assertSnapshot(
-      bitmap = screenshotWithoutNavBars,
+      bitmap = screenshotWithoutNavBar,
       name = testName.methodName + (if (nameSuffix != null) "_$nameSuffix" else "")
     )
   }

@@ -58,6 +58,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -67,6 +68,7 @@ import kotlinx.coroutines.flow.onEach
 import me.saket.cascade.internal.AnimateEntryExit
 import me.saket.cascade.internal.CoercePositiveValues
 import me.saket.cascade.internal.DropdownMenuPositionProvider
+import me.saket.cascade.internal.FixedPopupPositionProvider
 import me.saket.cascade.internal.MinSdkReader
 import me.saket.cascade.internal.PositionPopupContent
 import me.saket.cascade.internal.RealMinSdkReader
@@ -158,7 +160,9 @@ fun CascadeDropdownMenu(
     Popup(
       onDismissRequest = onDismissRequest,
       properties = properties.copy(usePlatformDefaultWidth = false),
+      popupPositionProvider = remember { FixedPopupPositionProvider(IntOffset.Zero) }
     ) {
+
       PositionPopupContent(
         modifier = Modifier
           .fillMaxSize()
