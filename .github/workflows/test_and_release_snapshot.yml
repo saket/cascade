@@ -26,10 +26,10 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
 
       - name: Run unit tests
-        run: ./gradlew check
+        run: ./gradlew checkDebug
 
       - name: Run paparazzi screenshot tests
-        run: ./gradlew cascade-compose:verifyPaparazziDebug
+        run: ./gradlew cascade-compose:verifyPaparazziDebug cascade-compose:verifyRoborazziDebug
 
       - name: (Fail-only) Upload paparazzi test reports
         if: failure()
