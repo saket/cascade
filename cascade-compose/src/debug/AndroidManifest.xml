@@ -4,6 +4,6 @@
   <application>
     <activity
       android:name=".TestActivity"
-      android:theme="@style/Theme.AppCompat.NoActionBar" />
+      android:theme="@style/Theme.AppCompat" />
   </application>
 </manifest>

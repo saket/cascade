@@ -2,8 +2,11 @@
 
 package me.saket.cascade
 
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
+import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,13 +51,16 @@ import com.dropbox.dropshots.Dropshots
 import com.dropbox.dropshots.ThresholdValidator
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
 
 @RunWith(TestParameterInjector::class)
-internal class CascadePopupAlignmentTest {
+internal class CascadePopupAlignmentTest(
+  @TestParameter private val showActionBar: ShowActionBarParam,
+) {
   @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
   @get:Rule val testName = TestName()
   @get:Rule val dropshots = Dropshots(
@@ -67,7 +73,21 @@ internal class CascadePopupAlignmentTest {
   // FWIW shadows are already tested by CascadeDropdownMenuTest.
   private val shadowElevation = 0.dp
 
-  @Test fun canary() {
+  @Before
+  fun setUp() {
+    composeTestRule.activityRule.scenario.onActivity {
+      showActionBar.apply(it)
+    }
+  }
+
+  @Test fun canary(
+    @TestParameter orientation: OrientationParam
+  ) {
+    composeTestRule.activity.requestedOrientation = orientation.orientation
+    composeTestRule.runOnUiThread {
+      showActionBar.apply(composeTestRule.activity)
+    }
+
     composeTestRule.setContent {
       CascadeMaterialTheme {
         PopupScaffold {
@@ -84,7 +104,9 @@ internal class CascadePopupAlignmentTest {
         }
       }
     }
-    dropshots.assertDeviceSnapshot()
+
+    composeTestRule.waitForIdle()
+    dropshots.assertSnapshot(takeScreenshotWithoutSystemBars())
   }
 
   @Test fun size_given_to_cascade_should_be_correctly_applied_to_its_content() {
@@ -110,14 +132,14 @@ internal class CascadePopupAlignmentTest {
         }
       }
     }
-    dropshots.assertDeviceSnapshot()
+    dropshots.assertSnapshot(takeScreenshotWithoutSystemBars())
   }
 
   @Test fun alignment_of_popup_should_match_with_material3(
-    @TestParameter alignment: PopupAlignment,
-    @TestParameter useNoLimitsFlag: Boolean,
+    @TestParameter alignment: PopupAlignmentParam,
+    @TestParameter useNoLimits: UseNoLimitsLayoutFlag,
   ) {
-    if (useNoLimitsFlag) {
+    if (useNoLimits.useNoLimits) {
       composeTestRule.runOnUiThread {
         composeTestRule.activity.window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
       }
@@ -157,7 +179,7 @@ internal class CascadePopupAlignmentTest {
         }
       }
     }
-    dropshots.assertDeviceSnapshot()
+    dropshots.assertSnapshot(takeScreenshotWithoutSystemBars())
   }
 
   @Test fun content_inside_popup_can_be_updated() {
@@ -184,7 +206,10 @@ internal class CascadePopupAlignmentTest {
 
     listOf(Red, Magenta, Blue, Cyan).forEachIndexed { num, nextColor ->
       color = nextColor
-      dropshots.assertDeviceSnapshot(nameSuffix = "[$num]")
+      dropshots.assertSnapshot(
+        bitmap = takeScreenshotWithoutSystemBars(),
+        name = testName.methodName + "_[$num]"
+      )
       composeTestRule.mainClock.advanceTimeByFrame()
     }
   }
@@ -219,7 +244,7 @@ internal class CascadePopupAlignmentTest {
         }
       }
     }
-    dropshots.assertDeviceSnapshot()
+    dropshots.assertSnapshot(takeScreenshotWithoutSystemBars())
   }
 
   @Test fun clicking_on_a_menu_item_opens_its_sub_menu() {
@@ -251,7 +276,7 @@ internal class CascadePopupAlignmentTest {
 
     composeTestRule.onNodeWithText("I just called").performClick()
     composeTestRule.waitForIdle()
-    dropshots.assertDeviceSnapshot()
+    dropshots.assertSnapshot(takeScreenshotWithoutSystemBars())
   }
 
   @Composable
@@ -276,32 +301,31 @@ internal class CascadePopupAlignmentTest {
   }
 
   /** Screenshots the entire device instead of just the active Activity's content. */
-  private fun Dropshots.assertDeviceSnapshot(nameSuffix: String? = null) {
+  private fun takeScreenshotWithoutSystemBars(): Bitmap {
     val screenshot: Bitmap = takeScreenshot()
+
+    val insets = composeTestRule.activity.window
+      .decorView.rootWindowInsets
+      .getInsets(WindowInsets.Type.systemBars())
 
     // The navigation bar's handle cross-fades its color smoothly and can
     // appear slightly different each time. Crop it out to affect screenshots.
     val navigationBarHeightInPx = composeTestRule.activity.resources.run {
       getDimensionPixelSize(getIdentifier("navigation_bar_height", "dimen", "android"))
     }
-    val screenshotWithoutNavBar: Bitmap = Bitmap.createBitmap(
-      /* source = */ screenshot,
-      /* x = */ 0,
-      /* y = */ 0,
-      /* width = */ screenshot.width,
-      /* height = */ screenshot.height - navigationBarHeightInPx
-    )
-
-    assertSnapshot(
-      bitmap = screenshotWithoutNavBar,
-      name = testName.methodName + (if (nameSuffix != null) "_$nameSuffix" else "")
+    return Bitmap.createBitmap(
+      screenshot,
+      insets.left,
+      insets.top,
+      screenshot.width - insets.left - insets.right,
+      screenshot.height - insets.top - insets.bottom
     )
   }
 }
 
 // These enums produce better test names than Alignment#toString().
 @Suppress("unused")
-enum class PopupAlignment(val alignment: Alignment) {
+enum class PopupAlignmentParam(val alignment: Alignment) {
   TopStart(Alignment.TopStart),
   TopCenter(Alignment.TopCenter),
   TopEnd(Alignment.TopEnd),
@@ -311,6 +335,34 @@ enum class PopupAlignment(val alignment: Alignment) {
   BottomStart(Alignment.BottomStart),
   BottomCenter(Alignment.BottomCenter),
   BottomEnd(Alignment.BottomEnd),
+}
+
+@Suppress("unused")
+enum class ShowActionBarParam(val show: Boolean) {
+  ShowActionBar(true),
+  HideActionBar(false),
+  ;
+
+  fun apply(activity: AppCompatActivity) {
+    activity.title = "cascade"
+    if (show) {
+      activity.supportActionBar!!.show()
+    } else {
+      activity.supportActionBar!!.hide()
+    }
+  }
+}
+
+@Suppress("unused")
+enum class UseNoLimitsLayoutFlag(val useNoLimits: Boolean) {
+  NoLimitsEnabled(true),
+  NoLimitsDisabled(false)
+}
+
+@Suppress("unused")
+enum class OrientationParam(val orientation: Int) {
+  Portrait(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT),
+  Landscape(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 }
 
 @Composable
