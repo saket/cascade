@@ -47,13 +47,13 @@ import org.robolectric.annotation.Config as RobolectricConfig
   manifest = RobolectricConfig.NONE,
   sdk = [33],
 )
-class RobolectricTest(private val anchorAlignment: AlignmentParam) {
+class RobolectricCompatibilityTest(private val anchorAlignment: AlignmentParam) {
 
   @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
   @get:Rule val roborazziRule = RoborazziRule(
     options = RoborazziRule.Options(
-      outputDirectoryPath = "src/test/snapshots",
+      outputDirectoryPath = "src/test/snapshots/images",
       outputFileProvider = { description, outputDirectory, fileExtension ->
         File(
           outputDirectory,
