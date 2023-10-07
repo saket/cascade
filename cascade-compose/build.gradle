@@ -22,6 +22,7 @@ android {
 
   buildFeatures {
     compose = true
+    buildConfig = true
   }
   composeOptions {
     kotlinCompilerExtensionVersion = versions.composeCompiler

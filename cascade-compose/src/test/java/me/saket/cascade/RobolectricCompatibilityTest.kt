@@ -32,6 +32,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.RoborazziRule
 import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.AssumptionViolatedException
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -63,6 +64,12 @@ class RobolectricCompatibilityTest(private val anchorAlignment: AlignmentParam) 
       }
     ),
   )
+
+  init {
+    if (!BuildConfig.DEBUG) {
+      throw AssumptionViolatedException("test activity is only available in debug builds")
+    }
+  }
 
   @Before fun setUp() {
     composeTestRule.activityRule.scenario.onActivity {
