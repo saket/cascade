@@ -9,29 +9,40 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Anchor
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Cyan
@@ -39,13 +50,16 @@ import androidx.compose.ui.graphics.Color.Companion.Magenta
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.test.core.app.takeScreenshot
 import com.dropbox.dropshots.Dropshots
 import com.dropbox.dropshots.ThresholdValidator
@@ -279,6 +293,86 @@ internal class CascadePopupAlignmentTest(
     dropshots.assertSnapshot(takeScreenshotWithoutSystemBars())
   }
 
+  @Test fun menu_should_not_cover_the_keyboard() {
+    composeTestRule.setContent {
+      CascadeMaterialTheme {
+        Column(
+          Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .systemBarsPadding()
+            .imePadding()
+            .padding(16.dp)
+        ) {
+          var text by rememberSaveable { mutableStateOf("") }
+          val focusRequester = remember { FocusRequester() }
+          TextField(
+            modifier = Modifier
+              .focusRequester(focusRequester)
+              .fillMaxWidth(),
+            value = text,
+            onValueChange = { text = it },
+            placeholder = { Text("Text field…") },
+          )
+          LaunchedEffect(focusRequester) {
+            focusRequester.requestFocus()
+          }
+
+          Spacer(Modifier.weight(1f))
+
+          Box(
+            Modifier
+              .align(Alignment.CenterHorizontally)
+              .padding(4.dp)
+          ) {
+            var isMenuShown by remember { mutableStateOf(false) }
+            val menuSize = DpSize(width = 196.dp, height = 100.dp)
+
+            IconButton(
+              modifier = Modifier.testTag("anchor"),
+              onClick = { isMenuShown = !isMenuShown }
+            ) {
+              Icon(Icons.Filled.Anchor, contentDescription = null)
+            }
+            DropdownMenu(
+              modifier = Modifier
+                .requiredSize(menuSize)
+                .background(Red),
+              expanded = isMenuShown,
+              onDismissRequest = { isMenuShown = false },
+              properties = PopupProperties(focusable = false),
+            ) {
+              LocalView.current.alpha = 0.5f
+            }
+
+            CascadeDropdownMenu(
+              modifier = Modifier.requiredHeight(menuSize.height),
+              expanded = isMenuShown,
+              onDismissRequest = { isMenuShown = false },
+              properties = PopupProperties(focusable = false),
+            ) {
+              Box(
+                Modifier
+                  .fillMaxWidth()
+                  .height(menuSize.height)
+                  .background(Blue.copy(alpha = 0.5f))
+              )
+            }
+          }
+        }
+      }
+    }
+
+    // Show the menu(s) only after the keyboard is already visible.
+    composeTestRule.waitUntil {
+      composeTestRule.activity.window.decorView.rootWindowInsets.isVisible(WindowInsets.Type.ime())
+    }
+    composeTestRule.onNodeWithTag("anchor").performClick()
+
+    composeTestRule.waitForIdle()
+    dropshots.assertSnapshot(takeScreenshotWithoutSystemBars())
+  }
+
   @Composable
   private fun PopupScaffold(
     anchorAlignment: Alignment = Alignment.TopStart,
@@ -310,9 +404,6 @@ internal class CascadePopupAlignmentTest(
 
     // The navigation bar's handle cross-fades its color smoothly and can
     // appear slightly different each time. Crop it out to affect screenshots.
-    val navigationBarHeightInPx = composeTestRule.activity.resources.run {
-      getDimensionPixelSize(getIdentifier("navigation_bar_height", "dimen", "android"))
-    }
     return Bitmap.createBitmap(
       screenshot,
       insets.left,

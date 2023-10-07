@@ -40,7 +40,7 @@ android {
 
 emulatorwtf {
   devices = [
-    [model: 'Pixel7', version: 31, atd: true],
+    [model: 'Pixel7', version: 31, atd: false], // ATD emulators don't have any soft keyboard.
   ]
   directoriesToPull = ["/sdcard/Download/"]
   numFlakyTestAttempts = 2 // 3 runs in total.
