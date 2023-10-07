@@ -20,11 +20,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowLeft
-import androidx.compose.material.icons.rounded.ArrowRight
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -60,8 +58,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.LayoutDirection.Ltr
-import androidx.compose.ui.unit.LayoutDirection.Rtl
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -361,11 +357,11 @@ interface CascadeColumnScope : ColumnScope {
           val requiredGapWithEdge = 4.dp
           val iconOffset = contentPadding.calculateEndPadding(LocalLayoutDirection.current) - requiredGapWithEdge
           Icon(
-            modifier = Modifier.offset(x = iconOffset),
-            imageVector = when (LocalLayoutDirection.current) {
-              Ltr -> Icons.Rounded.ArrowRight
-              Rtl -> Icons.Rounded.ArrowLeft
-            },
+            modifier = Modifier
+              .offset(x = iconOffset)
+              .size(24.dp)
+              .wrapContentSize(),
+            painter = painterResource(R.drawable.cascade_ic_arrow_right),
             contentDescription = null
           )
         }
