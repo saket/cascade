@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.ManagedVirtualDevice
-
 plugins {
   id "com.dropbox.dropshots" version "0.4.1"
   id "wtf.emulator.gradle" version "0.15.1"
@@ -8,6 +6,7 @@ plugins {
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'app.cash.paparazzi'
+apply plugin: "io.github.takahirom.roborazzi"
 apply plugin: 'com.vanniktech.maven.publish'
 
 android {
@@ -35,6 +34,7 @@ android {
   }
   testOptions {
     animationsDisabled = true
+    unitTests.includeAndroidResources = true  // Required by Robolectric.
   }
 }
 
@@ -60,6 +60,14 @@ dependencies {
   testImplementation "junit:junit:4.13.2"
   testImplementation "com.google.testparameterinjector:test-parameter-injector:$versions.testParamInjector"
   testImplementation "com.google.truth:truth:1.1.5"
+
+  testImplementation "androidx.compose.ui:ui-test-junit4:$versions.composeUi"
+  testImplementation "org.robolectric:robolectric:4.10.3"
+  testImplementation "io.github.takahirom.roborazzi:roborazzi:$versions.roborazzi"
+  testImplementation "io.github.takahirom.roborazzi:roborazzi-junit-rule:$versions.roborazzi"
+  testImplementation "androidx.compose.material:material-icons-extended:$versions.composeUi"
+  testImplementation 'org.hamcrest:hamcrest-core:1.3' // Workaround for https://github.com/cashapp/paparazzi/issues/622.
+  debugImplementation "androidx.compose.ui:ui-test-manifest:$versions.composeUi"
 
   debugImplementation "androidx.appcompat:appcompat:$versions.appCompat"
   androidTestImplementation "androidx.test:core-ktx:1.5.0"
