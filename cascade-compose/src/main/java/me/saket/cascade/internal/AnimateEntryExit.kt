@@ -169,7 +169,7 @@ private fun Modifier.clipDifference(shape: Shape): Modifier = composed {
 }
 
 @Stable
-fun Modifier.scale(scale: Float, transformOrigin: TransformOrigin): Modifier {
+private fun Modifier.scale(scale: Float, transformOrigin: TransformOrigin): Modifier {
   return if (scale != 1f) {
     graphicsLayer(
       scaleX = scale,

@@ -4,7 +4,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.PopupProperties
 
 @OptIn(ExperimentalComposeUiApi::class)
-fun PopupProperties.copy(
+internal fun PopupProperties.copy(
   usePlatformDefaultWidth: Boolean
 ): PopupProperties {
   return PopupProperties(
