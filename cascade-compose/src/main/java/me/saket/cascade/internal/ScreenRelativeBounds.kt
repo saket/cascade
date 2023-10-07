@@ -4,32 +4,40 @@ import android.view.View
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.unit.toSize
 
 @Immutable
 internal data class ScreenRelativeBounds(
   val boundsInRoot: Rect,
   val root: RootLayoutCoordinatesInfo,
-)
+) {
+  val boundsInWindow: Rect
+    get() = Rect(
+      offset = boundsInRoot.topLeft + root.layoutPositionInWindow,
+      size = boundsInRoot.size,
+    )
+}
 
 @Immutable
 internal data class ScreenRelativeOffset(
-  val positionInRoot: Offset,
+  val positionInWindow: Offset,
   val root: RootLayoutCoordinatesInfo,
-)
+) {
+  val positionInRoot: Offset
+    get() = positionInWindow - root.layoutPositionInWindow
+}
 
 @Immutable
 internal data class RootLayoutCoordinatesInfo(
-  val layoutBoundsInWindow: Rect,
-  val windowPositionOnScreen: Offset,
-) {
-  val layoutPositionInWindow: Offset get() = layoutBoundsInWindow.topLeft
-}
+  /** The boundaries of this layout relative to the window's origin. */
+  val layoutPositionInWindow: Offset,
+  val windowBoundsOnScreen: Rect,
+)
 
 internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): ScreenRelativeBounds {
   return ScreenRelativeBounds(
@@ -42,10 +50,13 @@ internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): 
       // but that produces infinite-like values for windows that have FLAG_LAYOUT_NO_LIMITS
       // set (source: WindowLayout.java). material3 ends up looking okay because WindowManager
       // sanitizes bad values.
-      layoutBoundsInWindow = coordinates.findRootCoordinates().boundsInWindow(),
-      windowPositionOnScreen = run {
-        owner.rootView.getLocationOnScreen(intArrayBuffer)
-        Offset(x = intArrayBuffer[0].toFloat(), y = intArrayBuffer[1].toFloat())
+      layoutPositionInWindow = coordinates.findRootCoordinates().positionInWindow(),
+      windowBoundsOnScreen = intArrayBuffer.let {
+        owner.rootView.getLocationOnScreen(it)
+        Rect(
+          offset = Offset(x = it[0].toFloat(), y = it[1].toFloat()),
+          size = Size(owner.rootView.width.toFloat(), owner.rootView.height.toFloat()),
+        )
       }
     )
   )
@@ -61,5 +72,5 @@ private val intArrayBuffer = IntArray(size = 2)
 internal fun ScreenRelativeOffset.positionInWindowOf(other: ScreenRelativeBounds): Offset {
   return positionInRoot -
     (other.root.layoutPositionInWindow - root.layoutPositionInWindow) -
-    (other.root.windowPositionOnScreen - root.windowPositionOnScreen)
+    (other.root.windowBoundsOnScreen.topLeft - root.windowBoundsOnScreen.topLeft)
 }
