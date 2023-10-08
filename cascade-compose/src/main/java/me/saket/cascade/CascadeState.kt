@@ -31,7 +31,9 @@ class CascadeState internal constructor() {
   }
 
   internal fun navigateTo(entry: CascadeBackStackEntry) {
-    backStack.add(entry)
+    if (entry != backStack.lastOrNull()) {
+      backStack.add(entry)
+    }
   }
 
   internal fun backStackSnapshot(): BackStackSnapshot {
