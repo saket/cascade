@@ -98,8 +98,9 @@ internal class CascadePopupAlignmentTest(
     @TestParameter orientation: OrientationParam
   ) {
     composeTestRule.activity.requestedOrientation = orientation.orientation
-    composeTestRule.runOnUiThread {
-      showActionBar.apply(composeTestRule.activity)
+    composeTestRule.waitForIdle()
+    composeTestRule.activityRule.scenario.onActivity {
+      showActionBar.apply(it)
     }
 
     composeTestRule.setContent {
@@ -334,17 +335,6 @@ internal class CascadePopupAlignmentTest(
             ) {
               Icon(Icons.Filled.Anchor, contentDescription = null)
             }
-            DropdownMenu(
-              modifier = Modifier
-                .requiredSize(menuSize)
-                .background(Red),
-              expanded = isMenuShown,
-              onDismissRequest = { isMenuShown = false },
-              properties = PopupProperties(focusable = false),
-            ) {
-              LocalView.current.alpha = 0.5f
-            }
-
             CascadeDropdownMenu(
               modifier = Modifier.requiredHeight(menuSize.height),
               expanded = isMenuShown,
@@ -357,6 +347,16 @@ internal class CascadePopupAlignmentTest(
                   .height(menuSize.height)
                   .background(Blue.copy(alpha = 0.5f))
               )
+            }
+            DropdownMenu(
+              modifier = Modifier
+                .requiredSize(menuSize)
+                .background(Red),
+              expanded = isMenuShown,
+              onDismissRequest = { isMenuShown = false },
+              properties = PopupProperties(focusable = false),
+            ) {
+              LocalView.current.alpha = 0.5f
             }
           }
         }
@@ -400,7 +400,7 @@ internal class CascadePopupAlignmentTest(
 
     val insets = composeTestRule.activity.window
       .decorView.rootWindowInsets
-      .getInsets(WindowInsets.Type.systemBars())
+      .getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.ime())
 
     // The navigation bar's handle cross-fades its color smoothly and can
     // appear slightly different each time. Crop it out to affect screenshots.

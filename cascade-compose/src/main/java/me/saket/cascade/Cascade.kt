@@ -162,7 +162,6 @@ fun CascadeDropdownMenu(
       properties = properties.copy(usePlatformDefaultWidth = false),
       popupPositionProvider = remember { FixedPopupPositionProvider(IntOffset.Zero) }
     ) {
-
       PositionPopupContent(
         modifier = Modifier
           .fillMaxSize()

@@ -12,14 +12,14 @@ class ScreenRelativeOffsetTest {
       positionInWindow = Offset(544f, 200f),
       root = RootLayoutCoordinatesInfo(
         layoutPositionInWindow = Offset.Zero,
-        windowBoundsOnScreen = Rect(offset = Offset.Zero, size = Size.Zero)
+        windowBoundsMinusIme = Rect(offset = Offset.Zero, size = Size.Zero)
       )
     )
     val second = ScreenRelativeBounds(
       boundsInRoot = Rect(0f, 0f, 515f, 630f),
       root = RootLayoutCoordinatesInfo(
         layoutPositionInWindow = Offset.Zero,
-        windowBoundsOnScreen = Rect(offset = Offset(1f, 63f), size = Size.Zero)
+        windowBoundsMinusIme = Rect(offset = Offset(1f, 63f), size = Size.Zero)
       )
     )
     assertThat(first.positionInWindowOf(second)).isEqualTo(Offset(543f, 137f))

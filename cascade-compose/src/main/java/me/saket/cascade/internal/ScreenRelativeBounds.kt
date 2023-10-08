@@ -10,6 +10,11 @@ import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.unit.toSize
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat.Type.displayCutout
+import androidx.core.view.WindowInsetsCompat.Type.ime
+import androidx.core.view.WindowInsetsCompat.Type.systemBars
 
 @Immutable
 internal data class ScreenRelativeBounds(
@@ -34,9 +39,15 @@ internal data class ScreenRelativeOffset(
 
 @Immutable
 internal data class RootLayoutCoordinatesInfo(
-  /** The boundaries of this layout relative to the window's origin. */
+  /**
+   * The boundaries of this layout relative to the window's origin.
+   */
   val layoutPositionInWindow: Offset,
-  val windowBoundsOnScreen: Rect,
+  /**
+   * This can include system bars because PopupPositionProvider
+   * does not take insets into account.
+   */
+  val windowBoundsMinusIme: Rect,
 )
 
 internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): ScreenRelativeBounds {
@@ -51,14 +62,29 @@ internal fun ScreenRelativeBounds(coordinates: LayoutCoordinates, owner: View): 
       // set (source: WindowLayout.java). material3 ends up looking okay because WindowManager
       // sanitizes bad values.
       layoutPositionInWindow = coordinates.findRootCoordinates().positionInWindow(),
-      windowBoundsOnScreen = intArrayBuffer.let {
-        owner.rootView.getLocationOnScreen(it)
-        Rect(
-          offset = Offset(x = it[0].toFloat(), y = it[1].toFloat()),
-          size = Size(owner.rootView.width.toFloat(), owner.rootView.height.toFloat()),
+      windowBoundsMinusIme = owner.rootView.getBoundsOnScreenAsRoot().let { bounds ->
+        // I should probably be using WindowManager#getCurrentWindowMetrics(), but it is
+        // ~10x slower and this function may get called many times if the UI is changing.
+        val insets = ViewCompat.getRootWindowInsets(owner)?.getInsets(ime()) ?: Insets.NONE
+        bounds.copy(
+          left = bounds.left + insets.left,
+          top = bounds.top + insets.top,
+          right = bounds.right - insets.right,
+          bottom = bounds.bottom - insets.bottom,
         )
       }
     )
+  )
+}
+
+private fun View.getBoundsOnScreenAsRoot(): Rect {
+  check(this === rootView)
+  return Rect(
+    offset = intArrayBuffer.let {
+      getLocationOnScreen(it)
+      Offset(x = it[0].toFloat(), y = it[1].toFloat())
+    },
+    size = Size(width.toFloat(), height.toFloat()),
   )
 }
 
@@ -72,5 +98,5 @@ private val intArrayBuffer = IntArray(size = 2)
 internal fun ScreenRelativeOffset.positionInWindowOf(other: ScreenRelativeBounds): Offset {
   return positionInRoot -
     (other.root.layoutPositionInWindow - root.layoutPositionInWindow) -
-    (other.root.windowBoundsOnScreen.topLeft - root.windowBoundsOnScreen.topLeft)
+    (other.root.windowBoundsMinusIme.topLeft - root.windowBoundsMinusIme.topLeft)
 }

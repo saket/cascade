@@ -58,7 +58,7 @@ internal fun PositionPopupContent(
             // todo: run these calculations only if something changes?
             val positionInAnchorWindow = positionProvider.calculatePosition(
               anchorBounds = anchorBounds.boundsInWindow.round(),
-              windowSize = anchorBounds.root.windowBoundsOnScreen.size.round(),
+              windowSize = anchorBounds.root.windowBoundsMinusIme.size.round(),
               layoutDirection = layoutDirection,
               popupContentSize = coordinates.size,
             )
