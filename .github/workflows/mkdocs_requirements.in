@@ -1,4 +1,8 @@
 mkdocs==1.4.2
+mkdocs-macros-plugin==0.7.0
+mkdocs-material==9.0.6
+
+# FYI the latest version breaks link colors.
 mkdocs-material==9.0.6
 
 # Force use newer versions of these dependencies. Their older versions had security vulnerabilities.

@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,600&display=swap');
+
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4 {
+  font-family: "Archivo", "Helvetica Neue", helvetica, sans-serif;
+  line-height: normal;
+  color: var(--md-default-fg-color);
+}
+
+.md-header__title {
+  font-family: "Archivo", "Helvetica Neue", helvetica, sans-serif;
+}
+.md-header {
+  box-shadow: none !important;
+  padding: 0.7rem 0rem;
+  background-color: var(--md-header-bg-color);
+}
+
+@media screen and (max-width: 76.1875em) {
+  /* Side drawer's header. */
+  .md-nav--primary .md-nav__title[for=__drawer] {
+    background-color: var(--md-header-bg-color);
+  }
+  /* Repository link shown in side drawer. */
+  .md-nav__source {
+    background-color: var(--md-header-bg-color);
+  }
+}
+
+.md-search__form {
+  border-radius: 0.24rem;
+  background-color: var(--md-header-search-bg-color);
+}
+.md-search__input {
+  color: var(--md-default-fg-color);
+}
+
+/* Active links on the left sidebar aren't very obvious in light mode. Increase their font-weight. */
+.md-nav__item .md-nav__link--active {
+  font-weight: 600;
+}
+
+/* Code blocks, both inline and multi-line. */
+.md-typeset code {
+  background: var(--md-inline-code-bg-color);
+  border: 0.1em solid var(--md-code-border-color);
+  border-radius: 0.25rem;
+}
+/* Code blocks. */
+.md-typeset pre>code {
+  background: var(--md-code-bg-color);
+  border-radius: 0.5rem;
+}
+
+.md-typeset video {
+  background: var(--md-video-bg-color);
+  outline: 0.1em solid var(--md-code-border-color);
+  border-radius: 0.3rem;
+}
+
+table {
+  font-size: 1em !important;
+}
+
+/*
+ * Reduce the main column's width because it looks too
+ * wide with the right sidebar (table of contents) hidden.
+ */
+.md-grid {
+  max-width: 50rem;
+}
+@media screen and (min-width: 76.25em) {
+  .md-content__inner {
+    margin-right: 2rem;
+  }
+}
+
+
+[data-md-color-scheme="default"] {
+  --md-header-bg-color: #DAE6CB;
+  --md-accent-fg-color: #386A20;
+  --md-primary-fg-color: var(--md-accent-fg-color);
+  --md-primary-fg-color--dark: var(--md-accent-fg-color);
+  --md-primary-bg-color: var(--md-default-fg-color);
+  --md-primary-bg-color--light: #666;
+  --md-default-bg-color: #F0F3E8;
+  --md-inline-code-bg-color: #FEFEFE;
+  --md-code-bg-color: var(--md-inline-code-bg-color);
+  --md-video-bg-color: var(--md-code-bg-color);
+  --md-code-border-color: var(--md-header-bg-color);
+  --md-header-search-bg-color: var(--md-default-bg-color);
+  --md-code-hl-color: #e5ff76a3;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-header-bg-color: #22232F;
+  --md-accent-fg-color: #B6F397;
+  --md-primary-fg-color: var(--md-accent-fg-color);
+  --md-primary-fg-color--dark: var(--md-accent-fg-color);
+  --md-primary-bg-color: var(--md-default-fg-color);
+  --md-default-bg-color: #2E303E;
+  --md-video-bg-color: #393C4E;
+  --md-inline-code-bg-color: var(--md-code-bg-color);
+  --md-code-border-color: transparent;
+  --md-header-search-bg-color: var(--md-default-bg-color);
+}

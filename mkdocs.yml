@@ -9,14 +9,14 @@ remote_branch: gh-pages
 
 theme:
   name: 'material'
+  custom_dir: 'docs/overrides'
   font:
+    text: 'Roboto'
     code: 'JetBrains Mono'
   palette:
     # Palette toggle for light mode
     - scheme: default
       media: "(prefers-color-scheme: light)"
-      primary: 'teal'
-      accent: 'pink'
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
@@ -24,17 +24,21 @@ theme:
     # Palette toggle for dark mode
     - scheme: slate
       media: "(prefers-color-scheme: dark)"
-      primary: 'teal'
-      accent: 'pink'
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
   features:
-    - navigation.tabs
     - content.tabs.link
-    - content.code.copy # For showing a copy button in code blocks.
+    - content.code.copy # Show a copy button in code blocks.
+    - navigation.instant # Instant loading of pages. Behave like a Single Page Application.
+    - toc.integrate
+
+extra_css:
+  - 'stylesheets/extra.css'
 
 markdown_extensions:
+  - toc: # Table of contents.
+      permalink: true # Anchor linking with headings.
   - pymdownx.highlight:
       use_pygments: true
       anchor_linenums: true
@@ -43,15 +47,20 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
-nav:
-  - 'Cascade':
-    - 'Overview': index.md
+plugins:
+  - search
+  - macros # For extra.versions.cascade below.
 
+extra:
+  versions:
+    cascade: '2.3.0' # Env var for the latest version on maven.
+
+nav:
+  - 'Overview': index.md
   - 'Compose UI':
     - 'Overview': compose/index.md
     - 'Navigation': compose/navigation.md
     - 'Theming': compose/theming.md
-
   - 'Views':
       - 'Overview': views/index.md
       - 'Navigation': views/navigation.md

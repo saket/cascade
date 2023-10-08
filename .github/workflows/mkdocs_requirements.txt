@@ -23,6 +23,7 @@ importlib-metadata==6.0.0
 jinja2==3.1.2
     # via
     #   mkdocs
+    #   mkdocs-macros-plugin
     #   mkdocs-material
 markdown==3.3.7
     # via
@@ -36,7 +37,10 @@ mergedeep==1.3.4
 mkdocs==1.4.2
     # via
     #   -r .github/workflows/mkdocs_requirements.in
+    #   mkdocs-macros-plugin
     #   mkdocs-material
+mkdocs-macros-plugin==0.7.0
+    # via -r .github/workflows/mkdocs_requirements.in
 mkdocs-material==9.0.6
     # via -r .github/workflows/mkdocs_requirements.in
 mkdocs-material-extensions==1.1.1
@@ -50,10 +54,13 @@ pymdown-extensions==10.0
     #   -r .github/workflows/mkdocs_requirements.in
     #   mkdocs-material
 python-dateutil==2.8.2
-    # via ghp-import
+    # via
+    #   ghp-import
+    #   mkdocs-macros-plugin
 pyyaml==6.0
     # via
     #   mkdocs
+    #   mkdocs-macros-plugin
     #   pymdown-extensions
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
@@ -66,6 +73,8 @@ requests==2.31.0
     #   mkdocs-material
 six==1.16.0
     # via python-dateutil
+termcolor==2.3.0
+    # via mkdocs-macros-plugin
 urllib3==1.26.14
     # via requests
 watchdog==2.2.1
