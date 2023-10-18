@@ -85,6 +85,7 @@ class SampleActivity : AppCompatActivity() {
         }
       }
     }
+    popupMenu.applyBackgroundDim(parent = anchor.rootView, dimAmount = 40)
     popupMenu.show()
   }
 

@@ -5,7 +5,10 @@ package me.saket.cascade
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +18,9 @@ import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.PopupMenu.OnDismissListener
+import android.widget.PopupWindow
+import androidx.annotation.IntRange
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
@@ -149,6 +155,18 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
   fun dismiss() =
     popup.dismiss()
+
+  fun applyBackgroundDim(parent: View, @IntRange(from = 0, to = 255) dimAmount: Int) {
+    val dim: Drawable = ColorDrawable(Color.BLACK)
+    dim.setBounds(0, 0, parent.width, parent.height)
+    dim.alpha = dimAmount
+    val overlay = parent.overlay
+    overlay.add(dim)
+
+    popup.setOnDismissListener {
+      overlay.clear()
+    }
+  }
 
   @get:JvmName("getDragToOpenListener")
   @Deprecated("CascadeMenu doesn't support drag-to-open.", level = ERROR)
