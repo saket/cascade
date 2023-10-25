@@ -16,10 +16,6 @@ ghp-import==2.1.0
     # via mkdocs
 idna==3.4
     # via requests
-importlib-metadata==6.0.0
-    # via
-    #   markdown
-    #   mkdocs
 jinja2==3.1.2
     # via
     #   mkdocs
@@ -36,13 +32,13 @@ mergedeep==1.3.4
     # via mkdocs
 mkdocs==1.4.2
     # via
-    #   -r .github/workflows/mkdocs_requirements.in
+    #   -r mkdocs_requirements.in
     #   mkdocs-macros-plugin
     #   mkdocs-material
 mkdocs-macros-plugin==0.7.0
-    # via -r .github/workflows/mkdocs_requirements.in
+    # via -r mkdocs_requirements.in
 mkdocs-material==9.0.6
-    # via -r .github/workflows/mkdocs_requirements.in
+    # via -r mkdocs_requirements.in
 mkdocs-material-extensions==1.1.1
     # via mkdocs-material
 packaging==23.0
@@ -51,7 +47,7 @@ pygments==2.14.0
     # via mkdocs-material
 pymdown-extensions==10.0
     # via
-    #   -r .github/workflows/mkdocs_requirements.in
+    #   -r mkdocs_requirements.in
     #   mkdocs-material
 python-dateutil==2.8.2
     # via
@@ -69,15 +65,13 @@ regex==2022.10.31
     # via mkdocs-material
 requests==2.31.0
     # via
-    #   -r .github/workflows/mkdocs_requirements.in
+    #   -r mkdocs_requirements.in
     #   mkdocs-material
 six==1.16.0
     # via python-dateutil
 termcolor==2.3.0
     # via mkdocs-macros-plugin
-urllib3==1.26.14
+urllib3==1.26.18
     # via requests
 watchdog==2.2.1
     # via mkdocs
-zipp==3.11.0
-    # via importlib-metadata
