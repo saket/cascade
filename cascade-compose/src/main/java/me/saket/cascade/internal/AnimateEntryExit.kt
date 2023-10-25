@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
@@ -86,14 +85,14 @@ internal fun AnimateEntryExit(
           is Outline.Generic,
           is Outline.Rectangle -> {
             Outline.Rectangle(
-              Rect(Offset.Zero, size = size.copy(height = size.height * reveal))
+              createRevealingRect(size)
             )
           }
 
           is Outline.Rounded -> {
             Outline.Rounded(
               RoundRect(
-                rect = Rect(Offset.Zero, size = size.copy(height = size.height * reveal)),
+                rect = createRevealingRect(size),
                 topLeft = outline.roundRect.topLeftCornerRadius,
                 topRight = outline.roundRect.topRightCornerRadius,
                 bottomRight = outline.roundRect.bottomRightCornerRadius,
@@ -101,6 +100,21 @@ internal fun AnimateEntryExit(
               )
             )
           }
+        }
+      }
+
+      private fun createRevealingRect(size: Size): Rect {
+        // If CascadeDropdownMenu() is aligned to the bottom of the
+        // screen then reveal from bottom to top. Otherwise, top to bottom.
+        return if (transformOriginState.value.pivotFractionY > 0.5f) {
+          Rect(
+            left = 0f,
+            top = 0f + size.height * (1f - reveal),
+            right = size.width,
+            bottom = size.height
+          )
+        } else {
+          Rect(Offset.Zero, size = size.copy(height = size.height * reveal))
         }
       }
     }
