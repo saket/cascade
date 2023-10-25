@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.twotone.Check
@@ -64,9 +65,9 @@ class ComposeSampleActivity : AppCompatActivity() {
           Box(
             Modifier
               .fillMaxSize()
-              .background(MaterialTheme.colorScheme.background)
+              .systemBarsPadding()
+              .background(MaterialTheme.colorScheme.background),
           ) {
-
             TopAppBar(
               title = { Text(stringResource(R.string.app_name)) },
               colors = TopAppBarDefaults.smallTopAppBarColors(
