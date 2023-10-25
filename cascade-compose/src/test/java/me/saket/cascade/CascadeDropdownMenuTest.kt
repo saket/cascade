@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import app.cash.paparazzi.Paparazzi
 import app.cash.paparazzi.androidHome
 import app.cash.paparazzi.detectEnvironment
+import com.google.common.truth.Truth.assertThat
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import me.saket.cascade.internal.MinSdkReader
@@ -210,7 +211,6 @@ class CascadeDropdownMenuTest(
     }
   }
 
-  @Suppress("JUnitMalformedDeclaration")
   @Test fun `custom shadow elevation`(
     @TestParameter("23", "31", "34") minSdk: Int
   ) {
@@ -224,6 +224,30 @@ class CascadeDropdownMenuTest(
         DropdownMenuItem(text = { Text("I love you") }, onClick = {})
       }
     }
+  }
+
+  // TODO: this should be an instrumented test, but I'm unable to enable animations in UI tests.
+  @Test fun `prevent multiple navigations`() {
+    val menuHeader: @Composable CascadeColumnScope.() -> Unit = { Text("Header") }
+    val menuContent: @Composable CascadeColumnScope.() -> Unit = { Text("Content") }
+
+    val state = CascadeState().apply {
+      navigateTo(
+        CascadeBackStackEntry(
+          header = menuHeader,
+          childrenContent = menuContent
+        )
+      )
+      navigateTo(
+        CascadeBackStackEntry(
+          header = menuHeader,
+          childrenContent = menuContent
+        )
+      )
+    }
+
+    state.navigateBack()
+    assertThat(state.canNavigateBack()).isFalse()
   }
 
   /**
