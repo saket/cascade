@@ -45,7 +45,7 @@ class CascadeState internal constructor() {
 }
 
 @Immutable
-internal class CascadeBackStackEntry(
+internal data class CascadeBackStackEntry(
   val header: @Composable CascadeColumnScope.() -> Unit,
   val childrenContent: @Composable CascadeColumnScope.() -> Unit
 )
