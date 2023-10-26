@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">Cascade</string>
+  <string name="button_text">Press</string>
 </resources>

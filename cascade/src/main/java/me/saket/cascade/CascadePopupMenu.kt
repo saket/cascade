@@ -68,7 +68,8 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
   }
 
-  fun show() {
+  @JvmOverloads
+  fun show(fromAnchor: Boolean = true) {
     // PopupWindow moves the popup to align with the anchor if a fixed width
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
@@ -85,7 +86,14 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
 
     showMenu(menuBuilder, goingForward = true)
-    popup.showAsDropDown(anchor, 0, 0, gravity)
+
+    if (fromAnchor) {
+      val anchorLocation = IntArray(2)
+      anchor.getLocationOnScreen(anchorLocation)
+      popup.showAtLocation(anchor, gravity, anchorLocation[0], anchorLocation[1])
+    } else {
+      popup.showAsDropDown(anchor, 0, 0, gravity)
+    }
   }
 
   /**
