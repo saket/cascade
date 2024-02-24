@@ -3,6 +3,9 @@
 
 package me.saket.cascade
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
@@ -158,12 +161,27 @@ open class CascadePopupMenu @JvmOverloads constructor(
   private fun applyBackgroundDim(@IntRange(from = 0, to = 255) dimAmount: Int) {
     val dim: Drawable = ColorDrawable(Color.BLACK)
     dim.setBounds(0, 0, anchor.rootView.width, anchor.rootView.height)
-    dim.alpha = dimAmount
+    dim.alpha = 0
     val overlay = anchor.rootView.overlay
     overlay.add(dim)
 
+    /* FADE IN: Animating dim from 0 to dimAmount */
+    ObjectAnimator.ofInt(dim, "alpha", dimAmount).apply {
+      duration = 300
+      start()
+    }
+
     popup.setOnDismissListener {
-      overlay.clear()
+      /* FADE OUT: Animating dim from dimAbout to 0 */
+      ObjectAnimator.ofInt(dim, "alpha", 0).apply {
+        duration = 300
+        addListener(object : AnimatorListenerAdapter() {
+          override fun onAnimationEnd(animation: Animator) {
+            overlay.clear()
+          }
+        })
+        start()
+      }
     }
   }
 
