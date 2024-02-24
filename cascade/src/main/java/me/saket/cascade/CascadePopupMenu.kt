@@ -71,7 +71,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
   }
 
-  fun show(@IntRange(from = 0, to = 255) dimAmount: Int = 80) {
+  fun show(@IntRange(from = 0, to = 255) dimAmount: Int? = null) {
     // PopupWindow moves the popup to align with the anchor if a fixed width
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
@@ -86,7 +86,9 @@ open class CascadePopupMenu @JvmOverloads constructor(
     styler.background()?.let {
       popup.contentView.background = it
     }
-    applyBackgroundDim(dimAmount)
+    dimAmount?.let {
+      applyBackgroundDim(dimAmount)
+    }
     showMenu(menuBuilder, goingForward = true)
     popup.showAsDropDown(anchor, 0, 0, gravity)
   }
