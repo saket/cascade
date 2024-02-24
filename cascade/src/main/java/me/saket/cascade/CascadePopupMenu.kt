@@ -86,7 +86,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     styler.background()?.let {
       popup.contentView.background = it
     }
-    applyBackgroundDim(anchor.rootView, dimAmount)
+    applyBackgroundDim(dimAmount)
     showMenu(menuBuilder, goingForward = true)
     popup.showAsDropDown(anchor, 0, 0, gravity)
   }
@@ -153,11 +153,11 @@ open class CascadePopupMenu @JvmOverloads constructor(
   fun dismiss() =
     popup.dismiss()
 
-  private fun applyBackgroundDim(parent: View, @IntRange(from = 0, to = 255) dimAmount: Int) {
+  private fun applyBackgroundDim(@IntRange(from = 0, to = 255) dimAmount: Int) {
     val dim: Drawable = ColorDrawable(Color.BLACK)
-    dim.setBounds(0, 0, parent.width, parent.height)
+    dim.setBounds(0, 0, anchor.rootView.width, anchor.rootView.height)
     dim.alpha = dimAmount
-    val overlay = parent.overlay
+    val overlay = anchor.rootView.overlay
     overlay.add(dim)
 
     popup.setOnDismissListener {
