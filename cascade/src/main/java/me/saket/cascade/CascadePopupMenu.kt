@@ -3,8 +3,13 @@
 
 package me.saket.cascade
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.Menu
@@ -15,6 +20,7 @@ import android.view.View.SCROLLBARS_INSIDE_OVERLAY
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.annotation.IntRange
 import androidx.annotation.MenuRes
 import androidx.appcompat.view.SupportMenuInflater
 import androidx.appcompat.view.menu.MenuBuilder
@@ -68,7 +74,7 @@ open class CascadePopupMenu @JvmOverloads constructor(
     }
   }
 
-  fun show() {
+  fun show(@IntRange(from = 0, to = 255) dimAmount: Int? = null) {
     // PopupWindow moves the popup to align with the anchor if a fixed width
     // is known before hand. Note to self: If fixedWidth ever needs to be
     // removed, copy over MenuPopup.measureIndividualMenuWidth().
@@ -83,7 +89,9 @@ open class CascadePopupMenu @JvmOverloads constructor(
     styler.background()?.let {
       popup.contentView.background = it
     }
-
+    dimAmount?.let {
+      applyBackgroundDim(dimAmount)
+    }
     showMenu(menuBuilder, goingForward = true)
     popup.showAsDropDown(anchor, 0, 0, gravity)
   }
@@ -149,6 +157,33 @@ open class CascadePopupMenu @JvmOverloads constructor(
 
   fun dismiss() =
     popup.dismiss()
+
+  private fun applyBackgroundDim(@IntRange(from = 0, to = 255) dimAmount: Int) {
+    val dim: Drawable = ColorDrawable(Color.BLACK)
+    dim.setBounds(0, 0, anchor.rootView.width, anchor.rootView.height)
+    dim.alpha = 0
+    val overlay = anchor.rootView.overlay
+    overlay.add(dim)
+
+    /* FADE IN: Animating dim from 0 to dimAmount */
+    ObjectAnimator.ofInt(dim, "alpha", dimAmount).apply {
+      duration = 300
+      start()
+    }
+
+    popup.setOnDismissListener {
+      /* FADE OUT: Animating dim from dimAbout to 0 */
+      ObjectAnimator.ofInt(dim, "alpha", 0).apply {
+        duration = 300
+        addListener(object : AnimatorListenerAdapter() {
+          override fun onAnimationEnd(animation: Animator) {
+            overlay.clear()
+          }
+        })
+        start()
+      }
+    }
+  }
 
   @get:JvmName("getDragToOpenListener")
   @Deprecated("CascadeMenu doesn't support drag-to-open.", level = ERROR)
